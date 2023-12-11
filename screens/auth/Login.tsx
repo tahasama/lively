@@ -1,66 +1,67 @@
-// RegisterScreen.tsx
+// LoginScreen.tsx
 import React, { useState } from "react";
 import {
   View,
   Text,
   TextInput,
-  Button,
-  StyleSheet,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
-import { Feather } from "@expo/vector-icons"; // Import Feather icon from Expo vector-icons
-import { auth } from "../firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { Feather, AntDesign } from "@expo/vector-icons";
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../../firebase";
 
-interface RegisterScreenProps {
+interface LoginScreenProps {
   navigation: any;
 }
 
-const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const handleRegister = async () => {
+  const handleLogin = async () => {
     try {
-      if (!username.trim()) {
-        setError("Username is required");
+      await signInWithEmailAndPassword(auth, email, password);
+
+      // Login successful, navigate to the home screen or perform other actions
+      navigation.navigate("Home");
+    } catch (error) {
+      // Handle login error
+      setError(error.message);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    try {
+      if (!email) {
+        setError("Email is required to reset the password");
         return;
       }
 
-      await createUserWithEmailAndPassword(auth, email, password);
+      // Send a password reset email
+      await sendPasswordResetEmail(auth, email);
 
-      // Set the username in the user's profile
-      await updateProfile(auth.currentUser, {
-        displayName: username,
-      });
-
-      // Registration successful, navigate to the home screen or perform other actions
-      navigation.navigate("Home");
+      // Inform the user that a password reset email has been sent
+      setError("Password reset email has been sent. Check your inbox.");
     } catch (error) {
-      // Handle registration error
       setError(error.message);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Create an Account</Text>
+      <Text style={styles.title}>Welcome Back</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={(text) => setEmail(text)}
         keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={(text) => setUsername(text)}
         autoCapitalize="none"
       />
       <View style={styles.passwordContainer}>
@@ -71,6 +72,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
           onChangeText={(text) => setPassword(text)}
           secureTextEntry={!showPassword}
         />
+
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
           style={styles.show}
@@ -82,16 +84,24 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
           />
         </TouchableOpacity>
       </View>
+      <Text style={styles.passwordAdvise}>
+        <AntDesign name="questioncircleo" size={13} color="#708090" /> Be
+        careful with Uppercase and Lowercase letters!
+      </Text>
       {error && <Text style={styles.errorText}>{error}</Text>}
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <View style={styles.loginContainer}>
-        <Text style={styles.loginText}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.loginLink}>Login here</Text>
+
+      <View style={styles.registerContainer}>
+        <Text style={styles.registerText}>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+          <Text style={styles.registerLink}>Register here</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity onPress={handleForgotPassword}>
+        <Text style={styles.forgotPasswordLink}>Forgot Password?</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -124,8 +134,8 @@ const styles = StyleSheet.create({
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     width: "100%",
-    gap: 12,
   },
   passwordInput: {
     flex: 1,
@@ -138,14 +148,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333333",
   },
+  passwordAdvise: {
+    color: "#708090",
+    marginBottom: 20,
+  },
   show: {
-    // flex: 1,
     height: 48,
     borderColor: "#dddddd",
+    marginBottom: 14,
+    paddingLeft: 12,
+    borderRadius: 8,
     justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 4,
-    marginBottom: 12,
   },
   showPasswordText: {
     color: "#4285F4",
@@ -155,10 +168,10 @@ const styles = StyleSheet.create({
     color: "red",
     marginBottom: 16,
   },
-  registerButton: {
+  loginButton: {
     backgroundColor: "#4285F4",
-    paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 26,
     borderRadius: 8,
     marginBottom: 16,
   },
@@ -167,19 +180,26 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  loginContainer: {
+  forgotPasswordLink: {
+    marginTop: 20,
+    color: "#4285F4",
+    fontSize: 16,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+  registerContainer: {
     flexDirection: "row",
     justifyContent: "center",
   },
-  loginText: {
+  registerText: {
     fontSize: 16,
     color: "#555555",
   },
-  loginLink: {
+  registerLink: {
     fontSize: 16,
     color: "#4285F4",
     fontWeight: "bold",
   },
 });
 
-export default RegisterScreen;
+export default LoginScreen;

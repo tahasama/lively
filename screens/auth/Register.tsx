@@ -1,67 +1,81 @@
-// LoginScreen.tsx
+// RegisterScreen.tsx
 import React, { useState } from "react";
 import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
+  Button,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
-import { Feather, AntDesign } from "@expo/vector-icons";
-import {
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth } from "../firebase";
+import { Feather } from "@expo/vector-icons"; // Import Feather icon from Expo vector-icons
+import { auth, db } from "../../firebase";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
-interface LoginScreenProps {
+interface RegisterScreenProps {
   navigation: any;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-
-      // Login successful, navigate to the home screen or perform other actions
-      navigation.navigate("Home");
-    } catch (error) {
-      // Handle login error
-      setError(error.message);
-    }
-  };
-
-  const handleForgotPassword = async () => {
-    try {
-      if (!email) {
-        setError("Email is required to reset the password");
+      if (!username.trim()) {
+        setError("Username is required");
         return;
       }
 
-      // Send a password reset email
-      await sendPasswordResetEmail(auth, email);
+      // Create the user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-      // Inform the user that a password reset email has been sent
-      setError("Password reset email has been sent. Check your inbox.");
+      // Set the username in the user's profile
+      await updateProfile(userCredential.user, {
+        displayName: username,
+      });
+
+      // Add the user to the Firestore collection 'users'
+      const usersCollection = collection(db, "users");
+      await addDoc(usersCollection, {
+        uid: userCredential.user.uid,
+        username: username,
+        timestamp: serverTimestamp(),
+        image: "",
+      });
+
+      // Registration successful, navigate to the home screen or perform other actions
+      navigation.navigate("Home");
     } catch (error) {
+      // Handle registration error
       setError(error.message);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome Back</Text>
+      <Text style={styles.title}>Create an Account</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={(text) => setEmail(text)}
         keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={(text) => setUsername(text)}
         autoCapitalize="none"
       />
       <View style={styles.passwordContainer}>
@@ -72,7 +86,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           onChangeText={(text) => setPassword(text)}
           secureTextEntry={!showPassword}
         />
-
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
           style={styles.show}
@@ -84,24 +97,16 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           />
         </TouchableOpacity>
       </View>
-      <Text style={styles.passwordAdvise}>
-        <AntDesign name="questioncircleo" size={13} color="#708090" /> Be
-        careful with Uppercase and Lowercase letters!
-      </Text>
       {error && <Text style={styles.errorText}>{error}</Text>}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
-
-      <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>Don't have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-          <Text style={styles.registerLink}>Register here</Text>
+      <View style={styles.loginContainer}>
+        <Text style={styles.loginText}>Already have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <Text style={styles.loginLink}>Login here</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={handleForgotPassword}>
-        <Text style={styles.forgotPasswordLink}>Forgot Password?</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -134,8 +139,8 @@ const styles = StyleSheet.create({
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
     width: "100%",
+    gap: 12,
   },
   passwordInput: {
     flex: 1,
@@ -148,17 +153,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333333",
   },
-  passwordAdvise: {
-    color: "#708090",
-    marginBottom: 20,
-  },
   show: {
+    // flex: 1,
     height: 48,
     borderColor: "#dddddd",
-    marginBottom: 14,
-    paddingLeft: 12,
-    borderRadius: 8,
     justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 4,
+    marginBottom: 12,
   },
   showPasswordText: {
     color: "#4285F4",
@@ -168,10 +170,10 @@ const styles = StyleSheet.create({
     color: "red",
     marginBottom: 16,
   },
-  loginButton: {
+  registerButton: {
     backgroundColor: "#4285F4",
-    paddingVertical: 12,
-    paddingHorizontal: 26,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
     borderRadius: 8,
     marginBottom: 16,
   },
@@ -180,26 +182,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  forgotPasswordLink: {
-    marginTop: 20,
-    color: "#4285F4",
-    fontSize: 16,
-    fontWeight: "bold",
-    textDecorationLine: "underline",
-  },
-  registerContainer: {
+  loginContainer: {
     flexDirection: "row",
     justifyContent: "center",
   },
-  registerText: {
+  loginText: {
     fontSize: 16,
     color: "#555555",
   },
-  registerLink: {
+  loginLink: {
     fontSize: 16,
     color: "#4285F4",
     fontWeight: "bold",
   },
 });
 
-export default LoginScreen;
+export default RegisterScreen;

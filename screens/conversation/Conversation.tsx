@@ -1,9 +1,9 @@
 // ConversationScreen.tsx
 import React, { useState, useEffect, useRef } from "react";
 import { View, FlatList, StyleSheet, Text, Animated } from "react-native";
-import ChatInput from "../ChatInput";
+import ChatInput from "./component/ChatInput";
 import { useNavigation } from "@react-navigation/native";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 interface Message {
   text: string;
   sender: string;
@@ -36,7 +36,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const handleSendMessage = (text: string) => {
     const newMessage: Message = {
       text,
-      sender: "CurrentUser", // Replace with actual user data or ID
+      sender: user.displayName, // Replace with actual user data or ID
       timestamp: new Date(),
     };
 
@@ -50,7 +50,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   }, [messages]);
 
   const renderMessage = ({ item }: { item: Message }) => {
-    const isCurrentUser = item.sender === "user1";
+    const isCurrentUser = item.sender === user.displayName;
     const alignStyle = isCurrentUser ? styles.alignRight : styles.alignLeft;
     const messageBubbleStyle = isCurrentUser
       ? styles.messageBubbleRight
