@@ -6,14 +6,19 @@ import {
   Button,
   TextInput,
   StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
+  StatusBar,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../../../AuthProvider/AuthProvider";
 
 const CreateGroup = () => {
+  const { user } = useAuth();
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [groupName, setGroupName] = useState("");
@@ -28,6 +33,8 @@ const CreateGroup = () => {
       const groupsCollection = collection(db, "groups");
       const newGroupRef = await addDoc(groupsCollection, {
         name: groupName,
+        creator: user,
+        users: [user],
         createdAt: serverTimestamp(),
         // Add more group data as needed
       });
@@ -57,37 +64,75 @@ const CreateGroup = () => {
 
       {/* Modal for creating a group */}
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalContainer}>
-          {/* Input for group name */}
-          <TextInput
-            style={styles.input}
-            placeholder="Group Name"
-            value={groupName}
-            onChangeText={setGroupName}
-          />
-          {/* Button to create the group */}
-          <TouchableOpacity
-            style={styles.createButton}
-            onPress={handleCreateGroup}
-          >
-            <Text style={styles.buttonText}>Create Group</Text>
-          </TouchableOpacity>
-          {/* Button to close the modal */}
-          <TouchableOpacity style={styles.cancelButton} onPress={toggleModal}>
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.modalBackground}
+          onPress={() => {
+            Keyboard.dismiss();
+            toggleModal();
+          }}
+        >
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
+
+          <TouchableWithoutFeedback>
+            <View style={styles.modalContainer}>
+              <View style={styles.barContainer}>
+                <View style={styles.bar}></View>
+              </View>
+              {/* Input for group name */}
+              <TextInput
+                style={styles.input}
+                placeholder=" Add Group Name..."
+                value={groupName}
+                onChangeText={setGroupName}
+              />
+              {/* Button to create the group */}
+              <TouchableOpacity
+                style={styles.createButton}
+                onPress={handleCreateGroup}
+              >
+                <Text style={styles.buttonText}>Create Group</Text>
+              </TouchableOpacity>
+              {/* Button to close the modal */}
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={toggleModal}
+              >
+                <Text style={[styles.buttonText, { color: "#4e5a65" }]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  modalBackground: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
   container: {
     flex: 1,
   },
+  barContainer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bar: {
+    width: 80,
+    height: 8,
+    backgroundColor: "#708090",
+    borderRadius: 10,
+    marginBottom: 20,
+  },
   addButton: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#4285F4",
@@ -99,14 +144,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
+    position: "absolute",
+    bottom: 20,
+    right: 20,
   },
   modalContainer: {
     backgroundColor: "#fff",
     padding: 16,
     borderRadius: 8,
-    height: "auto",
-    position: "absolute",
-    bottom: 0,
     width: "100%",
   },
   input: {
