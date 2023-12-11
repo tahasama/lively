@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, AntDesign } from "@expo/vector-icons";
 import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
@@ -72,6 +72,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           onChangeText={(text) => setPassword(text)}
           secureTextEntry={!showPassword}
         />
+
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
           style={styles.show}
@@ -83,19 +84,24 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           />
         </TouchableOpacity>
       </View>
+      <Text style={styles.passwordAdvise}>
+        <AntDesign name="questioncircleo" size={13} color="#708090" /> Be
+        careful with Uppercase and Lowercase letters!
+      </Text>
       {error && <Text style={styles.errorText}>{error}</Text>}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleForgotPassword}>
-        <Text style={styles.forgotPasswordLink}>Forgot Password?</Text>
-      </TouchableOpacity>
+
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>Don't have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>
           <Text style={styles.registerLink}>Register here</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity onPress={handleForgotPassword}>
+        <Text style={styles.forgotPasswordLink}>Forgot Password?</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -142,6 +148,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333333",
   },
+  passwordAdvise: {
+    color: "#708090",
+    marginBottom: 20,
+  },
   show: {
     height: 48,
     borderColor: "#dddddd",
@@ -160,8 +170,8 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: "#4285F4",
-    paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 26,
     borderRadius: 8,
     marginBottom: 16,
   },
@@ -171,7 +181,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   forgotPasswordLink: {
-    marginVertical: 16,
+    marginTop: 20,
     color: "#4285F4",
     fontSize: 16,
     fontWeight: "bold",

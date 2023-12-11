@@ -8,43 +8,14 @@ import HomeScreen from "./screens/Home";
 import { useEffect, useState } from "react";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
-
-const Stack = createStackNavigator();
+import ConversationScreen from "./screens/Conversation";
+import { AuthProvider, useAuth } from "./AuthProvider/AuthProvider";
+import Index from "./Index";
 
 export default function App() {
-  const [user, setUser] = useState<any>(null); // Track user authentication status
-
-  useEffect(() => {
-    // Check user authentication status
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-
-    // Cleanup subscription
-    return () => unsubscribe();
-  }, []);
-
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
-        {user ? (
-          <>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
-          </>
-        ) : (
-          <Stack.Screen name="Home" component={HomeScreen} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <Index />
+    </AuthProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
