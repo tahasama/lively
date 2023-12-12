@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 interface AuthContextType {
-  user: User | null;
+  user: any;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,8 +15,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-      setUser(authUser);
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      const usersCollection = collection(db, "users");
+      const q = query(
+        usersCollection,
+        where("username", "==", authUser.displayName)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      const foundUsers = [];
+      querySnapshot.forEach((doc) => {
+        foundUsers.push({ id: doc.id, ...doc.data() });
+      });
+
+      setUser(foundUsers[0]);
     });
 
     return () => unsubscribe();

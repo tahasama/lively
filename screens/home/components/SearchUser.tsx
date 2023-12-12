@@ -1,0 +1,294 @@
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Button,
+  TextInput,
+  StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
+  StatusBar,
+  FlatList,
+} from "react-native";
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import {
+  addDoc,
+  collection,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  where,
+} from "firebase/firestore";
+import { db } from "../../../firebase";
+import { EvilIcons } from "@expo/vector-icons";
+import { useAuth } from "../../../AuthProvider/AuthProvider";
+
+const SearchUser = ({ navigation }) => {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [users, setUsers] = useState([]);
+  console.log("🚀 ~ file: SearchUser.tsx:33 ~ SearchUser ~ users:", users);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const { user } = useAuth();
+
+  // const navigation = useNavigation();
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const handleLookForUser = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      // Create a new group in Firestore
+      const usersCollection = collection(db, "users");
+      const q = query(
+        usersCollection,
+        where("username", "==", searchTerm.toLocaleLowerCase())
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      const foundUsers = [];
+      querySnapshot.forEach((doc) => {
+        foundUsers.push({ id: doc.id, ...doc.data() });
+      });
+
+      setUsers(foundUsers);
+
+      setLoading(false);
+    } catch (error) {
+      setError("Error searching for user");
+      setLoading(false);
+      console.error("Error searching for user:", error.message);
+    }
+  };
+
+  const handleCreateGroup = async (item: any) => {
+    try {
+      // Create a new group in Firestore
+      const groupsCollection = collection(db, "groups");
+
+      // Ensure consistent order of users in the array
+      const usersArray = [user, item].sort();
+
+      // Check if a group with these users already exists
+      const q = query(
+        groupsCollection,
+        where("users", "array-contains", usersArray)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      const foundGroup = [];
+      querySnapshot.forEach((doc) => {
+        foundGroup.push({ id: doc.id, ...doc.data() });
+      });
+
+      if (foundGroup.length === 0) {
+        // Use doc with a specific ID instead of addDoc
+        const newGroupRef = addDoc(groupsCollection, {
+          name: item.username,
+          creator: user,
+          users: usersArray,
+          createdAt: serverTimestamp(),
+          // Add more group data as needed
+        });
+
+        // Close the modal
+        toggleModal();
+
+        // Navigate to the screen for conversation
+        navigation.navigate("Conversation");
+      } else {
+        // Group already exists, you might want to handle this case
+        console.log("Group already exists");
+      }
+    } catch (error) {
+      console.error("Error creating group:", error.message);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* Button to open the modal for creating a group */}
+      <TouchableOpacity onPress={toggleModal} style={styles.addButton}>
+        <EvilIcons
+          name="search"
+          size={44}
+          color="white"
+          style={{ marginBottom: 7 }}
+        />
+      </TouchableOpacity>
+
+      {/* Modal for creating a group */}
+      <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.modalBackground}
+          onPress={() => {
+            Keyboard.dismiss();
+            toggleModal();
+          }}
+        >
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
+
+          <TouchableWithoutFeedback>
+            <View style={styles.modalContainer}>
+              <View style={styles.barContainer}>
+                <View style={styles.bar}></View>
+              </View>
+              {/* Input for group name */}
+              <TextInput
+                style={styles.input}
+                placeholder=" Search by username..."
+                value={searchTerm}
+                onChangeText={setSearchTerm}
+              />
+              {/* Button to create the group */}
+              <TouchableOpacity
+                style={styles.createButton}
+                onPress={handleLookForUser}
+                disabled={loading} // Disable the button during loading
+              >
+                <Text style={styles.buttonText}>
+                  {loading ? "Searching..." : "Look for a friend"}
+                </Text>
+              </TouchableOpacity>
+
+              {error ? (
+                <Text style={styles.errorText}>{error}</Text>
+              ) : (
+                <FlatList
+                  data={users}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() => handleCreateGroup(item)}>
+                      <View style={styles.userItem}>
+                        <Text style={styles.usernameText}>{item.username}</Text>
+                        <Text style={styles.startConversationText}>
+                          Tap to start a conversation
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(item) => item.id}
+                />
+              )}
+
+              {/* Button to close the modal */}
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={toggleModal}
+              >
+                <Text style={[styles.buttonText, { color: "#4e5a65" }]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableWithoutFeedback>
+        </TouchableOpacity>
+      </Modal>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  modalBackground: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  container: {
+    flex: 1,
+  },
+  barContainer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bar: {
+    width: 80,
+    height: 8,
+    backgroundColor: "#708090",
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  addButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#7272e5",
+    borderRadius: 40,
+    height: 80,
+    width: 80,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+  },
+  modalContainer: {
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 8,
+    width: "100%",
+  },
+  input: {
+    height: 40,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingLeft: 8,
+    borderRadius: 5,
+  },
+  createButton: {
+    backgroundColor: "#4285F4",
+    paddingVertical: 12,
+    borderRadius: 5,
+    marginTop: 16,
+    alignItems: "center",
+  },
+  cancelButton: {
+    backgroundColor: "#ddd",
+    paddingVertical: 12,
+    borderRadius: 5,
+    marginTop: 8,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 16,
+    marginTop: 10,
+  },
+  userItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    paddingVertical: 12,
+  },
+  usernameText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  startConversationText: {
+    color: "#555",
+    fontSize: 14,
+  },
+});
+
+export default SearchUser;

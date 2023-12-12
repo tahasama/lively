@@ -77,7 +77,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Hello {user.displayName} !</Text>
+      <Text>Hello {user.username} !</Text>
       <FlatList
         data={messages}
         keyExtractor={(item, index) => index.toString()}

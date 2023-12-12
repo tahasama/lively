@@ -4,6 +4,7 @@ import { View, Text, FlatList, StyleSheet } from "react-native";
 import ConversationItem from "./components/ConversationItem";
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import CreateGroup from "./components/CreateGroup";
+import SearchUser from "./components/SearchUser";
 
 interface Message {
   text: string;
@@ -39,6 +40,9 @@ const HomeScreen = ({ navigation }) => {
   );
   return (
     <View style={styles.container}>
+      <View style={styles.search}>
+        <SearchUser navigation={navigation} />
+      </View>
       <View style={styles.add}>
         <CreateGroup />
       </View>
@@ -58,6 +62,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  search: {
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    zIndex: 2,
   },
   add: {
     position: "absolute",

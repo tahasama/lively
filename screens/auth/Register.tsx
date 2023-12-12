@@ -50,6 +50,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         username: username,
         timestamp: serverTimestamp(),
         image: "",
+        email: email,
       });
 
       // Registration successful, navigate to the home screen or perform other actions
