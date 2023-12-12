@@ -5,19 +5,19 @@ import ConversationItem from "./components/ConversationItem";
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import CreateGroup from "./components/CreateGroup";
 import SearchUser from "./components/SearchUser";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, or, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
 
 interface Message {
   text: string;
   sender: string;
-  timestamp: Date;
+  createdAt: Date;
 }
 
 interface Conversation {
   id: string;
   name: string;
-  users: string[];
+  users: any[];
   dateCreated: Date;
   messages: Message[];
   creator: any;
@@ -35,7 +35,13 @@ const HomeScreen = ({ navigation }) => {
     const groupsCollection = collection(db, "groups");
 
     // Check if a group with these users already exists
-    const q = query(groupsCollection, where("creator.id", "==", user.id));
+    const q = query(
+      groupsCollection,
+      or(
+        where("creator.id", "==", user.id),
+        where("users", "array-contains", user.id)
+      )
+    );
 
     const querySnapshot = await getDocs(q);
 

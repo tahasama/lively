@@ -1,19 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../firebase";
 
 interface Message {
   text: string;
   sender: string;
-  timestamp: Date;
+  createdAt: any;
 }
 
 interface Conversation {
+  id: string;
   name: string;
-  // users: string[];
-  users: any;
+  users: any[];
+  dateCreated: Date;
   messages: Message[];
   creator: any;
 }
@@ -27,14 +30,37 @@ const ConversationItem: React.FC<{
       ? conversation.messages[conversation.messages.length - 1]
       : "";
   console.log(
-    "🚀 ~ file: ConversationItem.tsx:21 ~ conversation:",
-    conversation.name
+    "🚀 ~ file: ConversationItem.tsx:26 ~ conversation:",
+    conversation
   );
+
+  const [senderName, setSenderName] = useState("");
 
   const handlePress = () => {
     // Navigate to the ConversationScreen with the conversation details
-    navigation.navigate("Conversation", { conversation });
+    navigation.navigate("Conversation", { conversationId: conversation.id });
   };
+
+  const getUser = async () => {
+    const docSnap = await getDoc(
+      doc(
+        db,
+        "users",
+        conversation.messages[conversation.messages.length - 1].sender
+      )
+    );
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+      setSenderName(docSnap.data().username);
+    } else {
+      // docSnap.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <TouchableOpacity
@@ -51,15 +77,15 @@ const ConversationItem: React.FC<{
       {latestMessage && (
         <>
           <View style={styles.messageContainer}>
-            <Text style={styles.message}>{latestMessage.sender} :</Text>
+            <Text style={styles.message}>{senderName} :</Text>
             <Text style={styles.message}>{latestMessage.text}</Text>
           </View>
           <View style={styles.detailsContainer}>
             <MaterialIcons name="mail-outline" size={18} color="#555" />
 
-            <Text
-              style={styles.dateCreated}
-            >{` ${latestMessage.timestamp.toDateString()}`}</Text>
+            <Text style={styles.dateCreated}>{` ${latestMessage.createdAt
+              .toDate()
+              .toLocaleString()}`}</Text>
           </View>
         </>
       )}

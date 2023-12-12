@@ -1,47 +1,114 @@
 // ConversationScreen.tsx
 import React, { useState, useEffect, useRef } from "react";
-import { View, FlatList, StyleSheet, Text, Animated } from "react-native";
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Text,
+  Animated,
+  ActivityIndicator,
+} from "react-native";
 import ChatInput from "./component/ChatInput";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../AuthProvider/AuthProvider";
+import {
+  FieldValue,
+  Timestamp,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "../../firebase";
+import RenderUserInformation from "./component/renderUserInformation";
+
 interface Message {
   text: string;
   sender: string;
-  timestamp: Date;
+  createdAt: any;
 }
 
 interface Conversation {
-  title: string;
+  id: string;
+  name: string;
   participants: string[];
   messages: Message[];
 }
 
 interface ConversationScreenProps {
-  route: { params: { conversation: Conversation } };
+  route: { params: { conversationId: string } };
 }
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
-  const { conversation } = route.params;
+  const { conversationId } = route.params;
+  const [conversation, setConversation] = useState(null);
+  console.log("🚀 ~ file: Conversation.tsx:46 ~ conversation:", conversationId);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getConversation = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, "groups", conversationId));
+        if (docSnap.exists()) {
+          console.log("Document data:", docSnap.data());
+          setConversation(docSnap.data());
+
+          // Check if messages property exists before accessing it
+          setMessages(docSnap.data().messages || []);
+        } else {
+          console.log("No such document!");
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error getting conversation:", error.message);
+        setLoading(false);
+      }
+    };
+
+    getConversation();
+  }, [conversationId]);
+
   const navigation = useNavigation();
   const { user } = useAuth();
-  console.log("🚀 ~ file: Conversation.tsx:27 ~ user:", user);
-
-  const [messages, setMessages] = useState<Message[]>(conversation.messages);
 
   useEffect(() => {
     // Set the title dynamically based on the conversation
-    navigation.setOptions({ title: conversation.title });
+    if (conversation) {
+      navigation.setOptions({ title: conversation.name });
+    }
   }, [conversation, navigation]);
 
   const handleSendMessage = (text: string) => {
     const newMessage: Message = {
       text,
-      sender: user.displayName, // Replace with actual user data or ID
-      timestamp: new Date(),
+      sender: user.id,
+      createdAt: new Date(),
     };
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
+
+  useEffect(() => {
+    const updateFirestore = async () => {
+      try {
+        if (conversation) {
+          await updateDoc(doc(db, "groups", conversationId), {
+            messages: messages,
+          });
+          console.log("Firestore updated successfully");
+        }
+      } catch (error) {
+        console.error("Error updating Firestore:", error.message);
+      }
+    };
+
+    // Call the Firestore update only if both conversation and messages are available
+    if (conversation && messages.length > 0) {
+      updateFirestore();
+    }
+  }, [messages, conversation, conversationId]);
 
   useEffect(() => {
     // You may want to scroll to the bottom when new messages are added
@@ -49,8 +116,19 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     // scrollViewRef.scrollToEnd();
   }, [messages]);
 
+  const getMessageDate = (item: any) => {
+    if (item && item.createdAt instanceof Date) {
+      // Message created on the client side
+      return item.createdAt.toLocaleString();
+    } else if (item && item.createdAt && item.createdAt.toDate) {
+      // Message fetched from Firestore
+      return item.createdAt.toDate().toLocaleString();
+    }
+    return ""; // Handle the case where createdAt is not defined
+  };
+
   const renderMessage = ({ item }: { item: Message }) => {
-    const isCurrentUser = item.sender === user.displayName;
+    const isCurrentUser = item.sender === user.id;
     const alignStyle = isCurrentUser ? styles.alignRight : styles.alignLeft;
     const messageBubbleStyle = isCurrentUser
       ? styles.messageBubbleRight
@@ -58,32 +136,31 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
     return (
       <View style={[styles.messageContainer, alignStyle]}>
-        <Text style={[styles.messageSender, alignStyle]}>{item.sender}</Text>
+        {/* <Text style={[styles.messageSender, alignStyle]}>{item.sender}</Text> */}
+        <RenderUserInformation sender={item.sender} />
+
         <View style={messageBubbleStyle}>
           <Text style={styles.messageText}>{item.text}</Text>
         </View>
-        {/* <Text style={[styles.messageTimestamp, alignStyle]}>
-          {item?.timestamp.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            day: "numeric",
-            month: "short",
-            year: "2-digit",
-          })}
-        </Text> */}
+        <Text style={[styles.messageTimestamp, alignStyle]}>
+          {getMessageDate(item) || item.createdAt.toLocaleString()}
+        </Text>
       </View>
     );
   };
 
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+
   return (
     <View style={styles.container}>
-      <Text>Hello {user.username} !</Text>
+      <Text>Hello {user.username}!</Text>
       <FlatList
         data={messages}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderMessage}
         contentContainerStyle={styles.messagesContentContainer}
-        // ref={(ref) => (scrollViewRef = ref)} // Set up a ref for scrolling to the bottom
       />
       <ChatInput onSendMessage={handleSendMessage} />
     </View>

@@ -76,12 +76,12 @@ const SearchUser = ({ navigation }) => {
       const groupsCollection = collection(db, "groups");
 
       // Ensure consistent order of users in the array
-      const usersArray = [user, item].sort();
+      const usersArray = [user.id, item.id].sort();
 
       // Check if a group with these users already exists
       const q = query(
         groupsCollection,
-        where("users", "array-contains", usersArray)
+        where("users", "array-contains-any", usersArray)
       );
 
       const querySnapshot = await getDocs(q);
@@ -106,10 +106,22 @@ const SearchUser = ({ navigation }) => {
         toggleModal();
 
         // Navigate to the screen for conversation
-        navigation.navigate("Conversation");
+        navigation.navigate("Conversation", {
+          conversation: {
+            id: (await newGroupRef).id,
+            name: item.username + "-" + user.username,
+            creator: user,
+            users: usersArray,
+            createdAt: serverTimestamp(),
+            messages: [],
+          },
+        });
       } else {
         // Group already exists, you might want to handle this case
         console.log("Group already exists");
+        navigation.navigate("Conversation", {
+          conversationId: foundGroup[0].id,
+        });
       }
     } catch (error) {
       console.error("Error creating group:", error.message);
