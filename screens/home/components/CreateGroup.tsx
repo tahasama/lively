@@ -35,6 +35,7 @@ const CreateGroup = () => {
         name: groupName,
         creator: user,
         users: [user],
+        messages: [],
         createdAt: serverTimestamp(),
         // Add more group data as needed
       });

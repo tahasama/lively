@@ -1,10 +1,12 @@
 // HomeScreen.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import ConversationItem from "./components/ConversationItem";
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import CreateGroup from "./components/CreateGroup";
 import SearchUser from "./components/SearchUser";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../../firebase";
 
 interface Message {
   text: string;
@@ -13,31 +15,56 @@ interface Message {
 }
 
 interface Conversation {
-  title: string;
-  participants: string[];
+  id: string;
+  name: string;
+  users: string[];
   dateCreated: Date;
   messages: Message[];
+  creator: any;
 }
 
 const HomeScreen = ({ navigation }) => {
   const { user } = useAuth();
-  console.log("🚀 ~ file: Home.tsx:22 ~ HomeScreen ~ user:", user.displayName);
+  const [converations, setConverations] = useState<Conversation[]>([]);
+  console.log(
+    "🚀 ~ file: Home.tsx:28 ~ HomeScreen ~ converations:",
+    converations
+  );
+
+  const getCoversations = async () => {
+    const groupsCollection = collection(db, "groups");
+
+    // Check if a group with these users already exists
+    const q = query(groupsCollection, where("creator.id", "==", user.id));
+
+    const querySnapshot = await getDocs(q);
+
+    const foundGroup = [];
+    querySnapshot.forEach((doc) => {
+      foundGroup.push({ id: doc.id, ...doc.data() });
+    });
+    setConverations(foundGroup);
+  };
+
+  useEffect(() => {
+    getCoversations();
+  }, []);
 
   // Sample Conversations
-  const sampleConversations: Conversation[] = Array.from(
-    { length: 10 },
-    (_, index) => {
-      return {
-        title: `Conversation ${index + 1}`,
-        participants: [`Participant ${index + 1}`, "Another Participant"],
-        dateCreated: new Date(),
-        messages: [
-          { text: "yooo", sender: user.displayName, timestamp: new Date() },
-          { text: "hhhh", sender: "user2", timestamp: new Date() },
-        ],
-      };
-    }
-  );
+  // const sampleConversations: Conversation[] = Array.from(
+  //   { length: 10 },
+  //   (_, index) => {
+  //     return {
+  //       title: `Conversation ${index + 1}`,
+  //       participants: [`Participant ${index + 1}`, "Another Participant"],
+  //       dateCreated: new Date(),
+  //       messages: [
+  //         { text: "yooo", sender: user.displayName, timestamp: new Date() },
+  //         { text: "hhhh", sender: "user2", timestamp: new Date() },
+  //       ],
+  //     };
+  //   }
+  // );
   return (
     <View style={styles.container}>
       <View style={styles.search}>
@@ -47,8 +74,8 @@ const HomeScreen = ({ navigation }) => {
         <CreateGroup />
       </View>
       <FlatList
-        data={sampleConversations}
-        keyExtractor={(item, index) => index.toString()}
+        data={converations}
+        keyExtractor={(converation) => converation.id}
         renderItem={({ item }) => (
           <ConversationItem conversation={item} navigation={navigation} />
         )}

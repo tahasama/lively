@@ -30,7 +30,6 @@ const SearchUser = ({ navigation }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState([]);
-  console.log("🚀 ~ file: SearchUser.tsx:33 ~ SearchUser ~ users:", users);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -98,6 +97,7 @@ const SearchUser = ({ navigation }) => {
           name: item.username,
           creator: user,
           users: usersArray,
+          messages: [],
           createdAt: serverTimestamp(),
           // Add more group data as needed
         });

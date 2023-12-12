@@ -11,9 +11,11 @@ interface Message {
 }
 
 interface Conversation {
-  title: string;
-  participants: string[];
+  name: string;
+  // users: string[];
+  users: any;
   messages: Message[];
+  creator: any;
 }
 
 const ConversationItem: React.FC<{
@@ -24,6 +26,10 @@ const ConversationItem: React.FC<{
     conversation.messages.length > 0
       ? conversation.messages[conversation.messages.length - 1]
       : "";
+  console.log(
+    "🚀 ~ file: ConversationItem.tsx:21 ~ conversation:",
+    conversation.name
+  );
 
   const handlePress = () => {
     // Navigate to the ConversationScreen with the conversation details
@@ -35,12 +41,12 @@ const ConversationItem: React.FC<{
       onPress={handlePress}
       style={styles.conversationContainer}
     >
-      <Text style={styles.title}>{conversation.title}</Text>
+      <Text style={styles.title}>{conversation.name}</Text>
       <View style={styles.detailsContainer}>
         <MaterialIcons name="people" size={18} color="#555" />
-        <Text style={styles.participants}>{` ${conversation.participants.join(
-          ", "
-        )}`}</Text>
+        <Text style={styles.participants}>
+          {conversation.users[0].username}
+        </Text>
       </View>
       {latestMessage && (
         <>

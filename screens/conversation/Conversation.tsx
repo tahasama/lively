@@ -62,15 +62,15 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         <View style={messageBubbleStyle}>
           <Text style={styles.messageText}>{item.text}</Text>
         </View>
-        <Text style={[styles.messageTimestamp, alignStyle]}>
-          {item.timestamp.toLocaleTimeString([], {
+        {/* <Text style={[styles.messageTimestamp, alignStyle]}>
+          {item?.timestamp.toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
             day: "numeric",
             month: "short",
             year: "2-digit",
           })}
-        </Text>
+        </Text> */}
       </View>
     );
   };
