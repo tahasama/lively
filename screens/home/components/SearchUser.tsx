@@ -15,18 +15,25 @@ import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   addDoc,
+  arrayUnion,
   collection,
+  doc,
   getDoc,
   getDocs,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "../../../firebase";
-import { EvilIcons } from "@expo/vector-icons";
+import { EvilIcons, AntDesign } from "@expo/vector-icons";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
 
-const SearchUser = ({ navigation }) => {
+const SearchUser = ({ navigation, icon, conversationId }) => {
+  console.log(
+    "🚀 ~ file: SearchUser.tsx:30 ~ SearchUser ~ icon:",
+    conversationId
+  );
   const [isModalVisible, setModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState([]);
@@ -71,73 +78,96 @@ const SearchUser = ({ navigation }) => {
   };
 
   const handleCreateGroup = async (item: any) => {
-    try {
-      // Create a new group in Firestore
-      const groupsCollection = collection(db, "groups");
+    if (conversationId === "") {
+      try {
+        // Create a new group in Firestore
+        const groupsCollection = collection(db, "groups");
 
-      // Ensure consistent order of users in the array
-      const usersArray = [user.id, item.id].sort();
+        // Ensure consistent order of users in the array
+        const usersArray = [user.id, item.id].sort();
 
-      // Check if a group with these users already exists
-      const q = query(
-        groupsCollection,
-        where("users", "array-contains-any", usersArray)
-      );
+        // Check if a group with these users already exists
+        const q = query(
+          groupsCollection,
+          where("users", "array-contains-any", usersArray)
+        );
 
-      const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(q);
 
-      const foundGroup = [];
-      querySnapshot.forEach((doc) => {
-        foundGroup.push({ id: doc.id, ...doc.data() });
-      });
-
-      if (foundGroup.length === 0) {
-        // Use doc with a specific ID instead of addDoc
-        const newGroupRef = addDoc(groupsCollection, {
-          name: item.username,
-          creator: user,
-          users: usersArray,
-          messages: [],
-          createdAt: serverTimestamp(),
-          // Add more group data as needed
+        const foundGroup = [];
+        querySnapshot.forEach((doc) => {
+          foundGroup.push({ id: doc.id, ...doc.data() });
         });
 
-        // Close the modal
-        toggleModal();
-
-        // Navigate to the screen for conversation
-        navigation.navigate("Conversation", {
-          conversation: {
-            id: (await newGroupRef).id,
-            name: item.username + "-" + user.username,
+        if (foundGroup.length === 0) {
+          // Use doc with a specific ID instead of addDoc
+          const newGroupRef = addDoc(groupsCollection, {
+            name: item.username,
             creator: user,
             users: usersArray,
-            createdAt: serverTimestamp(),
             messages: [],
-          },
-        });
-      } else {
-        // Group already exists, you might want to handle this case
-        console.log("Group already exists");
-        navigation.navigate("Conversation", {
-          conversationId: foundGroup[0].id,
-        });
+            createdAt: serverTimestamp(),
+            // Add more group data as needed
+          });
+
+          // Close the modal
+          toggleModal();
+
+          // Navigate to the screen for conversation
+          navigation.navigate("Conversation", {
+            conversation: {
+              id: (await newGroupRef).id,
+              name: item.username + "-" + user.username,
+              creator: user,
+              users: usersArray,
+              createdAt: serverTimestamp(),
+              messages: [],
+            },
+          });
+        } else {
+          // Group already exists, you might want to handle this case
+          console.log("Group already exists");
+          navigation.navigate("Conversation", {
+            conversationId: foundGroup[0].id,
+          });
+        }
+      } catch (error) {
+        console.error("Error creating group:", error.message);
       }
-    } catch (error) {
-      console.error("Error creating group:", error.message);
+    } else {
+      // Check if the user is already in the group
+      const existingGroup = await getDoc(doc(db, "groups", conversationId));
+      if (existingGroup.exists()) {
+        const groupData = existingGroup.data();
+        if (groupData.users && !groupData.users.includes(item.id)) {
+          await updateDoc(doc(db, "groups", conversationId), {
+            users: arrayUnion(item.id),
+          });
+        } else {
+          // User is already in the group, do nothing
+          console.log("User is already in the group");
+        }
+      }
     }
   };
 
   return (
     <View style={styles.container}>
       {/* Button to open the modal for creating a group */}
-      <TouchableOpacity onPress={toggleModal} style={styles.addButton}>
-        <EvilIcons
-          name="search"
-          size={44}
-          color="white"
-          style={{ marginBottom: 7 }}
-        />
+      <TouchableOpacity
+        onPress={toggleModal}
+        style={icon !== "adduser" ? styles.addButton : styles.addUsers}
+      >
+        {icon !== "adduser" ? (
+          <EvilIcons
+            name="search"
+            size={44}
+            color="white"
+            style={{ marginBottom: 7 }}
+          />
+        ) : (
+          <AntDesign name="adduser" size={24} color="black" />
+        )}
       </TouchableOpacity>
 
       {/* Modal for creating a group */}
@@ -248,6 +278,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 20,
     left: 20,
+  },
+  addUsers: {
+    height: "100%",
+    justifyContent: "center",
+    marginRight: 10,
   },
   modalContainer: {
     backgroundColor: "#fff",

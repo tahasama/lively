@@ -74,7 +74,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.search}>
-        <SearchUser navigation={navigation} />
+        <SearchUser navigation={navigation} icon={""} conversationId={"d"} />
       </View>
       <View style={styles.add}>
         <CreateGroup />

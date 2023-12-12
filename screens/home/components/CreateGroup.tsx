@@ -33,8 +33,8 @@ const CreateGroup = () => {
       const groupsCollection = collection(db, "groups");
       const newGroupRef = await addDoc(groupsCollection, {
         name: groupName,
-        creator: user,
-        users: [user],
+        creator: user.id,
+        users: [user.id],
         messages: [],
         createdAt: serverTimestamp(),
         // Add more group data as needed

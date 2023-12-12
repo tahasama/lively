@@ -11,15 +11,7 @@ import {
 import ChatInput from "./component/ChatInput";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../AuthProvider/AuthProvider";
-import {
-  FieldValue,
-  Timestamp,
-  collection,
-  doc,
-  getDoc,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import RenderUserInformation from "./component/renderUserInformation";
 
@@ -43,7 +35,6 @@ interface ConversationScreenProps {
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId } = route.params;
   const [conversation, setConversation] = useState(null);
-  console.log("🚀 ~ file: Conversation.tsx:46 ~ conversation:", conversationId);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -73,13 +64,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const navigation = useNavigation();
   const { user } = useAuth();
 
-  useEffect(() => {
-    // Set the title dynamically based on the conversation
-    if (conversation) {
-      navigation.setOptions({ title: conversation.name });
-    }
-  }, [conversation, navigation]);
-
   const handleSendMessage = (text: string) => {
     const newMessage: Message = {
       text,
@@ -90,31 +74,29 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
-  useEffect(() => {
-    const updateFirestore = async () => {
-      try {
-        if (conversation) {
-          await updateDoc(doc(db, "groups", conversationId), {
-            messages: messages,
-          });
-          console.log("Firestore updated successfully");
-        }
-      } catch (error) {
-        console.error("Error updating Firestore:", error.message);
+  const updateFirestore = async () => {
+    try {
+      if (conversation) {
+        await updateDoc(doc(db, "groups", conversationId), {
+          messages: messages,
+        });
+        console.log("Firestore updated successfully");
       }
-    };
+    } catch (error) {
+      console.error("Error updating Firestore:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (conversation) {
+      navigation.setOptions({ title: conversation.name });
+    }
 
     // Call the Firestore update only if both conversation and messages are available
     if (conversation && messages.length > 0) {
       updateFirestore();
     }
   }, [messages, conversation, conversationId]);
-
-  useEffect(() => {
-    // You may want to scroll to the bottom when new messages are added
-    // This is a simple example, and you might need to adjust it based on your UI library or component
-    // scrollViewRef.scrollToEnd();
-  }, [messages]);
 
   const getMessageDate = (item: any) => {
     if (item && item.createdAt instanceof Date) {
@@ -150,7 +132,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   };
 
   if (loading) {
-    return <ActivityIndicator />;
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size={80} />
+      </View>
+    );
   }
 
   return (
@@ -178,7 +164,7 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     flexDirection: "column",
-    marginBottom: 12,
+    marginBottom: 0,
     maxWidth: "80%", // Adjust the width of the message container
   },
   alignRight: {
@@ -214,6 +200,10 @@ const styles = StyleSheet.create({
     fontSize: 10,
     marginTop: 4,
     textAlign: "center",
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
   },
 });
 

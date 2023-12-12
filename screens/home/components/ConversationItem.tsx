@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
+import RenderUserInformation from "../../conversation/component/renderUserInformation";
 
 interface Message {
   text: string;
@@ -70,9 +77,12 @@ const ConversationItem: React.FC<{
       <Text style={styles.title}>{conversation.name}</Text>
       <View style={styles.detailsContainer}>
         <MaterialIcons name="people" size={18} color="#555" />
-        <Text style={styles.participants}>
-          {conversation.users[0].username}
-        </Text>
+        <FlatList
+          data={conversation.users}
+          keyExtractor={(index) => index}
+          renderItem={({ item }) => <RenderUserInformation sender={item} />}
+          style={styles.usersList}
+        />
       </View>
       {latestMessage && (
         <>
@@ -116,7 +126,7 @@ const styles = StyleSheet.create({
   messageContainer: {
     flex: 1,
     flexDirection: "row",
-    marginVertical: 3,
+    marginBottom: 7,
   },
   message: {
     fontSize: 16,
@@ -137,6 +147,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#777",
     marginLeft: 4,
+  },
+  usersList: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+    gap: 0,
   },
 });
 
