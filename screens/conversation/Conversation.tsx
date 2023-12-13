@@ -1,24 +1,30 @@
-// ConversationScreen.tsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
-  FlatList,
-  StyleSheet,
   Text,
-  Animated,
+  FlatList,
   ActivityIndicator,
+  TextInput,
+  Button,
 } from "react-native";
-import ChatInput from "./component/ChatInput";
+import { GiftedChat } from "react-native-gifted-chat";
+import { ref, onValue, set, off, get } from "firebase/database";
 import { useNavigation } from "@react-navigation/native";
+import { dbr } from "../../firebase";
 import { useAuth } from "../../AuthProvider/AuthProvider";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
-import RenderUserInformation from "./component/renderUserInformation";
+import renderAvatar from "./component/renderAvatar";
 
 interface Message {
   text: string;
   sender: string;
   createdAt: any;
+}
+
+interface IMessage {
+  _id: string;
+  text: string;
+  createdAt: Date;
+  user: any;
 }
 
 interface Conversation {
@@ -34,177 +40,97 @@ interface ConversationScreenProps {
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId } = route.params;
-  const [conversation, setConversation] = useState(null);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const getConversation = async () => {
-      try {
-        const docSnap = await getDoc(doc(db, "groups", conversationId));
-        if (docSnap.exists()) {
-          console.log("Document data:", docSnap.data());
-          setConversation(docSnap.data());
-
-          // Check if messages property exists before accessing it
-          setMessages(docSnap.data().messages || []);
-        } else {
-          console.log("No such document!");
-        }
-        setLoading(false);
-      } catch (error) {
-        console.error("Error getting conversation:", error.message);
-        setLoading(false);
-      }
-    };
-
-    getConversation();
-  }, [conversationId]);
-
-  const navigation = useNavigation();
   const { user } = useAuth();
-
-  const handleSendMessage = (text: string) => {
-    const newMessage: Message = {
-      text,
-      sender: user.id,
-      createdAt: new Date(),
-    };
-
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
-  };
-
-  const updateFirestore = async () => {
-    try {
-      if (conversation) {
-        await updateDoc(doc(db, "groups", conversationId), {
-          messages: messages,
-        });
-        console.log("Firestore updated successfully");
-      }
-    } catch (error) {
-      console.error("Error updating Firestore:", error.message);
-    }
-  };
+  const navigation = useNavigation();
 
   useEffect(() => {
-    if (conversation) {
-      navigation.setOptions({ title: conversation.name });
+    const conversationRef = ref(dbr, `groups/${conversationId}`);
+
+    const handleData = (snapshot) => {
+      const conversationData = snapshot.val();
+
+      if (conversationData) {
+        navigation.setOptions({ title: conversationData.name });
+
+        setMessages(
+          conversationData.messages
+            ? Object.values(conversationData.messages).map((msg: any) => ({
+                _id: msg._id,
+                text: msg.text,
+                createdAt: new Date(msg.createdAt),
+                user: msg.user,
+              }))
+            : []
+        );
+      }
+
+      setLoading(false);
+    };
+
+    // Subscribe to real-time updates
+    onValue(conversationRef, handleData);
+
+    return () => {
+      // Unsubscribe when component unmounts
+      // Cleanup subscriptions to avoid memory leaks
+      off(conversationRef, "value", handleData);
+    };
+  }, [conversationId, navigation]);
+
+  const handleSendMessage = async (newMessages: IMessage[]) => {
+    try {
+      const conversationRef = ref(dbr, `groups/${conversationId}`);
+
+      // Fetch the current messages from the database
+      const snapshot = await get(conversationRef);
+      const currentMessages = snapshot.val()?.messages || [];
+
+      // Convert the currentMessages to an array
+      const currentMessagesArray = Array.isArray(currentMessages)
+        ? currentMessages
+        : Object.values(currentMessages);
+
+      // Append new messages to the existing array
+      const updatedMessages = [
+        ...newMessages.map((msg) => ({
+          _id: msg._id,
+          text: msg.text,
+          createdAt: msg.createdAt.toISOString(),
+          user: msg.user,
+        })),
+        ...currentMessagesArray,
+      ];
+
+      // Update the Realtime Database with the updated messages array
+      await set(conversationRef, {
+        messages: updatedMessages,
+      });
+    } catch (error) {
+      console.error("Error updating Realtime Database:", error.message);
     }
-
-    // Call the Firestore update only if both conversation and messages are available
-    if (conversation && messages.length > 0) {
-      updateFirestore();
-    }
-  }, [messages, conversation, conversationId]);
-
-  const getMessageDate = (item: any) => {
-    if (item && item.createdAt instanceof Date) {
-      // Message created on the client side
-      return item.createdAt.toLocaleString();
-    } else if (item && item.createdAt && item.createdAt.toDate) {
-      // Message fetched from Firestore
-      return item.createdAt.toDate().toLocaleString();
-    }
-    return ""; // Handle the case where createdAt is not defined
-  };
-
-  const renderMessage = ({ item }: { item: Message }) => {
-    const isCurrentUser = item.sender === user.id;
-    const alignStyle = isCurrentUser ? styles.alignRight : styles.alignLeft;
-    const messageBubbleStyle = isCurrentUser
-      ? styles.messageBubbleRight
-      : styles.messageBubbleLeft;
-
-    return (
-      <View style={[styles.messageContainer, alignStyle]}>
-        {/* <Text style={[styles.messageSender, alignStyle]}>{item.sender}</Text> */}
-        <RenderUserInformation sender={item.sender} />
-
-        <View style={messageBubbleStyle}>
-          <Text style={styles.messageText}>{item.text}</Text>
-        </View>
-        <Text style={[styles.messageTimestamp, alignStyle]}>
-          {getMessageDate(item) || item.createdAt.toLocaleString()}
-        </Text>
-      </View>
-    );
   };
 
   if (loading) {
     return (
-      <View style={styles.loading}>
-        <ActivityIndicator size={80} />
+      <View>
+        <ActivityIndicator size="large" />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text>Hello {user.username}!</Text>
-      <FlatList
-        data={messages}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderMessage}
-        contentContainerStyle={styles.messagesContentContainer}
-      />
-      <ChatInput onSendMessage={handleSendMessage} />
-    </View>
+    <GiftedChat
+      messages={messages}
+      onSend={(newMessages: any) => handleSendMessage(newMessages)}
+      user={{
+        _id: user.id,
+        name: user.username,
+      }}
+      renderAvatar={(props) => renderAvatar(props)}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f8f8",
-  },
-  messagesContentContainer: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  messageContainer: {
-    flexDirection: "column",
-    marginBottom: 0,
-    maxWidth: "80%", // Adjust the width of the message container
-  },
-  alignRight: {
-    alignSelf: "flex-end",
-  },
-  alignLeft: {
-    alignSelf: "flex-start",
-  },
-  messageBubbleRight: {
-    backgroundColor: "#4285F4",
-    borderRadius: 16,
-    padding: 16,
-  },
-  messageBubbleLeft: {
-    backgroundColor: "#708090",
-    borderRadius: 16,
-    padding: 16,
-  },
-  messageText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  messageSender: {
-    color: "#555",
-    fontSize: 12,
-    marginTop: 8,
-    marginBottom: 3,
-    marginHorizontal: 8,
-    textTransform: "capitalize",
-  },
-  messageTimestamp: {
-    color: "#777",
-    fontSize: 10,
-    marginTop: 4,
-    textAlign: "center",
-  },
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-  },
-});
 
 export default ConversationScreen;
