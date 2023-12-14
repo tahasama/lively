@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   TextInput,
   Button,
+  Keyboard,
 } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
 import { ref, onValue, set, off, get } from "firebase/database";
@@ -108,6 +109,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       await set(conversationRef, {
         messages: updatedMessages,
       });
+      Keyboard.dismiss();
     } catch (error) {
       console.error("Error updating Realtime Database:", error.message);
     }
