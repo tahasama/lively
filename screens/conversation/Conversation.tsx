@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -44,6 +44,8 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const navigation = useNavigation();
+  const chatRef = useRef<FlatList<IMessage> | null>(null);
+  chatRef.current?.scrollToEnd();
 
   useEffect(() => {
     const conversationRef = ref(dbr, `groups/${conversationId}`);
@@ -93,13 +95,13 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
       // Append new messages to the existing array
       const updatedMessages = [
+        ...currentMessagesArray,
         ...newMessages.map((msg) => ({
           _id: msg._id,
           text: msg.text,
           createdAt: msg.createdAt.toISOString(),
           user: msg.user,
         })),
-        ...currentMessagesArray,
       ];
 
       // Update the Realtime Database with the updated messages array
@@ -128,6 +130,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         name: user.username,
       }}
       renderAvatar={(props) => renderAvatar(props)}
+      showAvatarForEveryMessage={true}
+      // alwaysShowSend
+      inverted={false}
+      renderUsernameOnMessage
+      messageContainerRef={chatRef}
     />
   );
 };

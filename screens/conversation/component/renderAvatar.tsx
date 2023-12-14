@@ -17,7 +17,7 @@ const renderAvatar = (props) => {
 
   return (
     <View style={styles.avatarContainer}>
-      <Text style={styles.senderName}>{senderName}</Text>
+      {/* <Text style={styles.senderName}>{senderName}</Text> */}
       <Image source={userImage} style={styles.avatarImage} />
       {/* <Text>HG</Text> */}
     </View>
@@ -26,26 +26,25 @@ const renderAvatar = (props) => {
 
 const styles = StyleSheet.create({
   avatarContainer: {
-    position: "relative",
+    flex: 1,
     marginLeft: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   avatarImage: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     borderRadius: 20,
-    top: -20,
-    left: 2,
-    position: "relative",
   },
 
-  senderName: {
-    fontSize: 12,
-    color: "gray",
-    marginBottom: 20,
-    // top: 28,
-    // left: 60,
-    // position: "absolute",
-  },
+  // senderName: {
+  //   fontSize: 12,
+  //   color: "gray",
+  //   // marginBottom: 20,
+  //   // top: 28,
+  //   // left: 60,
+  //   // position: "absolute",
+  // },
 });
 
 export default renderAvatar;
