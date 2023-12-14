@@ -45,7 +45,10 @@ const ConversationItem: React.FC<{
 
   const handlePress = () => {
     // Navigate to the ConversationScreen with the conversation details
-    navigation.navigate("Conversation", { conversationId: conversation.id });
+    navigation.navigate("Conversation", {
+      conversationId: conversation.id,
+      title: conversation.name,
+    });
   };
 
   const getUser = async () => {

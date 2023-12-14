@@ -4,39 +4,13 @@ import { View, StyleSheet, Text } from "react-native";
 import { db, dbr } from "../../../firebase";
 import { ref, set } from "firebase/database";
 
-const renderUserInformation = ({ sender }: { sender: string }) => {
+const RenderUserInformation = ({ sender }) => {
   console.log(
-    "🚀 ~ file: renderUserInformation.tsx:7 ~ renderUserInformation ~ sender:",
+    "🚀 ~ file: renderUserInformation.tsx:8 ~ renderUserInformation ~ sender:",
     sender
   );
   // Fetch user information using the sender ID
   const [userData, setUserData] = useState(null);
-  console.log(
-    "🚀 ~ file: renderUserInformation.tsx:13 ~ renderUserInformation ~ userData:",
-    userData
-  );
-
-  const [title, setTitle] = useState("yooo!!!!");
-
-  const TestDbr = () => {
-    console.log("dbr:", dbr);
-    const postsRef = ref(dbr, "posts/");
-    console.log("postsRef:", postsRef);
-
-    set(postsRef, {
-      title: "hello yo",
-    })
-      .then(() => {
-        console.log("Data successfully written");
-      })
-      .catch((error) => {
-        console.error("Error writing data:", error.message);
-      });
-  };
-
-  useEffect(() => {
-    TestDbr();
-  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -57,7 +31,7 @@ const renderUserInformation = ({ sender }: { sender: string }) => {
     <View>
       {userData && (
         <>
-          <Text style={styles.messageSender}>{userData.username}</Text>
+          <Text style={styles.messageSender}>{userData.username},</Text>
           {/* Add other user information as needed */}
         </>
       )}
@@ -76,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default renderUserInformation;
+export default RenderUserInformation;

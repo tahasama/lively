@@ -35,11 +35,11 @@ interface Conversation {
 }
 
 interface ConversationScreenProps {
-  route: { params: { conversationId: string } };
+  route: { params: { conversationId: string; title: string } };
 }
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
-  const { conversationId } = route.params;
+  const { conversationId, title } = route.params;
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -47,13 +47,12 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
   useEffect(() => {
     const conversationRef = ref(dbr, `groups/${conversationId}`);
+    navigation.setOptions({ title: title });
 
     const handleData = (snapshot) => {
       const conversationData = snapshot.val();
 
       if (conversationData) {
-        navigation.setOptions({ title: conversationData.name });
-
         setMessages(
           conversationData.messages
             ? Object.values(conversationData.messages).map((msg: any) => ({
