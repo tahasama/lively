@@ -11,11 +11,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import ConversationScreen from "./screens/conversation/Conversation";
 import { AuthProvider, useAuth } from "./AuthProvider/AuthProvider";
 import Index from "./Index";
+import { ImageProvider } from "./AuthProvider/ImageProvider";
 
 export default function App() {
   return (
     <AuthProvider>
-      <Index />
+      <ImageProvider>
+        <Index />
+      </ImageProvider>
     </AuthProvider>
   );
 }

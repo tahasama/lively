@@ -7,13 +7,22 @@ import {
   TextInput,
   Button,
   Keyboard,
+  TouchableOpacity,
 } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
+import {
+  Composer,
+  GiftedChat,
+  InputToolbar,
+  Send,
+} from "react-native-gifted-chat";
 import { ref, onValue, set, off, get } from "firebase/database";
 import { useNavigation } from "@react-navigation/native";
 import { dbr } from "../../firebase";
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import renderAvatar from "./component/renderAvatar";
+import { Entypo } from "@expo/vector-icons";
+import ImagePickerC from "./component/ImagePickerC";
+import { useImage } from "../../AuthProvider/ImageProvider";
 
 interface Message {
   text: string;
@@ -24,8 +33,9 @@ interface Message {
 interface IMessage {
   _id: string;
   text: string;
-  createdAt: Date;
+  createdAt: any;
   user: any;
+  image: string;
 }
 
 interface Conversation {
@@ -42,8 +52,12 @@ interface ConversationScreenProps {
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId, title } = route.params;
   const [messages, setMessages] = useState<IMessage[]>([]);
+
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { image, setImage, setLoadingImage, loadingImage } = useImage();
+
+  console.log("🚀 ~ file: Conversation.tsx:53 ~ image:", image);
   const navigation = useNavigation();
   const chatRef = useRef<FlatList<IMessage> | null>(null);
   chatRef.current?.scrollToEnd();
@@ -63,6 +77,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
                 text: msg.text,
                 createdAt: new Date(msg.createdAt),
                 user: msg.user,
+                image: msg.image,
               }))
             : []
         );
@@ -85,33 +100,58 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     try {
       const conversationRef = ref(dbr, `groups/${conversationId}`);
 
-      // Fetch the current messages from the database
       const snapshot = await get(conversationRef);
       const currentMessages = snapshot.val()?.messages || [];
 
-      // Convert the currentMessages to an array
       const currentMessagesArray = Array.isArray(currentMessages)
         ? currentMessages
         : Object.values(currentMessages);
 
-      // Append new messages to the existing array
       const updatedMessages = [
         ...currentMessagesArray,
         ...newMessages.map((msg) => ({
           _id: msg._id,
-          text: msg.text,
+          text: msg.text || "",
           createdAt: msg.createdAt.toISOString(),
           user: msg.user,
+          image: image !== "" ? image : "",
         })),
       ];
 
-      // Update the Realtime Database with the updated messages array
+      console.log("Updated Messages:", updatedMessages);
+
       await set(conversationRef, {
         messages: updatedMessages,
       });
+      setImage("");
       Keyboard.dismiss();
     } catch (error) {
       console.error("Error updating Realtime Database:", error.message);
+    }
+  };
+
+  const renderSend = ({ onSend, text, sendButtonProps, ...props }: any) => (
+    <Send
+      {...props}
+      sendButtonProps={{
+        ...sendButtonProps,
+        onPress: () => customOnPress(text, onSend),
+      }}
+      disabled={loadingImage}
+    />
+  );
+
+  const customOnPress = (text: string, onSend: (messages: any) => void) => {
+    // Customize the logic for sending messages here
+    const isTextEmpty = !text || text.trim() === "";
+    const isImageEmpty = !image || image.trim() === "";
+
+    if (!isTextEmpty || !isImageEmpty) {
+      const newMessages =
+        isTextEmpty && isImageEmpty
+          ? []
+          : [{ text, image, _id: Math.random().toString() }];
+      onSend(newMessages);
     }
   };
 
@@ -131,12 +171,36 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         _id: user.id,
         name: user.username,
       }}
+      renderSend={renderSend}
       renderAvatar={(props) => renderAvatar(props)}
       showAvatarForEveryMessage={true}
-      // alwaysShowSend
       inverted={false}
+      alwaysShowSend
       renderUsernameOnMessage
       messageContainerRef={chatRef}
+      renderInputToolbar={(props) => (
+        <InputToolbar
+          {...props}
+          accessoryStyle={{
+            height: 44,
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+          renderComposer={(composerProps) => (
+            <Composer
+              {...composerProps}
+              textInputStyle={{
+                color: "#333",
+                borderRadius: 20,
+                borderWidth: 1,
+                borderColor: "#ccc",
+                paddingHorizontal: 10,
+              }}
+            />
+          )}
+          renderAccessory={() => <ImagePickerC />}
+        />
+      )}
     />
   );
 };
