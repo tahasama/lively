@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Linking,
 } from "react-native";
 import { Feather, AntDesign } from "@expo/vector-icons";
 import {
@@ -56,6 +57,24 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back</Text>
+      <Text style={{ textAlign: "center", color: "#999999" }}>
+        By continuing, you agree on, and aknowledge that you've read Lively's{" "}
+      </Text>
+      <Text
+        style={{
+          color: "#0aaccc",
+          textDecorationLine: "underline",
+          marginBottom: 20,
+          fontSize: 16,
+        }}
+        onPress={() =>
+          Linking.openURL(
+            "https://www.privacypolicies.com/live/ca35efc1-6094-4aca-b26d-54ba9a6c0035"
+          )
+        }
+      >
+        Privacy policy
+      </Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
