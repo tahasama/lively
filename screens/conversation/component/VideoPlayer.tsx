@@ -3,7 +3,6 @@ import React, { useRef, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
 
 const VideoPlayer = ({ source }) => {
-  console.log("🚀 ~ file: VideoPlayer.tsx:6 ~ VideoPlayer ~ source:", source);
   const videoRef = useRef(null);
   const [status, setStatus] = useState<any>({});
 

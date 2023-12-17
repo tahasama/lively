@@ -4,10 +4,15 @@ import { collection, doc, getDoc } from "firebase/firestore"; // Import Firebase
 import { db } from "../../../firebase";
 import VideoPlayer from "./VideoPlayer";
 import AudioPlayer from "./AudioPlayer";
-import FileLink from "./FileLink";
+import FileLink from "./FilePlayer";
 import { useImage } from "../../../AuthProvider/ImageProvider";
+import FilePlayer from "./FilePlayer";
 
 const MessageBubble = ({ message, isSender }) => {
+  console.log(
+    "🚀 ~ file: MessageBubble.tsx:12 ~ MessageBubble ~ message:",
+    message
+  );
   const [userData, setUserData] = useState(null);
   const { file, setFile } = useImage();
 
@@ -85,10 +90,8 @@ const MessageBubble = ({ message, isSender }) => {
         )}
         {/* {message.audio && (
           <AudioPlayer source={{ uri: message.audio }} />
-        )}
-        {message.file && (
-          <FileLink onFilePick={() => setFile(file)} />
         )} */}
+        {message.file && <FilePlayer fileUrl={message.file} />}
         <Text style={styles.messageText}>{message.text}</Text>
         <Text style={styles.timestamp}>
           {formatTimestamp(message.createdAt)}

@@ -4,7 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../../firebase";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
-import DocumentPicker from "react-native-document-picker";
+import * as DocumentPicker from "expo-document-picker";
 
 import {
   Foundation,
@@ -16,7 +16,7 @@ import {
 import { useImage } from "../../../AuthProvider/ImageProvider";
 const ImagePickerC = ({ type }) => {
   const { user } = useAuth();
-  const { image, setImage, setVideo, setLoadingImage, loadingImage } =
+  const { image, setImage, setVideo, setFile, setLoadingImage, loadingImage } =
     useImage();
 
   const pickImageAsync = async () => {
@@ -35,10 +35,8 @@ const ImagePickerC = ({ type }) => {
             allowsEditing: true,
             quality: 1,
           })
-        : await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true,
-            quality: 1,
-          });
+        : await DocumentPicker.getDocumentAsync();
+    console.log("🚀 ~ file: ImagePickerC.tsx:26 ~ pickImageAsync ~ result:");
 
     if (!result.canceled) {
       // dispatch(updateUserImageState(result.assets[0].uri));
@@ -48,14 +46,27 @@ const ImagePickerC = ({ type }) => {
       const storageRef =
         type === "video"
           ? ref(storage, user.id + ".mp4")
-          : ref(storage, user.id + ".jpg");
+          : type === "image"
+          ? ref(storage, user.id + ".jpg")
+          : ref(
+              storage,
+              user.id +
+                "." +
+                result.assets[0].uri.split(".")[
+                  result.assets[0].uri.split(".").length - 1
+                ]
+            );
 
       uploadBytesResumable(storageRef, blob)
         .then(async () => {
           const res = await getDownloadURL(storageRef);
           setTimeout(() => {
             // dispatch(updateUserImage({ userImage: res, userId: user.id }));
-            type === "video" ? setVideo(res) : setImage(res);
+            type === "video"
+              ? setVideo(res)
+              : type === "video"
+              ? setImage(res)
+              : setFile(res);
           }, 2000),
             setLoadingImage(false);
         })
