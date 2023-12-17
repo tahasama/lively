@@ -203,7 +203,7 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
 
               {error ? (
                 <Text style={styles.errorText}>{error}</Text>
-              ) : (
+              ) : users.length !== 0 ? (
                 <FlatList
                   data={users}
                   renderItem={({ item }) => (
@@ -218,6 +218,10 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
                   )}
                   keyExtractor={(item) => item.id}
                 />
+              ) : (
+                <Text style={{ color: "#7f0000", marginTop: 3 }}>
+                  User not found, try a different name.
+                </Text>
               )}
 
               {/* Button to close the modal */}
@@ -327,6 +331,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 4,
+    color: "#3c0068",
   },
   startConversationText: {
     color: "#555",
