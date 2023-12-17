@@ -12,7 +12,7 @@ const renderAvatar = (props) => {
   }
 
   // Use your logic to get the sender's information (e.g., name and image)
-  const senderName = currentMessage.user.name;
+  // const senderName = currentMessage.user.name;
   // Replace the following line with the actual avatar URL or path
 
   return (

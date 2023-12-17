@@ -23,6 +23,7 @@ import renderAvatar from "./component/renderAvatar";
 import { Entypo } from "@expo/vector-icons";
 import ImagePickerC from "./component/ImagePickerC";
 import { useImage } from "../../AuthProvider/ImageProvider";
+import { Ionicons } from "@expo/vector-icons";
 
 interface Message {
   text: string;
@@ -56,10 +57,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { image, setImage, setLoadingImage, loadingImage } = useImage();
+  const [showImagePicker, setShowImagePicker] = useState(false); // State to control visibility
 
-  console.log("🚀 ~ file: Conversation.tsx:53 ~ image:", image);
   const navigation = useNavigation();
   const chatRef = useRef<FlatList<IMessage> | null>(null);
+
   chatRef.current?.scrollToEnd();
 
   useEffect(() => {
@@ -118,8 +120,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         })),
       ];
 
-      console.log("Updated Messages:", updatedMessages);
-
       await set(conversationRef, {
         messages: updatedMessages,
       });
@@ -131,14 +131,17 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   };
 
   const renderSend = ({ onSend, text, sendButtonProps, ...props }: any) => (
-    <Send
-      {...props}
-      sendButtonProps={{
-        ...sendButtonProps,
-        onPress: () => customOnPress(text, onSend),
+    <TouchableOpacity
+      style={{
+        position: "absolute",
+        bottom: 10,
+        right: 0,
       }}
+      onPress={() => customOnPress(text, onSend)}
       disabled={loadingImage}
-    />
+    >
+      <Ionicons name="send" size={24} color="black" />
+    </TouchableOpacity>
   );
 
   const customOnPress = (text: string, onSend: (messages: any) => void) => {
@@ -153,6 +156,10 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           : [{ text, image, _id: Math.random().toString() }];
       onSend(newMessages);
     }
+  };
+
+  const handleImagePickerToggle = () => {
+    setShowImagePicker(!showImagePicker);
   };
 
   if (loading) {
@@ -178,13 +185,17 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       alwaysShowSend
       renderUsernameOnMessage
       messageContainerRef={chatRef}
+      infiniteScroll
+      loadEarlier
       renderInputToolbar={(props) => (
         <InputToolbar
           {...props}
-          accessoryStyle={{
-            height: 44,
-            flexDirection: "row",
+          containerStyle={{
+            flexDirection: "row-reverse",
+            justifyContent: "space-around",
             alignItems: "center",
+            // margin: 5,
+            gap: 20,
           }}
           renderComposer={(composerProps) => (
             <Composer
@@ -195,10 +206,43 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
                 borderWidth: 1,
                 borderColor: "#ccc",
                 paddingHorizontal: 10,
+                marginTop: 3,
+                marginLeft: -20,
+                flex: 6,
+                opacity: showImagePicker ? 0 : 1,
+                zIndex: showImagePicker ? 0 : 50,
+                maxWidth: "86%",
               }}
             />
           )}
-          renderAccessory={() => <ImagePickerC />}
+          renderAccessory={() => (
+            <View
+              style={{
+                // flexDirection: "row",
+                // alignItems: "center",
+                // justifyContent: "center",
+                // height: "100%",
+                // marginLeft: 1,
+                position: "absolute",
+                bottom: 4,
+                left: -10,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  // width: !showImagePicker ? 25 : 100,
+                }}
+              >
+                <TouchableOpacity onPress={handleImagePickerToggle}>
+                  <Ionicons name="add" size={32} color="black" />
+                </TouchableOpacity>
+                {showImagePicker && <ImagePickerC />}
+              </View>
+            </View>
+          )}
         />
       )}
     />

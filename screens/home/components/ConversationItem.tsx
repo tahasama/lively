@@ -36,10 +36,6 @@ const ConversationItem: React.FC<{
     conversation.messages.length > 0
       ? conversation.messages[conversation.messages.length - 1]
       : "";
-  console.log(
-    "🚀 ~ file: ConversationItem.tsx:26 ~ conversation:",
-    conversation
-  );
 
   const [senderName, setSenderName] = useState("");
 
@@ -52,19 +48,31 @@ const ConversationItem: React.FC<{
   };
 
   const getUser = async () => {
-    const docSnap = await getDoc(
-      doc(
-        db,
-        "users",
-        conversation.messages[conversation.messages.length - 1].sender
-      )
-    );
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-      setSenderName(docSnap.data().username);
-    } else {
-      // docSnap.data() will be undefined in this case
-      console.log("No such document!");
+    if (
+      conversation.messages &&
+      conversation.messages[conversation.messages.length - 1]?.sender
+    ) {
+      try {
+        const docSnap = await getDoc(
+          doc(
+            db,
+            "users",
+            conversation.messages[conversation.messages.length - 1].sender
+          )
+        );
+        if (docSnap.exists()) {
+          console.log("Document data:", docSnap.data());
+          setSenderName(docSnap.data().username);
+        } else {
+          // docSnap.data() will be undefined in this case
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: ConversationItem.tsx:54 ~ getUser ~ error:",
+          error
+        );
+      }
     }
   };
 

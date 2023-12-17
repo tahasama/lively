@@ -4,23 +4,21 @@ import { View, StyleSheet, Text } from "react-native";
 import { db, dbr } from "../../../firebase";
 import { ref, set } from "firebase/database";
 
-const RenderUserInformation = ({ sender }) => {
-  console.log(
-    "🚀 ~ file: renderUserInformation.tsx:8 ~ renderUserInformation ~ sender:",
-    sender
-  );
+const RenderUserInformation = ({ sender }: any) => {
   // Fetch user information using the sender ID
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const docSnap = await getDoc(doc(db, "users", sender));
-        if (docSnap.exists()) {
-          setUserData(docSnap.data());
+      if (sender) {
+        try {
+          const docSnap = await getDoc(doc(db, "users", sender));
+          if (docSnap.exists()) {
+            setUserData(docSnap.data());
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error.message);
         }
-      } catch (error) {
-        console.error("Error fetching user data:", error.message);
       }
     };
 

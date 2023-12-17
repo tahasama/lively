@@ -16,20 +16,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-      const usersCollection = collection(db, "users");
-      const q = query(
-        usersCollection,
-        where("username", "==", authUser.displayName)
-      );
+      if (authUser) {
+        const usersCollection = collection(db, "users");
+        const q = query(
+          usersCollection,
+          where("username", "==", authUser.displayName)
+        );
 
-      const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(q);
 
-      const foundUsers = [];
-      querySnapshot.forEach((doc) => {
-        foundUsers.push({ id: doc.id, ...doc.data() });
-      });
+        const foundUsers = [];
+        querySnapshot.forEach((doc) => {
+          foundUsers.push({ id: doc.id, ...doc.data() });
+        });
 
-      setUser(foundUsers[0]);
+        setUser(foundUsers[0]);
+      }
     });
 
     return () => unsubscribe();

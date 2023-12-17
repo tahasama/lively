@@ -23,13 +23,13 @@ interface Conversation {
   creator: any;
 }
 
-const HomeScreen = ({ navigation }) => {
+interface HomeScreenProps {
+  navigation: any;
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { user } = useAuth();
   const [converations, setConverations] = useState<Conversation[]>([]);
-  console.log(
-    "🚀 ~ file: Home.tsx:28 ~ HomeScreen ~ converations:",
-    converations
-  );
 
   const getCoversations = async () => {
     const groupsCollection = collection(db, "groups");
@@ -56,25 +56,10 @@ const HomeScreen = ({ navigation }) => {
     getCoversations();
   }, []);
 
-  // Sample Conversations
-  // const sampleConversations: Conversation[] = Array.from(
-  //   { length: 10 },
-  //   (_, index) => {
-  //     return {
-  //       title: `Conversation ${index + 1}`,
-  //       participants: [`Participant ${index + 1}`, "Another Participant"],
-  //       dateCreated: new Date(),
-  //       messages: [
-  //         { text: "yooo", sender: user.displayName, timestamp: new Date() },
-  //         { text: "hhhh", sender: "user2", timestamp: new Date() },
-  //       ],
-  //     };
-  //   }
-  // );
   return (
     <View style={styles.container}>
       <View style={styles.search}>
-        <SearchUser navigation={navigation} icon={""} conversationId={"d"} />
+        <SearchUser navigation={navigation} icon={""} conversationId={""} />
       </View>
       <View style={styles.add}>
         <CreateGroup />

@@ -30,10 +30,6 @@ import { EvilIcons, AntDesign } from "@expo/vector-icons";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
 
 const SearchUser = ({ navigation, icon, conversationId }) => {
-  console.log(
-    "🚀 ~ file: SearchUser.tsx:30 ~ SearchUser ~ icon:",
-    conversationId
-  );
   const [isModalVisible, setModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState([]);
