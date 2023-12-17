@@ -2,9 +2,14 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { collection, doc, getDoc } from "firebase/firestore"; // Import Firebase Firestore functions
 import { db } from "../../../firebase";
+import VideoPlayer from "./VideoPlayer";
+import AudioPlayer from "./AudioPlayer";
+import FileLink from "./FileLink";
+import { useImage } from "../../../AuthProvider/ImageProvider";
 
 const MessageBubble = ({ message, isSender }) => {
   const [userData, setUserData] = useState(null);
+  const { file, setFile } = useImage();
 
   const fetchUserData = async () => {
     if (message.user.id) {
@@ -71,10 +76,19 @@ const MessageBubble = ({ message, isSender }) => {
         </View>
       )}
       <View style={styles.messageContent}>
-        {/* <Text style={styles.messageText}>{message.image}</Text> */}
         {message.image && (
           <Image style={styles.image} source={{ uri: message.image }} />
         )}
+        {message.video && (
+          // Render your video component (e.g., using Video or other components)
+          <VideoPlayer source={message.video} />
+        )}
+        {/* {message.audio && (
+          <AudioPlayer source={{ uri: message.audio }} />
+        )}
+        {message.file && (
+          <FileLink onFilePick={() => setFile(file)} />
+        )} */}
         <Text style={styles.messageText}>{message.text}</Text>
         <Text style={styles.timestamp}>
           {formatTimestamp(message.createdAt)}
@@ -121,7 +135,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
-    color: "#333",
+    color: "#fff",
   },
   timestamp: {
     fontSize: 12,

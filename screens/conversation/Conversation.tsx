@@ -32,6 +32,9 @@ interface IMessage {
   createdAt: any;
   user: any;
   image: string;
+  video: string;
+  audio: string;
+  file: string;
 }
 
 interface Conversation {
@@ -50,9 +53,21 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  const { image, setImage, setLoadingImage, loadingImage } = useImage();
+  const {
+    text,
+    setText,
+    image,
+    setImage,
+    setLoadingImage,
+    loadingImage,
+    video,
+    setVideo,
+    audio,
+    setAudio,
+    file,
+    setFile,
+  } = useImage();
   const [showImagePicker, setShowImagePicker] = useState(false);
-  const [customText, setCustomText] = useState("");
   const navigation = useNavigation();
   const chatRef = useRef<FlatList<IMessage> | null>(null);
 
@@ -72,6 +87,9 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
                 createdAt: new Date(msg.createdAt),
                 user: msg.user,
                 image: msg.image,
+                video: msg.video,
+                audio: msg.audio,
+                file: msg.file,
               }))
             : []),
           // { _id: "0", text: "", createdAt: "", user: "", image: "" },
@@ -96,8 +114,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     };
   }, [conversationId, navigation]);
 
-  const handleSendMessage = async (newMessages: IMessage[]) => {
-    if (customText || image) {
+  const handleSendMessage = async () => {
+    // Your existing logic for sending messages
+
+    // Check if the message contains a file (image, video, audio, etc.)
+    if (image || video || audio || file || text) {
       try {
         const conversationRef = ref(dbr, `groups/${conversationId}`);
 
@@ -110,20 +131,28 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
         const updatedMessages = [
           ...currentMessagesArray,
-          ...newMessages.map((msg) => ({
-            _id: msg._id,
-            text: msg.text || "",
-            createdAt: msg.createdAt.toISOString(),
-            user: msg.user,
+          {
+            _id: `${new Date().getTime()}-${Math.random()}`,
+            createdAt: new Date().toISOString(),
+            user: user,
+            text: text ? text : "",
             image: image ? image : "",
-          })),
+            video: video ? video : "",
+            audio: audio ? audio : "",
+            file: file ? file : "",
+          },
         ];
 
         await set(conversationRef, {
           messages: updatedMessages,
         });
+
+        // Clear the selected file after sending
         setImage("");
-        setCustomText("");
+        setVideo("");
+        setAudio("");
+        setFile("");
+        setText("");
         Keyboard.dismiss();
       } catch (error) {
         console.error("Error updating Realtime Database:", error.message);
@@ -135,6 +164,8 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setShowImagePicker(!showImagePicker);
   };
 
+  const Types = ["file", "image", "audio", "video"];
+
   if (loading) {
     return (
       <View>
@@ -144,7 +175,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, padding: 2 }}>
       <FlatList
         ref={chatRef}
         data={messages}
@@ -167,29 +198,22 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         {!showImagePicker ? (
           <TextInput
             style={styles.textInput}
-            value={customText}
-            onChangeText={setCustomText}
+            value={text}
+            onChangeText={setText}
             placeholder="Type your message..."
             multiline={true}
           />
         ) : (
-          <ImagePickerC />
+          // <ImagePickerC />
+          Types.map((type, index) => (
+            <View key={index} style={[styles.types]}>
+              <ImagePickerC type={type} />
+            </View>
+          ))
         )}
 
         {/* Show the "Send Message" button on the far right */}
-        <TouchableOpacity
-          onPress={() =>
-            handleSendMessage([
-              {
-                text: customText,
-                _id: `${new Date().getTime()}-${Math.random()}`,
-                createdAt: new Date(),
-                user: user,
-                image: "",
-              },
-            ])
-          }
-        >
+        <TouchableOpacity onPress={handleSendMessage}>
           <Ionicons name="send" size={20} color="black" />
         </TouchableOpacity>
       </View>
@@ -210,12 +234,16 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 12,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#ccc",
     color: "#333",
     marginRight: 20,
+  },
+  types: {
+    flex: 1,
+    paddingVertical: 8,
   },
 });
 
