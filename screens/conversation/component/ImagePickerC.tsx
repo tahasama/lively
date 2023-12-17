@@ -52,9 +52,7 @@ const ImagePickerC = () => {
 
   return (
     <TouchableOpacity style={{ marginLeft: 10 }} onPress={pickImageAsync}>
-      {/* <Entypo name="camera" size={24} color="black" /> */}
       <Entypo name="image" size={24} color="black" />
-      {/* <Text>jjj</Text> */}
     </TouchableOpacity>
   );
 };
