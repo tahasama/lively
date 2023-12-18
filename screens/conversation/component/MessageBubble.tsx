@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   messageContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
-    padding: 10,
+    padding: 8,
     margin: 5,
     maxWidth: "80%",
     borderRadius: 15, // Increase border radius for rounded corners
