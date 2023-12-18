@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 16 / 9, // You can adjust the aspect ratio based on your video's dimensions
     backgroundColor: "black", // Background color while loading
+    borderRadius: 10, // Adjust the border radius as needed
   },
   video: {
     ...StyleSheet.absoluteFillObject,

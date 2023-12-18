@@ -74,6 +74,8 @@ const AudioPlayer = ({ audioUri }) => {
         maximumValue={duration}
         onSlidingComplete={handleSliderChange}
         disabled={!sound}
+        thumbTintColor="gray"
+        maximumTrackTintColor="white"
       />
       <View style={styles.timeContainer}>
         <Text style={styles.timeText}>{formatTime(position)}</Text>
@@ -86,17 +88,19 @@ const AudioPlayer = ({ audioUri }) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: 10,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    // backgroundColor: "red",
+    marginTop: 10,
   },
   slider: {
     width: "70%",
-    marginTop: 10,
+    marginTop: 0,
   },
   timeContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "70%",
-    marginTop: 5,
   },
   timeText: {
     color: "black",

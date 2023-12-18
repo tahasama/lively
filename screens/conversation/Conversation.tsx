@@ -67,6 +67,14 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     file,
     setFile,
   } = useImage();
+  console.log(
+    "🚀 ~ file: Conversation.tsx:70 ~   ",
+    text,
+    image,
+    video,
+    audio,
+    file
+  );
   const [showImagePicker, setShowImagePicker] = useState(false);
   const navigation = useNavigation();
   const chatRef = useRef<FlatList<IMessage> | null>(null);

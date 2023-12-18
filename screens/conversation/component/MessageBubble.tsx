@@ -12,13 +12,6 @@ const MessageBubble = ({ message, isSender }) => {
   const [userData, setUserData] = useState(null);
   const xxx =
     "https://firebasestorage.googleapis.com/v0/b/lively-5824e.appspot.com/o/cVWlGmB4Mz94ZwP07dKY.docx?alt=media&token=43e06eea-2e55-47e3-8aa5-3629717a17bf";
-  console.log(
-    "🚀 ~ file: MessageBubble.tsx:14 ~ MessageBubble ~ xxx:",
-    xxx
-      .split("?")[0]
-      .split("/")
-      [xxx.split("?")[0].split("/").length - 1].split(".")[1]
-  );
 
   const fetchUserData = async () => {
     if (message.user.id) {
@@ -86,7 +79,17 @@ const MessageBubble = ({ message, isSender }) => {
       )}
       <View style={styles.messageContent}>
         {message.image && (
-          <Image style={styles.image} source={{ uri: message.image }} />
+          <Image
+            style={{
+              width: 214,
+              height: 135,
+              resizeMode: "contain",
+              borderRadius: 10,
+              right: 0,
+              top: 0,
+            }}
+            source={{ uri: message.image }}
+          />
         )}
         {message.video && (
           // Render your video component (e.g., using Video or other components)
@@ -94,11 +97,18 @@ const MessageBubble = ({ message, isSender }) => {
         )}
         {message.audio && <AudioPlayer audioUri={message.audio} />}
         {message.file && <FilePlayer fileUrl={message.file} />}
-
-        <Text style={styles.messageText}>{message.text}</Text>
-        <Text style={styles.timestamp}>
-          {formatTimestamp(message.createdAt)}
-        </Text>
+        <View
+          style={{
+            marginTop: 5,
+          }}
+        >
+          {message.text && (
+            <Text style={styles.messageText}>{message.text}</Text>
+          )}
+          <Text style={styles.timestamp}>
+            {formatTimestamp(message.createdAt)}
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -115,11 +125,14 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   image: {
-    flex: 1,
-    width: "100%", // Set the width to 50% of the container
-    aspectRatio: 1, // Maintain the aspect ratio (adjust as needed)
-    objectFit: "contain",
+    maxWidth: 200,
+    width: "100%",
+    aspectRatio: 1, // Maintain aspect ratio (1:1 in this case)
+    backgroundColor: "red",
+    resizeMode: "contain", // Ensure the entire image fits within the specified dimensions
+    alignSelf: "flex-start", // Align the image to the start of the container
   },
+
   senderMessage: {
     alignSelf: "flex-end",
     backgroundColor: "#2db4e2", // Set sender background color

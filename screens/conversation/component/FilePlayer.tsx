@@ -10,9 +10,9 @@ const FileDownloadButton = ({ fileUrl }) => {
     [fileUrl.split("?")[0].split("/").length - 1].split(".")[1];
 
   const iconMapping = {
-    pdf: "file-pdf",
-    docx: "file-word-o",
-    xlsx: "file-excel-o",
+    pdf: { name: "file-pdf", color: "#E44D26" }, // Adobe PDF red
+    docx: { name: "file-word-o", color: "#2B579A" }, // Microsoft Word blue
+    xlsx: { name: "file-excel-o", color: "#217346" }, // Microsoft Excel green
     // Add more file types as needed
   };
 
@@ -36,9 +36,13 @@ const FileDownloadButton = ({ fileUrl }) => {
         onPress={handleDownload}
         style={{ alignItems: "center", justifyContent: "center" }}
       >
-        <Text style={{ marginBottom: 20 }}>Download File</Text>
+        <Text style={{ marginBottom: 10 }}>Download File</Text>
         {fileType && iconMapping[fileType] && (
-          <FontAwesome name={iconMapping[fileType]} size={30} color="black" />
+          <FontAwesome
+            name={iconMapping[fileType].name}
+            size={30}
+            color={iconMapping[fileType].color}
+          />
         )}
       </TouchableOpacity>
     </View>
