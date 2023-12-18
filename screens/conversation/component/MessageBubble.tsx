@@ -9,12 +9,16 @@ import { useImage } from "../../../AuthProvider/ImageProvider";
 import FilePlayer from "./FilePlayer";
 
 const MessageBubble = ({ message, isSender }) => {
-  console.log(
-    "🚀 ~ file: MessageBubble.tsx:12 ~ MessageBubble ~ message:",
-    message
-  );
   const [userData, setUserData] = useState(null);
-  const { file, setFile } = useImage();
+  const xxx =
+    "https://firebasestorage.googleapis.com/v0/b/lively-5824e.appspot.com/o/cVWlGmB4Mz94ZwP07dKY.docx?alt=media&token=43e06eea-2e55-47e3-8aa5-3629717a17bf";
+  console.log(
+    "🚀 ~ file: MessageBubble.tsx:14 ~ MessageBubble ~ xxx:",
+    xxx
+      .split("?")[0]
+      .split("/")
+      [xxx.split("?")[0].split("/").length - 1].split(".")[1]
+  );
 
   const fetchUserData = async () => {
     if (message.user.id) {
@@ -88,10 +92,9 @@ const MessageBubble = ({ message, isSender }) => {
           // Render your video component (e.g., using Video or other components)
           <VideoPlayer source={message.video} />
         )}
-        {/* {message.audio && (
-          <AudioPlayer source={{ uri: message.audio }} />
-        )} */}
+        {message.audio && <AudioPlayer audioUri={message.audio} />}
         {message.file && <FilePlayer fileUrl={message.file} />}
+
         <Text style={styles.messageText}>{message.text}</Text>
         <Text style={styles.timestamp}>
           {formatTimestamp(message.createdAt)}

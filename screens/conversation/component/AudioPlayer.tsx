@@ -1,40 +1,106 @@
-import React, { useEffect } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
-import Sound from "react-native-sound";
+import React, { useState, useEffect } from "react";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import Slider from "@react-native-community/slider";
+import { Audio } from "expo-av";
 
-const AudioPlayer = ({ source }) => {
-  const sound = new Sound(source, "", (error) => {
-    if (error) {
-      console.error("Error loading audio file:", error);
-    } else {
-      console.log("Audio file loaded successfully");
-    }
-  });
-
-  const playAudio = () => {
-    sound.play((success) => {
-      if (success) {
-        console.log("Audio playback successful");
-      } else {
-        console.error("Audio playback failed");
-      }
-    });
-  };
+const AudioPlayer = ({ audioUri }) => {
+  const [sound, setSound] = useState<any>();
+  const [isPlaying, setPlaying] = useState(false);
+  const [position, setPosition] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   useEffect(() => {
+    async function loadAudio() {
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: audioUri },
+        { shouldPlay: false }
+      );
+      setSound(sound);
+
+      const status: any = await sound.getStatusAsync();
+      setDuration(status.durationMillis);
+
+      // Add a listener to update the position state during playback
+      sound.setOnPlaybackStatusUpdate((status: any) => {
+        if (status.isPlaying) {
+          setPosition(status.positionMillis);
+        }
+      });
+    }
+
+    loadAudio();
     return () => {
-      // Stop and release the audio when the component is unmounted
-      sound.stop(() => sound.release());
+      if (sound) {
+        sound.unloadAsync();
+      }
     };
-  }, []);
+  }, [audioUri]);
+
+  const handlePlayPause = async () => {
+    if (sound) {
+      if (isPlaying) {
+        await sound.pauseAsync();
+      } else {
+        await sound.playAsync();
+      }
+      setPlaying(!isPlaying);
+    }
+  };
+
+  const handleSliderChange = (value) => {
+    if (sound) {
+      sound.setPositionAsync(value);
+      setPosition(value);
+    }
+  };
+
+  const formatTime = (milliseconds) => {
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  };
 
   return (
-    <View>
-      <TouchableOpacity onPress={playAudio}>
-        <Text>Play Audio</Text>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={handlePlayPause}>
+        <Ionicons name={isPlaying ? "pause" : "play"} size={24} color="black" />
       </TouchableOpacity>
+      <Slider
+        style={styles.slider}
+        value={position}
+        minimumValue={0}
+        maximumValue={duration}
+        onSlidingComplete={handleSliderChange}
+        disabled={!sound}
+      />
+      <View style={styles.timeContainer}>
+        <Text style={styles.timeText}>{formatTime(position)}</Text>
+        <Text style={styles.timeText}>{formatTime(duration)}</Text>
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    padding: 10,
+  },
+  slider: {
+    width: "70%",
+    marginTop: 10,
+  },
+  timeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "70%",
+    marginTop: 5,
+  },
+  timeText: {
+    color: "black",
+  },
+});
 
 export default AudioPlayer;

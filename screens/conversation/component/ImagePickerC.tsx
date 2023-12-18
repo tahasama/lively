@@ -15,9 +15,17 @@ import {
 
 import { useImage } from "../../../AuthProvider/ImageProvider";
 const ImagePickerC = ({ type }) => {
+  console.log("🚀 ~ file: ImagePickerC.tsx:18 ~ ImagePickerC ~ type:", type);
   const { user } = useAuth();
-  const { image, setImage, setVideo, setFile, setLoadingImage, loadingImage } =
-    useImage();
+  const {
+    image,
+    setImage,
+    setVideo,
+    setFile,
+    setAudio,
+    setLoadingImage,
+    loadingImage,
+  } = useImage();
 
   const pickImageAsync = async () => {
     setLoadingImage(true);
@@ -35,8 +43,15 @@ const ImagePickerC = ({ type }) => {
             allowsEditing: true,
             quality: 1,
           })
+        : type === "audio"
+        ? await DocumentPicker.getDocumentAsync({
+            type: "audio/*",
+          })
         : await DocumentPicker.getDocumentAsync();
-    console.log("🚀 ~ file: ImagePickerC.tsx:26 ~ pickImageAsync ~ result:");
+    console.log(
+      "🚀 ~ file: ImagePickerC.tsx:26 ~ pickImageAsync ~ result:",
+      result
+    );
 
     if (!result.canceled) {
       // dispatch(updateUserImageState(result.assets[0].uri));
@@ -64,8 +79,10 @@ const ImagePickerC = ({ type }) => {
             // dispatch(updateUserImage({ userImage: res, userId: user.id }));
             type === "video"
               ? setVideo(res)
-              : type === "video"
+              : type === "image"
               ? setImage(res)
+              : type === "audio"
+              ? setAudio(res)
               : setFile(res);
           }, 2000),
             setLoadingImage(false);

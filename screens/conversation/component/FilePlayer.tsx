@@ -1,7 +1,21 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Linking } from "react-native";
+import { View, TouchableOpacity, Text, Image } from "react-native";
+import { Linking } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 
 const FileDownloadButton = ({ fileUrl }) => {
+  const fileType = fileUrl
+    .split("?")[0]
+    .split("/")
+    [fileUrl.split("?")[0].split("/").length - 1].split(".")[1];
+
+  const iconMapping = {
+    pdf: "file-pdf",
+    docx: "file-word-o",
+    xlsx: "file-excel-o",
+    // Add more file types as needed
+  };
+
   const handleDownload = async () => {
     try {
       const supported = await Linking.canOpenURL(fileUrl);
@@ -18,8 +32,14 @@ const FileDownloadButton = ({ fileUrl }) => {
 
   return (
     <View>
-      <TouchableOpacity onPress={handleDownload}>
-        <Text>Download File</Text>
+      <TouchableOpacity
+        onPress={handleDownload}
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
+        <Text style={{ marginBottom: 20 }}>Download File</Text>
+        {fileType && iconMapping[fileType] && (
+          <FontAwesome name={iconMapping[fileType]} size={30} color="black" />
+        )}
       </TouchableOpacity>
     </View>
   );
