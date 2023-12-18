@@ -101,7 +101,14 @@ const MessageBubble = ({ message, isSender }) => {
           }}
         >
           {message.text && (
-            <Text style={styles.messageText}>{message.text}</Text>
+            <Text
+              style={[
+                styles.messageText,
+                { color: "black", marginLeft: !isSender ? 36 : 0 },
+              ]}
+            >
+              {message.text}
+            </Text>
           )}
           <View
             style={{
@@ -119,7 +126,9 @@ const MessageBubble = ({ message, isSender }) => {
               </View>
             )}
 
-            <Text style={styles.timestamp}>
+            <Text
+              style={[styles.timestamp, { color: isSender ? "#444" : "gray" }]}
+            >
               {formatTimestamp(message.createdAt)}
             </Text>
           </View>
