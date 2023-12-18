@@ -11,7 +11,7 @@ import {
   StatusBar,
   FlatList,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   addDoc,
@@ -35,6 +35,7 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [canShowNotFound, setCanShowNotFound] = useState(false);
 
   const { user } = useAuth();
 
@@ -43,6 +44,10 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+
+  useEffect(() => {
+    !searchTerm && setCanShowNotFound(false);
+  }, [searchTerm]);
 
   const handleLookForUser = async () => {
     try {
@@ -66,6 +71,7 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
       setUsers(foundUsers);
 
       setLoading(false);
+      setCanShowNotFound(true);
     } catch (error) {
       setError("Error searching for user");
       setLoading(false);
@@ -219,9 +225,12 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
                   keyExtractor={(item) => item.id}
                 />
               ) : (
-                <Text style={{ color: "#7f0000", marginTop: 3 }}>
-                  User not found, try a different name.
-                </Text>
+                canShowNotFound &&
+                searchTerm !== "" && (
+                  <Text style={{ color: "#7f0000", marginTop: 3 }}>
+                    User not found, try a different name.
+                  </Text>
+                )
               )}
 
               {/* Button to close the modal */}

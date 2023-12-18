@@ -53,6 +53,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  console.log("🚀 ~ file: Conversation.tsx:56 ~ user:", user);
   const {
     text,
     setText,
@@ -67,16 +68,9 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     file,
     setFile,
   } = useImage();
-  console.log(
-    "🚀 ~ file: Conversation.tsx:70 ~   ",
-    text,
-    image,
-    video,
-    audio,
-    file
-  );
+
   const [showImagePicker, setShowImagePicker] = useState(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const chatRef = useRef<FlatList<IMessage> | null>(null);
 
   useEffect(() => {
@@ -235,6 +229,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   addButton: {
     marginRight: 10,
