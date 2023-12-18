@@ -71,12 +71,6 @@ const MessageBubble = ({ message, isSender }) => {
         isSender ? styles.senderMessage : styles.receiverMessage,
       ]}
     >
-      {userData && !isSender && (
-        <View style={styles.messageContent}>
-          <Text style={styles.messageText}>{userData.username}</Text>
-          <View style={styles.userAvatarContainer}>{renderUserAvatar()}</View>
-        </View>
-      )}
       <View style={styles.messageContent}>
         {message.image && (
           <Image
@@ -105,9 +99,26 @@ const MessageBubble = ({ message, isSender }) => {
           {message.text && (
             <Text style={styles.messageText}>{message.text}</Text>
           )}
-          <Text style={styles.timestamp}>
-            {formatTimestamp(message.createdAt)}
-          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            {userData && !isSender && (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={styles.userAvatarContainer}>
+                  {renderUserAvatar()}
+                </View>
+                <Text style={styles.messageText}>~ {userData.username}</Text>
+              </View>
+            )}
+
+            <Text style={styles.timestamp}>
+              {formatTimestamp(message.createdAt)}
+            </Text>
+          </View>
         </View>
       </View>
     </View>
@@ -154,12 +165,13 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
-    color: "#fff",
+    color: "#666",
   },
   timestamp: {
     fontSize: 12,
     color: "gray",
     marginLeft: 8,
+    alignItems: "center",
   },
   emptyAvatarContainer: {
     width: 30,
