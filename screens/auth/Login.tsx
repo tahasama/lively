@@ -14,6 +14,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../../firebase";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 
 interface LoginScreenProps {
   navigation: any;

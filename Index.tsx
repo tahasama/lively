@@ -17,28 +17,35 @@ const Stack = createStackNavigator();
 
 const Index = () => {
   const { user } = useAuth();
+  console.log("🚀 ~ file: Index.tsx:20 ~ Index ~ user:", user);
 
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={({ route }) => ({
-            headerRight: () => <LogOut />,
-          })}
-        />
-        <Stack.Screen
-          name="Conversation"
-          component={ConversationScreen}
-          options={({ route }) => ({
-            headerRight: () => <AddUsers route={route} />,
-          })}
-        />
-        <Stack.Screen name="Logout" component={LogOut} />
+        {!user ? (
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={({ route }) => ({
+                headerRight: () => <LogOut />,
+              })}
+            />
+            <Stack.Screen
+              name="Conversation"
+              component={ConversationScreen}
+              options={({ route }) => ({
+                headerRight: () => <AddUsers route={route} />,
+              })}
+            />
+            <Stack.Screen name="Logout" component={LogOut} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

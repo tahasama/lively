@@ -9,6 +9,10 @@ import { useImage } from "../../../AuthProvider/ImageProvider";
 import FilePlayer from "./FilePlayer";
 
 const MessageBubble = ({ message, isSender }) => {
+  console.log(
+    "🚀 ~ file: MessageBubble.tsx:12 ~ MessageBubble ~ message:",
+    message
+  );
   const [userData, setUserData] = useState(null);
   const xxx =
     "https://firebasestorage.googleapis.com/v0/b/lively-5824e.appspot.com/o/cVWlGmB4Mz94ZwP07dKY.docx?alt=media&token=43e06eea-2e55-47e3-8aa5-3629717a17bf";
