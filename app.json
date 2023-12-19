@@ -2,7 +2,7 @@
   "expo": {
     "name": "lively",
     "slug": "lively",
-    "version": "1.0.2",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,6 +17,12 @@
         {
           "iCloudContainerEnvironment": "Production"
         }
+      ],
+      [
+        "expo-updates",
+        {
+          "username": "tahasama"
+        }
       ]
     ],
     "assetBundlePatterns": ["**/*"],
@@ -29,7 +35,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.tahasama.lively",
-      "versionCode": 3
+      "versionCode": 6
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,6 +44,12 @@
       "eas": {
         "projectId": "bdc93857-b5ca-43a2-8da0-de853cfbc056"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/bdc93857-b5ca-43a2-8da0-de853cfbc056"
     }
   }
 }

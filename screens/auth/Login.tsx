@@ -57,7 +57,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome Back</Text>
+      <Text style={styles.title}>Lively Chat</Text>
       <Text style={{ textAlign: "center", color: "#999999" }}>
         By continuing, you agree on, and aknowledge that you've read Lively's{" "}
       </Text>
