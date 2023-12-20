@@ -67,6 +67,10 @@ const AudioPlayer = ({ audioUri }) => {
       <TouchableOpacity onPress={handlePlayPause}>
         <Ionicons name={isPlaying ? "pause" : "play"} size={24} color="black" />
       </TouchableOpacity>
+      <Text style={styles.timeText}>
+        {isPlaying ? "0:00" : formatTime(duration)}
+      </Text>
+
       <Slider
         style={styles.slider}
         value={position}
@@ -79,7 +83,6 @@ const AudioPlayer = ({ audioUri }) => {
       />
       <View style={styles.timeContainer}>
         <Text style={styles.timeText}>{formatTime(position)}</Text>
-        <Text style={styles.timeText}>{formatTime(duration)}</Text>
       </View>
     </View>
   );
@@ -100,7 +103,7 @@ const styles = StyleSheet.create({
   timeContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "70%",
+    width: "25%",
   },
   timeText: {
     color: "black",

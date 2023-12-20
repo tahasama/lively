@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { collection, doc, getDoc } from "firebase/firestore"; // Import Firebase Firestore functions
 import { db } from "../../../firebase";
 import VideoPlayer from "./VideoPlayer";
@@ -7,15 +7,12 @@ import AudioPlayer from "./AudioPlayer";
 import FileLink from "./FilePlayer";
 import { useImage } from "../../../AuthProvider/ImageProvider";
 import FilePlayer from "./FilePlayer";
+import EnlargedImage from "./EnlargedImage";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const MessageBubble = ({ message, isSender }) => {
-  console.log(
-    "🚀 ~ file: MessageBubble.tsx:12 ~ MessageBubble ~ message:",
-    message
-  );
   const [userData, setUserData] = useState(null);
-  const xxx =
-    "https://firebasestorage.googleapis.com/v0/b/lively-5824e.appspot.com/o/cVWlGmB4Mz94ZwP07dKY.docx?alt=media&token=43e06eea-2e55-47e3-8aa5-3629717a17bf";
+  const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
   const fetchUserData = async () => {
     if (message.user.id) {
@@ -48,6 +45,14 @@ const MessageBubble = ({ message, isSender }) => {
     });
   };
 
+  const handleImageClick = () => {
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
   const renderUserAvatar = () => {
     if (userData && userData.image !== "") {
       return (
@@ -76,19 +81,27 @@ const MessageBubble = ({ message, isSender }) => {
       ]}
     >
       <View style={styles.messageContent}>
-        {message.image && (
-          <Image
-            style={{
-              width: 214,
-              height: 135,
-              resizeMode: "contain",
-              borderRadius: 10,
-              right: 0,
-              top: 0,
-            }}
-            source={{ uri: message.image }}
-          />
-        )}
+        <TouchableOpacity onPress={handleImageClick}>
+          {message.image && (
+            <Image
+              style={{
+                width: Dimensions.get("window").width * 0.5, // Set width to full screen width
+                height: Dimensions.get("window").width * 0.5, // Maintain aspect ratio
+                // aspectRatio: 1,
+                resizeMode: "contain",
+                // Add other styles as needed
+              }}
+              source={{ uri: message.image }}
+            />
+          )}
+          {isModalVisible && (
+            <EnlargedImage
+              imageUri={message.image}
+              onClose={handleCloseModal}
+            />
+          )}
+        </TouchableOpacity>
+
         {message.video && (
           // Render your video component (e.g., using Video or other components)
           <VideoPlayer source={message.video} />
@@ -175,7 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   messageContent: {
-    maxWidth: "70%",
+    maxWidth: 280,
     flexDirection: "column", // Align avatar and message text horizontally
   },
   messageText: {
