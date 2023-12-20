@@ -7,9 +7,11 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  StatusBar,
 } from "react-native";
 
 const EnlargedImage = ({ imageUri, onClose }) => {
+  const { height, width } = Dimensions.get("window");
   return (
     <Modal
       animationType="fade"
@@ -22,11 +24,13 @@ const EnlargedImage = ({ imageUri, onClose }) => {
         activeOpacity={1}
         onPress={onClose}
       >
+        <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
+
         <View style={styles.modalContainer}>
           <Image
             style={{
-              width: Dimensions.get("window").width, // Adjusted for padding
-              height: Dimensions.get("window").width, // Adjusted for padding and to maintain aspect ratio
+              width: width - 16, // Adjusted for padding
+              height: height || width, // Adjusted for padding and to maintain aspect ratio
               // Add other styles as needed
               resizeMode: "contain",
             }}

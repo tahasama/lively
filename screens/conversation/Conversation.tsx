@@ -54,7 +54,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  console.log("🚀 ~ file: Conversation.tsx:56 ~ user:", user);
   const {
     text,
     setText,
@@ -70,7 +69,10 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setFile,
     audioRecord,
     setAudioRecord,
+    imageRecord,
+    setImageRecord,
   } = useImage();
+  console.log("🚀 ~ file: Conversation.tsx:75 ~ imageRecord:", imageRecord);
 
   const [showImagePicker, setShowImagePicker] = useState(false);
   const navigation = useNavigation<any>();
@@ -96,6 +98,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
                 audio: msg.audio,
                 file: msg.file,
                 audioRecord: msg.audioRecord,
+                imageRecord: msg.imageRecord,
               }))
             : []),
           // { _id: "0", text: "", createdAt: "", user: "", image: "" },
@@ -119,16 +122,16 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       off(conversationRef, "value", handleData);
     };
   }, [conversationId, navigation]);
-  console.log(
-    "🚀 ~ file: Conversation.tsx:128 ~ handleSendMessage ~ audioRecord:",
-    audioRecord
-  );
 
+  console.log(
+    "🚀 ~ file: Conversation.tsx:135 ~ handleSendMessage ~ imageRecord:",
+    imageRecord
+  );
   const handleSendMessage = async () => {
     // Your existing logic for sending messages
 
     // Check if the message contains a file (image, video, audio, etc.)
-    if (image || video || audio || file || text || audioRecord) {
+    if (image || video || audio || file || text || audioRecord || imageRecord) {
       try {
         const conversationRef = ref(dbr, `groups/${conversationId}`);
 
@@ -151,6 +154,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
             audio: audio ? audio : "",
             file: file ? file : "",
             audioRecord: audioRecord ? audioRecord : "",
+            imageRecord: imageRecord ? imageRecord : "",
           },
         ];
 
@@ -165,6 +169,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         setFile("");
         setText("");
         setAudioRecord("");
+        setImageRecord("");
         Keyboard.dismiss();
       } catch (error) {
         console.error("Error updating Realtime Database:", error.message);
@@ -176,7 +181,14 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setShowImagePicker(!showImagePicker);
   };
 
-  const Types = ["file", "image", "audio", "video", "audioRecord"];
+  const Types = [
+    "file",
+    "image",
+    "audio",
+    "video",
+    "audioRecord",
+    "imageRecord",
+  ];
 
   if (loading) {
     return (

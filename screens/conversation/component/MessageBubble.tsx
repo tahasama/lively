@@ -82,7 +82,7 @@ const MessageBubble = ({ message, isSender }) => {
     >
       <View style={styles.messageContent}>
         <TouchableOpacity onPress={handleImageClick}>
-          {message.image && (
+          {(message.image || message.imageRecord) && (
             <Image
               style={{
                 width: Dimensions.get("window").width * 0.5, // Set width to full screen width
@@ -91,12 +91,12 @@ const MessageBubble = ({ message, isSender }) => {
                 resizeMode: "contain",
                 // Add other styles as needed
               }}
-              source={{ uri: message.image }}
+              source={{ uri: message.image || message.imageRecord.uri }}
             />
           )}
           {isModalVisible && (
             <EnlargedImage
-              imageUri={message.image}
+              imageUri={message.image || message.imageRecord.uri}
               onClose={handleCloseModal}
             />
           )}
