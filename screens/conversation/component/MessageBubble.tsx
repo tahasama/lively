@@ -102,9 +102,9 @@ const MessageBubble = ({ message, isSender }) => {
           )}
         </TouchableOpacity>
 
-        {message.video && (
+        {(message.video || message.recordedVideo) && (
           // Render your video component (e.g., using Video or other components)
-          <VideoPlayer source={message.video} />
+          <VideoPlayer source={message.video || message.recordedVideo} />
         )}
         {(message.audio || message.audioRecord) && (
           <AudioPlayer audioUri={message.audio || message.audioRecord} />

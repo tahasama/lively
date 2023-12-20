@@ -16,6 +16,7 @@ import {
 import { useImage } from "../../../AuthProvider/ImageProvider";
 import RecordingSounds from "./RecordingSounds";
 import CameraUsage from "./CameraUsage";
+import VideoRecorder from "./VideoRecorder";
 const ImagePickerC = ({ type }) => {
   console.log("🚀 ~ file: ImagePickerC.tsx:18 ~ ImagePickerC ~ type:", type);
   const { user } = useAuth();
@@ -121,6 +122,7 @@ const ImagePickerC = ({ type }) => {
       {type === "file" && <Ionicons name="attach" size={30} color="black" />}
       {type === "audioRecord" && <RecordingSounds />}
       {type === "imageRecord" && <CameraUsage />}
+      {type === "recordedVideo" && <VideoRecorder />}
     </TouchableOpacity>
   );
 };

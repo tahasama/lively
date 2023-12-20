@@ -15,6 +15,7 @@ import { collection, getDocs, or, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
 import RecordingSounds from "../conversation/component/RecordingSounds";
 import CameraUsage from "../conversation/component/CameraUsage";
+import VideoRecorder from "../conversation/component/VideoRecorder";
 
 interface Message {
   text: string;
