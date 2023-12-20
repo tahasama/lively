@@ -16,9 +16,10 @@ import { dbr } from "../../firebase";
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import ImagePickerC from "./component/ImagePickerC";
 import { useImage } from "../../AuthProvider/ImageProvider";
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 
 import MessageBubble from "./component/MessageBubble";
+import RecordingSounds from "./component/RecordingSounds";
 
 interface Message {
   text: string;
@@ -67,6 +68,8 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setAudio,
     file,
     setFile,
+    audioRecord,
+    setAudioRecord,
   } = useImage();
 
   const [showImagePicker, setShowImagePicker] = useState(false);
@@ -92,6 +95,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
                 video: msg.video,
                 audio: msg.audio,
                 file: msg.file,
+                audioRecord: msg.audioRecord,
               }))
             : []),
           // { _id: "0", text: "", createdAt: "", user: "", image: "" },
@@ -115,12 +119,16 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       off(conversationRef, "value", handleData);
     };
   }, [conversationId, navigation]);
+  console.log(
+    "🚀 ~ file: Conversation.tsx:128 ~ handleSendMessage ~ audioRecord:",
+    audioRecord
+  );
 
   const handleSendMessage = async () => {
     // Your existing logic for sending messages
 
     // Check if the message contains a file (image, video, audio, etc.)
-    if (image || video || audio || file || text) {
+    if (image || video || audio || file || text || audioRecord) {
       try {
         const conversationRef = ref(dbr, `groups/${conversationId}`);
 
@@ -142,6 +150,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
             video: video ? video : "",
             audio: audio ? audio : "",
             file: file ? file : "",
+            audioRecord: audioRecord ? audioRecord : "",
           },
         ];
 
@@ -155,6 +164,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         setAudio("");
         setFile("");
         setText("");
+        setAudioRecord("");
         Keyboard.dismiss();
       } catch (error) {
         console.error("Error updating Realtime Database:", error.message);
@@ -166,7 +176,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setShowImagePicker(!showImagePicker);
   };
 
-  const Types = ["file", "image", "audio", "video"];
+  const Types = ["file", "image", "audio", "video", "audioRecord"];
 
   if (loading) {
     return (
@@ -207,11 +217,14 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           />
         ) : (
           // <ImagePickerC />
-          Types.map((type, index) => (
-            <View key={index} style={[styles.types]}>
-              <ImagePickerC type={type} />
-            </View>
-          ))
+          <>
+            {Types.map((type, index) => (
+              <View key={index} style={[styles.types]}>
+                <ImagePickerC type={type} />
+              </View>
+            ))}
+            {/* <RecordingSounds type={"audioRecord"} /> */}
+          </>
         )}
 
         {/* Show the "Send Message" button on the far right */}
@@ -245,7 +258,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   types: {
-    flex: 1,
+    // flex: 1,
     paddingVertical: 8,
   },
 });

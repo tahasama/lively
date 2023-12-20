@@ -15,6 +15,8 @@ interface ImageContextType {
   setAudio: React.Dispatch<React.SetStateAction<string | null>>;
   file: string;
   setFile: React.Dispatch<React.SetStateAction<string | null>>;
+  audioRecord: string;
+  setAudioRecord: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const ImageContext = createContext<ImageContextType | undefined>(undefined);
@@ -27,6 +29,8 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({
   const [video, setVideo] = useState<string | null>(null);
   const [audio, setAudio] = useState<string | null>(null);
   const [file, setFile] = useState<string | null>(null);
+  const [audioRecord, setAudioRecord] = useState<string | null>(null);
+
   const [loadingImage, setLoadingImage] = useState<boolean>(false);
 
   return (
@@ -44,6 +48,8 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({
         setAudio,
         file,
         setFile,
+        audioRecord,
+        setAudioRecord,
       }}
     >
       {children}

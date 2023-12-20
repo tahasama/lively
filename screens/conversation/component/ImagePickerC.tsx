@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../../firebase";
@@ -14,6 +14,7 @@ import {
 } from "@expo/vector-icons";
 
 import { useImage } from "../../../AuthProvider/ImageProvider";
+import RecordingSounds from "./RecordingSounds";
 const ImagePickerC = ({ type }) => {
   console.log("🚀 ~ file: ImagePickerC.tsx:18 ~ ImagePickerC ~ type:", type);
   const { user } = useAuth();
@@ -23,77 +24,79 @@ const ImagePickerC = ({ type }) => {
     setVideo,
     setFile,
     setAudio,
+
     setLoadingImage,
+    setAudioRecord,
     loadingImage,
   } = useImage();
 
   const pickImageAsync = async () => {
-    setLoadingImage(true);
+    if (type !== "audioRecord") {
+      setLoadingImage(true);
+      let result =
+        type === "image"
+          ? await ImagePicker.launchImageLibraryAsync({
+              allowsEditing: true,
+              quality: 1,
+            })
+          : type === "video"
+          ? await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Videos,
 
-    let result =
-      type === "image"
-        ? await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true,
-            quality: 1,
+              allowsEditing: true,
+              quality: 1,
+            })
+          : type === "audio"
+          ? await DocumentPicker.getDocumentAsync({
+              type: "audio/*",
+            })
+          : type === "file" && (await DocumentPicker.getDocumentAsync());
+      if (result.canceled) {
+        setLoadingImage(false);
+      }
+      if (!result.canceled) {
+        // dispatch(updateUserImageState(result.assets[0].uri));
+        const response = await fetch(result.assets[0].uri);
+        const blob = await response.blob();
+
+        const storageRef =
+          type === "video"
+            ? ref(storage, user.id + ".mp4")
+            : type === "image"
+            ? ref(storage, user.id + ".jpg")
+            : ref(
+                storage,
+                user.id +
+                  "." +
+                  result.assets[0].uri.split(".")[
+                    result.assets[0].uri.split(".").length - 1
+                  ]
+              );
+
+        uploadBytesResumable(storageRef, blob)
+          .then(async () => {
+            const res = await getDownloadURL(storageRef);
+            setTimeout(() => {
+              // dispatch(updateUserImage({ userImage: res, userId: user.id }));
+              type === "video"
+                ? setVideo(res)
+                : type === "image"
+                ? setImage(res)
+                : type === "audio"
+                ? setAudio(res)
+                : setFile(res);
+            }, 2000),
+              setLoadingImage(false);
           })
-        : type === "video"
-        ? await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Videos,
 
-            allowsEditing: true,
-            quality: 1,
-          })
-        : type === "audio"
-        ? await DocumentPicker.getDocumentAsync({
-            type: "audio/*",
-          })
-        : await DocumentPicker.getDocumentAsync();
-    console.log(
-      "🚀 ~ file: ImagePickerC.tsx:26 ~ pickImageAsync ~ result:",
-      result
-    );
-
-    if (!result.canceled) {
-      // dispatch(updateUserImageState(result.assets[0].uri));
-      const response = await fetch(result.assets[0].uri);
-      const blob = await response.blob();
-
-      const storageRef =
-        type === "video"
-          ? ref(storage, user.id + ".mp4")
-          : type === "image"
-          ? ref(storage, user.id + ".jpg")
-          : ref(
-              storage,
-              user.id +
-                "." +
-                result.assets[0].uri.split(".")[
-                  result.assets[0].uri.split(".").length - 1
-                ]
-            );
-
-      uploadBytesResumable(storageRef, blob)
-        .then(async () => {
-          const res = await getDownloadURL(storageRef);
-          setTimeout(() => {
-            // dispatch(updateUserImage({ userImage: res, userId: user.id }));
-            type === "video"
-              ? setVideo(res)
-              : type === "image"
-              ? setImage(res)
-              : type === "audio"
-              ? setAudio(res)
-              : setFile(res);
-          }, 2000),
+          .catch((error) => {
             setLoadingImage(false);
-        })
-
-        .catch((error) => {
-          setLoadingImage(false);
-        });
-    } else {
-      setLoadingImage(false);
+          });
+      } else {
+        setLoadingImage(false);
+      }
     }
+    setLoadingImage(false);
   };
 
   if (loadingImage) {
@@ -106,7 +109,7 @@ const ImagePickerC = ({ type }) => {
   const Types = ["file", "image", "audio", "video"];
 
   return (
-    <TouchableOpacity style={{ marginLeft: 10 }} onPress={pickImageAsync}>
+    <TouchableOpacity style={{ marginLeft: 0 }} onPress={pickImageAsync}>
       {type === "image" && <Entypo name="image" size={24} color="black" />}
       {type === "video" && (
         <Foundation name="play-video" size={34} color="black" />
@@ -115,6 +118,7 @@ const ImagePickerC = ({ type }) => {
         <MaterialIcons name="audiotrack" size={24} color="black" />
       )}
       {type === "file" && <Ionicons name="attach" size={30} color="black" />}
+      {type === "audioRecord" && <RecordingSounds />}
     </TouchableOpacity>
   );
 };

@@ -93,7 +93,9 @@ const MessageBubble = ({ message, isSender }) => {
           // Render your video component (e.g., using Video or other components)
           <VideoPlayer source={message.video} />
         )}
-        {message.audio && <AudioPlayer audioUri={message.audio} />}
+        {(message.audio || message.audioRecord) && (
+          <AudioPlayer audioUri={message.audio || message.audioRecord} />
+        )}
         {message.file && <FilePlayer fileUrl={message.file} />}
         <View
           style={{

@@ -13,6 +13,7 @@ import CreateGroup from "./components/CreateGroup";
 import SearchUser from "./components/SearchUser";
 import { collection, getDocs, or, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
+import RecordingSounds from "../conversation/component/RecordingSounds";
 
 interface Message {
   text: string;
