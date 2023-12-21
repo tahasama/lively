@@ -11,6 +11,10 @@ import EnlargedImage from "./EnlargedImage";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 const MessageBubble = ({ message, isSender }) => {
+  console.log(
+    "🚀 ~ file: MessageBubble.tsx:14 ~ MessageBubble ~ message:",
+    message && message.imageRecord
+  );
   const [userData, setUserData] = useState(null);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -91,12 +95,12 @@ const MessageBubble = ({ message, isSender }) => {
                 resizeMode: "contain",
                 // Add other styles as needed
               }}
-              source={{ uri: message.image || message.imageRecord.uri }}
+              source={{ uri: message.image || message.imageRecord }}
             />
           )}
           {isModalVisible && (
             <EnlargedImage
-              imageUri={message.image || message.imageRecord.uri}
+              imageUri={message.image || message.imageRecord}
               onClose={handleCloseModal}
             />
           )}

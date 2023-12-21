@@ -1,27 +1,45 @@
-import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
+  ActivityIndicator,
+  Dimensions,
   Modal,
   Button,
   StyleSheet,
-  Dimensions,
+  StatusBar,
 } from "react-native";
-import { Camera, CameraType } from "expo-camera";
-import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import React, { useEffect, useRef, useState } from "react";
+import * as ImagePicker from "expo-image-picker";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../../firebase";
+import { useAuth } from "../../../AuthProvider/AuthProvider";
+
+import {
+  Foundation,
+  Ionicons,
+  Entypo,
+  MaterialIcons,
+  FontAwesome5,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+
 import { useImage } from "../../../AuthProvider/ImageProvider";
+import RecordingSounds from "./RecordingSounds";
+import VideoRecorder from "./VideoRecorder";
+import { Camera, CameraType } from "expo-camera";
 
 function CameraUsage() {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
-  const { setImageRecord } = useImage();
+  const { setImageRecord, setLoadingImage } = useImage();
 
   const [isModalVisible, setModalVisible] = useState(false);
   const cameraRef = useRef(null);
   const { width } = Dimensions.get("window");
   const height = Math.round((width * 16) / 9);
+  const { user } = useAuth();
 
   const handleCameraReady = () => {
     // Adjust aspect ratio based on device orientation
@@ -50,11 +68,29 @@ function CameraUsage() {
   };
 
   const takePicture = async () => {
-    if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
-      setImageRecord(photo);
-      setModalVisible(false); // Close the modal after taking a picture
-    }
+    // if (cameraRef.current) {
+    const photo = await cameraRef.current.takePictureAsync();
+    setImageRecord(photo);
+
+    const response = await fetch(photo.uri);
+
+    const blob = await response.blob();
+
+    const storageRef = ref(storage, user.id + ".jpg");
+
+    uploadBytesResumable(storageRef, blob)
+      .then(async () => {
+        const res = await getDownloadURL(storageRef);
+        setTimeout(() => {
+          setImageRecord(res);
+        }, 2000),
+          setLoadingImage(false);
+        setModalVisible(false); // Close the modal after taking a picture
+      })
+
+      .catch((error) => {
+        setLoadingImage(false);
+      });
   };
 
   const toggleCameraType = () => {
@@ -76,14 +112,57 @@ function CameraUsage() {
   if (!permission || !permission.granted) {
     // Camera permissions are not granted yet
     return (
-      <Modal visible={isModalVisible} transparent={true} animationType="slide">
-        <View style={styles.container}>
-          <Text style={{ textAlign: "center" }}>
-            We need your permission to access the camera
-          </Text>
-          <Button onPress={requestPermission} title="Grant Permission" />
-        </View>
-      </Modal>
+      <>
+        <Modal
+          visible={isModalVisible}
+          transparent={true}
+          animationType="fade"
+          // style={styles.container}
+        >
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.9)" />
+
+          <View
+            style={[
+              styles.modalContainer,
+              {
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            ]}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                color: "white",
+                fontSize: 18,
+                marginHorizontal: 5,
+              }}
+            >
+              We need your permission to access the camera
+            </Text>
+            <View
+              style={{
+                maxWidth: "50%",
+                // alignItems: "center",
+                justifyContent: "center",
+                gap: 30,
+                marginTop: 40,
+                // borderRadius: 50,
+              }}
+            >
+              <Button onPress={requestPermission} title="Grant Permission" />
+              <Button
+                onPress={closeCameraModal}
+                title="Close"
+                color={"purple"}
+              />
+            </View>
+          </View>
+        </Modal>
+        <TouchableOpacity onPress={openCameraModal}>
+          <MaterialCommunityIcons name="camera" size={25} color="black" />
+        </TouchableOpacity>
+      </>
     );
   }
 
@@ -91,6 +170,8 @@ function CameraUsage() {
     <View>
       <Modal visible={isModalVisible} transparent={true} animationType="slide">
         <View style={styles.modalContainer}>
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.9)" />
+
           <Camera
             ratio="16:9"
             // style={styles.camera}
@@ -139,7 +220,8 @@ const styles = StyleSheet.create({
     flex: 1,
     // position: "relative",
     // height: "100%",
-    backgroundColor: "black",
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
+
     // bottom: 0,
     // justifyContent: "flex-end", // Align content at the bottom
   },

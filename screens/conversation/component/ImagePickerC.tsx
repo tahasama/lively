@@ -122,7 +122,8 @@ const ImagePickerC = ({ type }) => {
       {type === "file" && <Ionicons name="attach" size={30} color="black" />}
       {type === "audioRecord" && <RecordingSounds />}
       {type === "imageRecord" && <CameraUsage />}
-      {type === "recordedVideo" && <VideoRecorder />}
+
+      {/* {type === "recordedVideo" && <VideoRecorder />} */}
     </TouchableOpacity>
   );
 };
