@@ -52,7 +52,6 @@ const RecordingSounds = () => {
     uploadBytesResumable(storageRef, blob)
       .then(async () => {
         const res = await getDownloadURL(storageRef);
-        console.log("🚀 ~ file: RecordingSounds.tsx:55 ~ .then ~ res:", res);
         setTimeout(() => {
           // dispatch(updateUserImage({ userImage: res, userId: user.id }));
           setAudioRecord(res);
@@ -74,7 +73,7 @@ const RecordingSounds = () => {
       <TouchableOpacity onPress={recording ? stopRecording : startRecording}>
         <MaterialCommunityIcons
           name={`microphone${!recording ? "" : "-off"}`}
-          size={24}
+          size={27}
           color="black"
         />
       </TouchableOpacity>

@@ -64,10 +64,12 @@ const VideoRecorder = () => {
   if (!permission || !permission.granted) {
     // Camera permissions are not granted yet
     return (
-      <View>
-        <Text>We need your permission to access the camera</Text>
-        <Button onPress={requestPermission} title="Grant Permission" />
-      </View>
+      <Modal visible={isModalVisible} transparent={true} animationType="slide">
+        <View>
+          <Text>We need your permission to access the camera</Text>
+          <Button onPress={requestPermission} title="Grant Permission" />
+        </View>
+      </Modal>
     );
   }
 

@@ -73,13 +73,21 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <View style={styles.add}>
         <CreateGroup />
       </View>
-      <FlatList
-        data={converations}
-        keyExtractor={(converation) => converation.id}
-        renderItem={({ item }) => (
-          <ConversationItem conversation={item} navigation={navigation} />
-        )}
-      />
+      {converations ? (
+        <FlatList
+          data={converations}
+          keyExtractor={(converation) => converation.id}
+          renderItem={({ item }) => (
+            <ConversationItem conversation={item} navigation={navigation} />
+          )}
+        />
+      ) : (
+        <View style={styles.empty}>
+          <Text style={styles.emptyText}>
+            Look for you friends or create a group and add them!
+          </Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -101,6 +109,17 @@ const styles = StyleSheet.create({
     bottom: 10,
     right: 10,
     zIndex: 2,
+  },
+  empty: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    fontSize: 22,
+    // fontStyle: "italic",
+    fontWeight: "700",
+    textAlign: "center",
   },
 });
 

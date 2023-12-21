@@ -225,7 +225,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       <View style={styles.inputContainer}>
         {/* Show the "Add" button on the far left */}
         <TouchableOpacity
-          style={styles.addButton}
+          // style={styles.addButton}
           onPress={handleImagePickerToggle}
         >
           <Ionicons name="add" size={32} color="black" />
@@ -242,19 +242,49 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           />
         ) : (
           // <ImagePickerC />
-          <>
+          <View style={[styles.type]}>
             {Types.map((type, index) => (
               <View key={index} style={[styles.types]}>
                 <ImagePickerC type={type} />
               </View>
             ))}
             {/* <RecordingSounds type={"audioRecord"} /> */}
-          </>
+          </View>
         )}
 
         {/* Show the "Send Message" button on the far right */}
-        <TouchableOpacity onPress={handleSendMessage}>
-          <Ionicons name="send" size={20} color="black" />
+        <TouchableOpacity
+          onPress={handleSendMessage}
+          style={styles.sendButton}
+          disabled={
+            image ||
+            video ||
+            audio ||
+            file ||
+            text ||
+            audioRecord ||
+            imageRecord ||
+            recordedVideo
+              ? false
+              : true
+          }
+        >
+          <Ionicons
+            name="send"
+            size={22}
+            color={
+              image ||
+              video ||
+              audio ||
+              file ||
+              text ||
+              audioRecord ||
+              imageRecord ||
+              recordedVideo
+                ? "#00A1C9"
+                : "black"
+            }
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -269,8 +299,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  addButton: {
-    marginRight: 10,
+  sendButton: {
+    // marginHorizontal: 10,
+    marginLeft: 10,
   },
   textInput: {
     flex: 1,
@@ -281,6 +312,14 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     color: "#333",
     marginRight: 20,
+  },
+  type: {
+    flex: 1,
+    // backgroundColor: "red",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginLeft: -6,
   },
   types: {
     // flex: 1,

@@ -76,12 +76,14 @@ function CameraUsage() {
   if (!permission || !permission.granted) {
     // Camera permissions are not granted yet
     return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: "center" }}>
-          We need your permission to access the camera
-        </Text>
-        <Button onPress={requestPermission} title="Grant Permission" />
-      </View>
+      <Modal visible={isModalVisible} transparent={true} animationType="slide">
+        <View style={styles.container}>
+          <Text style={{ textAlign: "center" }}>
+            We need your permission to access the camera
+          </Text>
+          <Button onPress={requestPermission} title="Grant Permission" />
+        </View>
+      </Modal>
     );
   }
 
@@ -120,7 +122,7 @@ function CameraUsage() {
         </View>
       </Modal>
       <TouchableOpacity onPress={openCameraModal}>
-        <MaterialCommunityIcons name="camera" size={24} color="black" />
+        <MaterialCommunityIcons name="camera" size={25} color="black" />
       </TouchableOpacity>
     </View>
   );
