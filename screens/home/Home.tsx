@@ -6,6 +6,7 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import ConversationItem from "./components/ConversationItem";
 import { useAuth } from "../../AuthProvider/AuthProvider";
@@ -39,8 +40,10 @@ interface HomeScreenProps {
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { user } = useAuth();
   const [converations, setConverations] = useState<Conversation[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const getCoversations = async () => {
+    setLoading(true);
     const groupsCollection = collection(db, "groups");
 
     // Check if a group with these users already exists
@@ -62,8 +65,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    getCoversations();
+    getCoversations().then(() => setLoading(false));
   }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size={60} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -120,6 +131,11 @@ const styles = StyleSheet.create({
     // fontStyle: "italic",
     fontWeight: "700",
     textAlign: "center",
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

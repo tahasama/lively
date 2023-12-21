@@ -205,8 +205,8 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
   if (loading) {
     return (
-      <View>
-        <ActivityIndicator size="large" />
+      <View style={styles.loading}>
+        <ActivityIndicator size={60} />
       </View>
     );
   }
@@ -324,6 +324,11 @@ const styles = StyleSheet.create({
   types: {
     // flex: 1,
     paddingVertical: 8,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
