@@ -20,23 +20,8 @@ const VideoPlayer = ({ source }) => {
   const [status, setStatus] = useState<any>({});
   const [loading, setLoading] = useState<any>(true);
   const [isVisible, setVisible] = useState(false);
-  // const [image, setImage] = useState(null);
-  // console.log("🚀 ~ file: VideoPlayer.tsx:21 ~ VideoPlayer ~ image:", image);
-
-  // const generateThumbnail = async () => {
-  //   try {
-  //     const { uri } = await VideoThumbnails.getThumbnailAsync(source, {
-  //       time: 15000,
-  //     });
-  //     setImage(uri);
-  //   } catch (e) {
-  //     console.warn(e);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   generateThumbnail();
-  // }, []);
+  const [image, setImage] = useState(null);
+  console.log("🚀 ~ file: VideoPlayer.tsx:21 ~ VideoPlayer ~ image:", image);
 
   useEffect(() => {
     isVisible
@@ -107,6 +92,8 @@ const VideoPlayer = ({ source }) => {
           alignItems: "center",
           width: 150,
           height: 120,
+          backgroundColor: "rgba(0, 0, 0, 0.9)",
+          borderRadius: 10,
         }}
       >
         <View
