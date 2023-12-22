@@ -70,7 +70,6 @@ function CameraUsage() {
   const takePicture = async () => {
     // if (cameraRef.current) {
     const photo = await cameraRef.current.takePictureAsync();
-    setImageRecord(photo);
 
     const response = await fetch(photo.uri);
 

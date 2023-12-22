@@ -123,7 +123,7 @@ const ImagePickerC = ({ type }) => {
       {type === "audioRecord" && <RecordingSounds />}
       {type === "imageRecord" && <CameraUsage />}
 
-      {/* {type === "recordedVideo" && <VideoRecorder />} */}
+      {type === "recordedVideo" && <VideoRecorder />}
     </TouchableOpacity>
   );
 };

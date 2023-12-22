@@ -217,7 +217,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         ref={chatRef}
         data={messages}
         keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <MessageBubble message={item} isSender={item.user.id === user.id} />
         )}
         // Add any additional FlatList props or styling here
