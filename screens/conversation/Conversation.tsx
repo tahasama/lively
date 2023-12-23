@@ -125,12 +125,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   }, [conversationId, navigation]);
 
   const handleSendMessage = async () => {
-    console.log("clicked");
-    // Your existing logic for sending messages
-    console.log(
-      "🚀 ~ file: Conversation.tsx:141 ~ handleSendMessage ~ recordedVideo:",
-      recordedVideo
-    );
     // Check if the message contains a file (image, video, audio, etc.)
     if (
       image ||

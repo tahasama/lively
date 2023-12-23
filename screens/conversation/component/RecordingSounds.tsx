@@ -44,7 +44,7 @@ const RecordingSounds = () => {
     });
     const uri = recording.getURI();
     console.log("Recording stopped and stored at", uri);
-    const storageRef = ref(storage, user.id + ".m4a");
+    const storageRef = ref(storage, `${user.id}_${Date.now().toString()}.m4a`);
     const response = await fetch(uri);
 
     const blob = await response.blob();

@@ -75,7 +75,7 @@ function CameraUsage() {
 
     const blob = await response.blob();
 
-    const storageRef = ref(storage, user.id + ".jpg");
+    const storageRef = ref(storage, `${user.id}_${Date.now().toString()}.jpg`);
 
     uploadBytesResumable(storageRef, blob)
       .then(async () => {

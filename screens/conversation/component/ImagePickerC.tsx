@@ -63,12 +63,12 @@ const ImagePickerC = ({ type }) => {
 
         const storageRef =
           type === "video"
-            ? ref(storage, user.id + ".mp4")
+            ? ref(storage, `${user.id}_${Date.now().toString()}.mp4`)
             : type === "image"
-            ? ref(storage, user.id + ".jpg")
+            ? ref(storage, `${user.id}_${Date.now().toString()}.jpg`)
             : ref(
                 storage,
-                user.id +
+                `${user.id}_${Date.now().toString()}` +
                   "." +
                   result.assets[0].uri.split(".")[
                     result.assets[0].uri.split(".").length - 1
