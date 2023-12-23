@@ -1,18 +1,30 @@
-import React, { useRef, useState } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { Video } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
 
 const VideoPlayer = ({ source }) => {
-  console.log("🚀 ~ file: VideoPlayer.tsx:7 ~ VideoPlayer ~ source:", source);
   const videoRef = useRef(null);
   const [status, setStatus] = useState<any>({});
+  const [loading, setLoading] = useState<any>(true);
   const [isOverlayVisible, setOverlayVisible] = useState(true);
 
   const handlePlay = async () => {
     setOverlayVisible(false);
     await videoRef.current.playAsync();
   };
+
+  useEffect(() => {
+    source !== "" &&
+      setTimeout(() => {
+        setLoading(false);
+      }, 5000);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -28,7 +40,11 @@ const VideoPlayer = ({ source }) => {
 
       {isOverlayVisible && (
         <TouchableOpacity style={styles.overlay} onPress={handlePlay}>
-          <Ionicons name="play-circle" size={60} color="white" />
+          {!loading ? (
+            <Ionicons name="play-circle" size={60} color="white" />
+          ) : (
+            <ActivityIndicator size={40} />
+          )}
         </TouchableOpacity>
       )}
     </View>
