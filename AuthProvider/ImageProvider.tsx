@@ -21,6 +21,8 @@ interface ImageContextType {
   setImageRecord: React.Dispatch<React.SetStateAction<string | null>>;
   recordedVideo: string;
   setRecordedVideo: React.Dispatch<React.SetStateAction<string | null>>;
+  uploadProgress: number;
+  setUploadProgress: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 const ImageContext = createContext<ImageContextType | undefined>(undefined);
@@ -35,7 +37,8 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({
   const [file, setFile] = useState<string | null>(null);
   const [audioRecord, setAudioRecord] = useState<string | null>(null);
   const [imageRecord, setImageRecord] = useState<any>(null);
-  const [recordedVideo, setRecordedVideo] = useState(null); // State to store the recorded video URI
+  const [recordedVideo, setRecordedVideo] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(0);
 
   const [loadingImage, setLoadingImage] = useState<boolean>(false);
 
@@ -60,6 +63,8 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({
         setImageRecord,
         recordedVideo,
         setRecordedVideo,
+        uploadProgress,
+        setUploadProgress,
       }}
     >
       {children}

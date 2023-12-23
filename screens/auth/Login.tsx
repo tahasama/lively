@@ -25,11 +25,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { user, setUser } = useAuth();
 
   const handleLogin = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-
+      const xx = await signInWithEmailAndPassword(auth, email, password);
+      setUser(xx);
+      setTimeout(() => {
+        navigation.navigate("Home");
+      }, 1500);
       // Login successful, navigate to the home screen or perform other actions
       navigation.navigate("Home");
     } catch (error) {

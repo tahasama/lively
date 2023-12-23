@@ -24,6 +24,7 @@ const VideoRecorder = () => {
 
   const [isRecording, setRecording] = useState(false);
   const { user } = useAuth();
+  const { setUploadProgress } = useImage();
 
   const { recordedVideo, setRecordedVideo } = useImage();
   console.log(
@@ -31,20 +32,19 @@ const VideoRecorder = () => {
     recordedVideo
   );
   const [isModalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const cameraRef = useRef(null);
   const { width } = Dimensions.get("window");
   const height = Math.round((width * 16) / 9);
+
+  // Import necessary components and libraries
 
   const startRecording = async () => {
     setRecording(true);
     if (cameraRef.current) {
       try {
         const { uri } = await cameraRef.current.recordAsync();
-
         const response = await fetch(uri);
-
         const blob = await response.blob();
 
         const storageRef = ref(
@@ -52,21 +52,33 @@ const VideoRecorder = () => {
           `${user.id}_${Date.now().toString()}.mp4`
         );
 
-        uploadBytesResumable(storageRef, blob)
-          .then(async () => {
-            const res = await getDownloadURL(storageRef);
-            setTimeout(() => {
-              setRecordedVideo(res);
-              setLoading(false);
-            }, 2000);
-          })
+        const uploadTask = uploadBytesResumable(storageRef, blob);
 
-          .catch((error) => {
-            console.log(
-              "🚀 ~ file: VideoRecorder.tsx:69 ~ startRecording ~ error:",
-              error
-            );
-          });
+        // Set up an event listener to track the upload progress
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Upload is ${progress}% done`);
+            setUploadProgress(progress);
+            // You can update the UI to show the progress to the user
+          },
+          (error) => {
+            console.error("Error during upload:", error);
+            // Handle errors
+          },
+          () => {
+            // Upload completed successfully
+            getDownloadURL(storageRef)
+              .then((res) => {
+                setRecordedVideo(res);
+              })
+              .catch((error) => {
+                console.error("Error getting download URL:", error);
+              });
+          }
+        );
       } catch (error) {
         console.error("Error starting video recording:", error);
       }
@@ -75,11 +87,11 @@ const VideoRecorder = () => {
 
   const stopRecording = () => {
     setRecording(false);
-    setLoading(true);
+
     if (cameraRef.current) {
       cameraRef.current.stopRecording();
     }
-    // setModalVisible(false);
+    setModalVisible(false);
   };
 
   const toggleRecording = () => {
@@ -205,7 +217,7 @@ const VideoRecorder = () => {
                 color={isRecording ? "red" : "white"}
               />
             </TouchableOpacity>
-            {recordedVideo && !loading ? (
+            {recordedVideo ? (
               <TouchableOpacity
                 style={styles.iconButton}
                 onPress={closeVideoRecorderModal}
@@ -214,13 +226,9 @@ const VideoRecorder = () => {
               </TouchableOpacity>
             ) : (
               <View style={styles.iconButton}>
-                {!isRecording && loading ? (
-                  <ActivityIndicator color="white" />
-                ) : (
-                  <TouchableOpacity onPress={closeVideoRecorderModal}>
-                    <FontAwesome5 name="times" size={24} color="white" />
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity onPress={closeVideoRecorderModal}>
+                  <FontAwesome5 name="times" size={24} color="white" />
+                </TouchableOpacity>
               </View>
             )}
           </View>

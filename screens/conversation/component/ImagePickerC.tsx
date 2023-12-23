@@ -26,7 +26,7 @@ const ImagePickerC = ({ type }) => {
     setVideo,
     setFile,
     setAudio,
-
+    uploadProgress,
     setLoadingImage,
     setAudioRecord,
     loadingImage,
@@ -123,7 +123,13 @@ const ImagePickerC = ({ type }) => {
       {type === "audioRecord" && <RecordingSounds />}
       {type === "imageRecord" && <CameraUsage />}
 
-      {type === "recordedVideo" && <VideoRecorder />}
+      {type === "recordedVideo" &&
+      uploadProgress > 0 &&
+      uploadProgress < 100 ? (
+        <VideoRecorder />
+      ) : (
+        <Text>{uploadProgress}%</Text>
+      )}
     </TouchableOpacity>
   );
 };

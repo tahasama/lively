@@ -14,17 +14,20 @@ import { getStorage } from "firebase/storage";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBB4BwnEs8iFCNMBpS49h846ofPBmJi5G8",
-  authDomain: "lively-5824e.firebaseapp.com",
-  databaseURL:
-    "https://lively-5824e-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "lively-5824e",
-  storageBucket: "lively-5824e.appspot.com",
-  messagingSenderId: "673209507632",
-  appId: "1:673209507632:web:c92a39a69f1df730a632f5",
-};
 
+const yo = process.env.EXPO_PUBLIC_YO;
+console.log("🚀 ~ file: firebase.ts:19 ~ yo:", yo);
+
+const firebaseConfig = {
+  apiKey: process.env.EXPO_PUBLIC_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+  databaseURL: process.env.EXPO_PUBLIC_DATABASE_URL,
+  storageBucket: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_APP_ID,
+  measurementId: process.env.EXPO_PUBLIC_MESUREMENT_ID,
+};
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 

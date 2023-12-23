@@ -17,7 +17,6 @@ const Stack = createStackNavigator();
 
 const Index = () => {
   const { user } = useAuth();
-  console.log("🚀 ~ file: Index.tsx:20 ~ Index ~ user:", user);
 
   return (
     <NavigationContainer>

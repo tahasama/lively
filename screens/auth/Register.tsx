@@ -10,8 +10,13 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons"; // Import Feather icon from Expo vector-icons
 import { auth, db } from "../../firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 
 interface RegisterScreenProps {
   navigation: any;
@@ -23,6 +28,8 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const { user, setUser } = useAuth();
+  console.log("🚀 ~ file: Register.tsx:32 ~ user:", user);
 
   const handleRegister = async () => {
     try {
@@ -52,9 +59,14 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         image: "",
         email: email,
       });
+      const xx = await signInWithEmailAndPassword(auth, email, password);
+      console.log("🚀 ~ file: Register.tsx:63 ~ handleRegister ~ xx:", xx);
+      setUser(xx);
+      setTimeout(() => {
+        navigation.navigate("Home");
+      }, 1500);
 
       // Registration successful, navigate to the home screen or perform other actions
-      navigation.navigate("Home");
     } catch (error) {
       // Handle registration error
       setError(error.message);

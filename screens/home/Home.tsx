@@ -39,7 +39,8 @@ interface HomeScreenProps {
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { user } = useAuth();
-  const [converations, setConverations] = useState<Conversation[]>([]);
+  const [converations, setConverations] = useState<Conversation[]>(null);
+  console.log("🚀 ~ file: Home.tsx:43 ~ converations:", converations);
   const [loading, setLoading] = useState(true);
 
   const getCoversations = async () => {
@@ -62,10 +63,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       foundGroup.push({ id: doc.id, ...doc.data() });
     });
     setConverations(foundGroup);
+    setLoading(false);
   };
 
   useEffect(() => {
-    getCoversations().then(() => setLoading(false));
+    getCoversations();
+    // setTimeout(() => {
+    //   setLoading(false);
+    // }, 1200);
   }, []);
 
   if (loading) {
@@ -84,7 +89,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <View style={styles.add}>
         <CreateGroup />
       </View>
-      {converations ? (
+      {converations.length !== 0 ? (
         <FlatList
           data={converations}
           keyExtractor={(converation) => converation.id}
