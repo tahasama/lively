@@ -34,8 +34,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       setTimeout(() => {
         navigation.navigate("Home");
       }, 1500);
-      // Login successful, navigate to the home screen or perform other actions
-      navigation.navigate("Home");
     } catch (error) {
       // Handle login error
       setError(error.message);

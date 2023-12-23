@@ -51,6 +51,11 @@ interface ConversationScreenProps {
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId, title } = route.params;
+  console.log(
+    "🚀 ~ file: Conversation.tsx:54 ~  conversationId, title :",
+    conversationId,
+    title
+  );
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -71,6 +76,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setImageRecord,
     recordedVideo,
     setRecordedVideo,
+    uploadProgress,
   } = useImage();
   console.log("🚀 ~ file: Conversation.tsx:75 ~ recordedVideo:", recordedVideo);
 
@@ -234,16 +240,22 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
             placeholder="Type your message..."
             multiline={true}
           />
-        ) : (
-          // <ImagePickerC />
+        ) : // <ImagePickerC />
+        uploadProgress <= 1 || uploadProgress >= 99 ? (
           <View style={[styles.type]}>
             {Types.map((type, index) => (
               <View key={index} style={[styles.types]}>
                 <ImagePickerC type={type} />
               </View>
             ))}
-            {/* <RecordingSounds type={"audioRecord"} /> */}
           </View>
+        ) : (
+          <Text style={{ fontSize: 12 }}>
+            you can add a message after upload is finished{" "}
+            <Text style={{ color: "#2ecc71" }}>
+              {uploadProgress.toFixed(0)}%
+            </Text>
+          </Text>
         )}
 
         {/* Show the "Send Message" button on the far right */}

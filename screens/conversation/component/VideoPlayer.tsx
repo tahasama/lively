@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: 200,
     aspectRatio: 1,
+    borderRadius: 10,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

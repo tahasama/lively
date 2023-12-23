@@ -28,6 +28,7 @@ import {
 import { db } from "../../../firebase";
 import { EvilIcons, AntDesign } from "@expo/vector-icons";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { useImage } from "../../../AuthProvider/ImageProvider";
 
 const SearchUser = ({ navigation, icon, conversationId }) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -38,6 +39,7 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
   const [canShowNotFound, setCanShowNotFound] = useState(false);
 
   const { user } = useAuth();
+  const { setGetHome } = useImage();
 
   // const navigation = useNavigation();
 
@@ -89,21 +91,21 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
         const usersArray = [user.id, item.id].sort();
 
         // Check if a group with these users already exists
-        const q = query(
-          groupsCollection,
-          where("users", "array-contains-any", usersArray)
-        );
-
+        const q = query(groupsCollection, where("users", "==", usersArray));
         const querySnapshot = await getDocs(q);
 
         const foundGroup = [];
         querySnapshot.forEach((doc) => {
           foundGroup.push({ id: doc.id, ...doc.data() });
+          console.log(
+            "🚀 ~ file: SearchUser.tsx:100 ~ handleCreateGroup ~ foundGroup:",
+            foundGroup
+          );
         });
 
         if (foundGroup.length === 0) {
           // Use doc with a specific ID instead of addDoc
-          const newGroupRef = addDoc(groupsCollection, {
+          const newGroupRef = await addDoc(groupsCollection, {
             name: item.username,
             creator: user,
             users: usersArray,
@@ -118,7 +120,7 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
           // Navigate to the screen for conversation
           navigation.navigate("Conversation", {
             conversation: {
-              id: (await newGroupRef).id,
+              id: newGroupRef.id,
               name: item.username + "-" + user.username,
               creator: user,
               users: usersArray,
@@ -126,11 +128,12 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
               messages: [],
             },
           });
+          setGetHome(true);
         } else {
-          // Group already exists, you might want to handle this case
-          console.log("Group already exists");
+          console.log("Group already exists", foundGroup[0].id);
           navigation.navigate("Conversation", {
             conversationId: foundGroup[0].id,
+            title: foundGroup[0].name,
           });
         }
       } catch (error) {
@@ -145,6 +148,7 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
           await updateDoc(doc(db, "groups", conversationId), {
             users: arrayUnion(item.id),
           });
+          setGetHome(true);
         } else {
           // User is already in the group, do nothing
           console.log("User is already in the group");

@@ -17,6 +17,7 @@ import { db } from "../../firebase";
 import RecordingSounds from "../conversation/component/RecordingSounds";
 import CameraUsage from "../conversation/component/CameraUsage";
 import VideoRecorder from "../conversation/component/VideoRecorder";
+import { useImage } from "../../AuthProvider/ImageProvider";
 
 interface Message {
   text: string;
@@ -39,8 +40,8 @@ interface HomeScreenProps {
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { user } = useAuth();
-  const [converations, setConverations] = useState<Conversation[]>(null);
-  console.log("🚀 ~ file: Home.tsx:43 ~ converations:", converations);
+  const { getHome, setGetHome } = useImage();
+  const [converations, setConverations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
 
   const getCoversations = async () => {
@@ -48,6 +49,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     const groupsCollection = collection(db, "groups");
 
     // Check if a group with these users already exists
+    console.log("🚀 ~ file: Home.tsx:57 ~ getCoversations ~ user.id:", user.id);
+
     const q = query(
       groupsCollection,
       or(
@@ -67,11 +70,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    getCoversations();
-    // setTimeout(() => {
-    //   setLoading(false);
-    // }, 1200);
-  }, []);
+    user && getCoversations();
+    setTimeout(() => {
+      setLoading(false);
+      setGetHome(false);
+    }, 1200);
+  }, [getHome, user]);
 
   if (loading) {
     return (
