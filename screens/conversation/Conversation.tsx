@@ -51,11 +51,7 @@ interface ConversationScreenProps {
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId, title } = route.params;
-  console.log(
-    "🚀 ~ file: Conversation.tsx:54 ~  conversationId, title :",
-    conversationId,
-    title
-  );
+
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -78,7 +74,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setRecordedVideo,
     uploadProgress,
   } = useImage();
-  console.log("🚀 ~ file: Conversation.tsx:75 ~ recordedVideo:", recordedVideo);
 
   const [showImagePicker, setShowImagePicker] = useState(false);
   const navigation = useNavigation<any>();
