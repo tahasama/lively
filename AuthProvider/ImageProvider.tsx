@@ -25,6 +25,8 @@ interface ImageContextType {
   setUploadProgress: React.Dispatch<React.SetStateAction<number | null>>;
   getHome: boolean;
   setGetHome: React.Dispatch<React.SetStateAction<boolean | null>>;
+  downloadedVideo: string;
+  setDowloadedVideo: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const ImageContext = createContext<ImageContextType | undefined>(undefined);
@@ -44,6 +46,7 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [loadingImage, setLoadingImage] = useState<boolean>(false);
   const [getHome, setGetHome] = useState<boolean>(false);
+  const [downloadedVideo, setDowloadedVideo] = useState<string>("");
 
   return (
     <ImageContext.Provider
@@ -70,6 +73,8 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({
         setUploadProgress,
         getHome,
         setGetHome,
+        downloadedVideo,
+        setDowloadedVideo,
       }}
     >
       {children}

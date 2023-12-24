@@ -4,49 +4,27 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import { Video } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
 
 const VideoPlayer = ({ source }) => {
-  const videoRef = useRef(null);
-  const [status, setStatus] = useState<any>({});
-  const [loading, setLoading] = useState<any>(true);
   const [isOverlayVisible, setOverlayVisible] = useState(true);
 
   const handlePlay = async () => {
-    setOverlayVisible(false);
-    await videoRef.current.playAsync();
+    // Check if the URL is valid before attempting to open it
+    if (Linking.canOpenURL(source)) {
+      Linking.openURL(source);
+    } else {
+      console.warn(`Invalid URL: ${source}`);
+    }
   };
-
-  useEffect(() => {
-    source !== "" &&
-      setTimeout(() => {
-        setLoading(false);
-      }, 5000);
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Video
-        ref={videoRef}
-        style={styles.video}
-        source={{
-          uri: source,
-        }}
-        useNativeControls
-        onPlaybackStatusUpdate={(status) => setStatus(status)}
-      />
-
-      {isOverlayVisible && (
-        <TouchableOpacity style={styles.overlay} onPress={handlePlay}>
-          {!loading ? (
-            <Ionicons name="play-circle" size={60} color="white" />
-          ) : (
-            <ActivityIndicator size={40} />
-          )}
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity style={styles.overlay} onPress={handlePlay}>
+        <Ionicons name="play-circle" size={60} color="white" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -54,6 +32,10 @@ const VideoPlayer = ({ source }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: 200,
+    aspectRatio: 1,
+    borderRadius: 10,
+    backgroundColor: "#23282d",
   },
   video: {
     flex: 1,
