@@ -39,7 +39,7 @@ const MessageBubble = ({ message, isSender }) => {
 
   const formatTimestamp = (timestamp) => {
     // Implement your timestamp formatting logic here
-    return timestamp.toLocaleTimeString([], {
+    return new Date(timestamp).toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   messageContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
-    padding: 8,
+    padding: 10,
     margin: 5,
     maxWidth: "80%",
     borderRadius: 15, // Increase border radius for rounded corners

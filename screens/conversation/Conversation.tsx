@@ -9,8 +9,23 @@ import {
   Keyboard,
   TouchableOpacity,
   StyleSheet,
+  RefreshControl,
 } from "react-native";
-import { ref, onValue, set, off, get } from "firebase/database";
+import {
+  ref,
+  onValue,
+  set,
+  off,
+  get,
+  query,
+  limitToLast,
+  orderByChild,
+  orderByValue,
+  getDatabase,
+  orderByKey,
+  limitToFirst,
+  onChildAdded,
+} from "firebase/database";
 import { useNavigation } from "@react-navigation/native";
 import { dbr } from "../../firebase";
 import { useAuth } from "../../AuthProvider/AuthProvider";
@@ -46,87 +61,85 @@ interface Conversation {
 }
 
 interface ConversationScreenProps {
-  route: { params: { conversationId: string; title: string } };
+  route: { params: { conversationId: string; title: string; index: any } };
 }
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId, title } = route.params;
 
-  const [messages, setMessages] = useState<IMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const {
     text,
-    setText,
     image,
-    setImage,
     video,
-    setVideo,
     audio,
-    setAudio,
     file,
-    setFile,
     audioRecord,
-    setAudioRecord,
     imageRecord,
-    setImageRecord,
     recordedVideo,
-    setRecordedVideo,
     uploadProgress,
+    setImage,
+    setVideo,
+    setAudio,
+    setFile,
+    setText,
+    setAudioRecord,
+    setImageRecord,
+    setRecordedVideo,
   } = useImage();
 
   const [showImagePicker, setShowImagePicker] = useState(false);
   const navigation = useNavigation<any>();
   const chatRef = useRef<FlatList<IMessage> | null>(null);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [isRefreshing, setRefreshing] = useState(false);
+  const [goDowns, setGoDown] = useState(true);
+  const [showPullUpMessage, setShowPullUpMessage] = useState(false);
 
+  const conversationRef = ref(dbr, `groups/${conversationId}/messages/`);
   useEffect(() => {
-    const conversationRef = ref(dbr, `groups/${conversationId}`);
-    navigation.setOptions({ title: title });
+    const handleChildAdded = (snapshot) => {
+      const newMessage = snapshot.val();
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    };
 
-    const handleData = (snapshot) => {
-      const conversationData = snapshot.val();
+    // Subscribe to real-time updates using onChildAdded
+    onChildAdded(conversationRef, handleChildAdded);
 
-      if (conversationData) {
-        setMessages([
-          ...(conversationData.messages
-            ? Object.values(conversationData.messages).map((msg: any) => ({
-                _id: msg._id,
-                text: msg.text,
-                createdAt: new Date(msg.createdAt),
-                user: msg.user,
-                image: msg.image,
-                video: msg.video,
-                audio: msg.audio,
-                file: msg.file,
-                audioRecord: msg.audioRecord,
-                imageRecord: msg.imageRecord,
-                recordedVideo: msg.recordedVideo,
-              }))
-            : []),
-          // { _id: "0", text: "", createdAt: "", user: "", image: "" },
-          // { _id: "1", text: "", createdAt: "", user: "", image: "" },
-        ]);
+    // Fetch initial messages
+    const fetchMessages = async () => {
+      try {
+        const snapshot = await get(query(conversationRef, limitToLast(2)));
 
-        // Scroll to the bottom after setting messages
-        setTimeout(() => {
-          chatRef.current?.scrollToEnd();
-        }, 1000);
+        const newMessages = snapshot.val() || [];
+
+        setMessages(Object.values(newMessages));
+        setLoading(false);
+        setGoDown(true);
+      } catch (error) {
+        console.error("Error fetching messages:", error.message);
+        setLoading(false);
       }
-      setLoading(false);
     };
 
-    // Subscribe to real-time updates
-    onValue(conversationRef, handleData);
+    fetchMessages();
 
+    // Unsubscribe when component unmounts
     return () => {
-      // Unsubscribe when component unmounts
-      // Cleanup subscriptions to avoid memory leaks
-      off(conversationRef, "value", handleData);
+      off(conversationRef, "child_added", handleChildAdded);
     };
-  }, [conversationId, navigation]);
+  }, [conversationId]);
+
+  const fetchMoreMessages = async () => {
+    const currentMessagesCount = messages.length;
+    const newLimit = currentMessagesCount + 2;
+    const snapshot = await get(query(conversationRef, limitToLast(newLimit)));
+    const newMessages = snapshot.val() || [];
+    setMessages(Object.values(newMessages));
+  };
 
   const handleSendMessage = async () => {
-    // Check if the message contains a file (image, video, audio, etc.)
     if (
       image ||
       video ||
@@ -138,11 +151,8 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       recordedVideo
     ) {
       try {
-        const conversationRef = ref(dbr, `groups/${conversationId}`);
-
         const snapshot = await get(conversationRef);
         const currentMessages = snapshot.val()?.messages || [];
-
         const currentMessagesArray = Array.isArray(currentMessages)
           ? currentMessages
           : Object.values(currentMessages);
@@ -168,7 +178,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           messages: updatedMessages,
         });
 
-        // Clear the selected file after sending
         setImage("");
         setVideo("");
         setAudio("");
@@ -177,6 +186,8 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         setAudioRecord("");
         setImageRecord("");
         setRecordedVideo("");
+        setGoDown(true);
+
         Keyboard.dismiss();
       } catch (error) {
         console.error("Error updating Realtime Database:", error.message);
@@ -186,6 +197,15 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
   const handleImagePickerToggle = () => {
     setShowImagePicker(!showImagePicker);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setGoDown(false);
+
+    await fetchMoreMessages();
+
+    setRefreshing(false);
   };
 
   const Types = [
@@ -198,13 +218,15 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     "recordedVideo",
   ];
 
-  if (loading) {
+  if (loading && messages.length === 0) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size={60} />
       </View>
     );
   }
+
+  let previousOffset = 0;
 
   return (
     <View style={{ flex: 1, padding: 2 }}>
@@ -215,18 +237,32 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         renderItem={({ item, index }) => (
           <MessageBubble message={item} isSender={item.user.id === user.id} />
         )}
-        // Add any additional FlatList props or styling here
+        onContentSizeChange={() =>
+          goDowns && chatRef.current?.scrollToEnd({ animated: true })
+        }
+        onStartReached={() => setShowPullUpMessage(true)}
+        onEndReachedThreshold={0.1}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }
+        onScroll={(event) => {
+          const currentOffset = event.nativeEvent.contentOffset.y;
+          const isScrollingUp =
+            currentOffset > 0 && currentOffset < previousOffset;
+          previousOffset = currentOffset;
+
+          if (isScrollingUp) {
+            setShowPullUpMessage(true);
+          } else {
+            setShowPullUpMessage(false);
+          }
+        }}
       />
+
       <View style={styles.inputContainer}>
-        {/* Show the "Add" button on the far left */}
-        <TouchableOpacity
-          // style={styles.addButton}
-          onPress={handleImagePickerToggle}
-        >
+        <TouchableOpacity onPress={handleImagePickerToggle}>
           <Ionicons name="add" size={32} color="black" />
         </TouchableOpacity>
-
-        {/* Show the TextInput in the middle */}
         {!showImagePicker ? (
           <TextInput
             style={styles.textInput}
@@ -235,8 +271,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
             placeholder="Type your message..."
             multiline={true}
           />
-        ) : // <ImagePickerC />
-        uploadProgress <= 1 || uploadProgress >= 99 ? (
+        ) : uploadProgress <= 1 || uploadProgress >= 99 ? (
           <View style={[styles.type]}>
             {Types.map((type, index) => (
               <View key={index} style={[styles.types]}>
@@ -246,14 +281,12 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           </View>
         ) : (
           <Text style={{ fontSize: 12 }}>
-            you can add a message after upload is finished{" "}
+            You can add a message after upload is finished{" "}
             <Text style={{ color: "#2ecc71" }}>
               {uploadProgress.toFixed(0)}%
             </Text>
           </Text>
         )}
-
-        {/* Show the "Send Message" button on the far right */}
         <TouchableOpacity
           onPress={handleSendMessage}
           style={styles.sendButton}
