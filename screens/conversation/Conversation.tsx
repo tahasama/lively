@@ -118,7 +118,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       onChildAdded(conversationQuery, handleChildAdded);
     }
 
-    fetchMessages();
+    // fetchMessages();
 
     // Unsubscribe when component unmounts
     return () => {
