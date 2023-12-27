@@ -25,6 +25,8 @@ import {
   orderByKey,
   limitToFirst,
   onChildAdded,
+  startAt,
+  endAt,
 } from "firebase/database";
 import { useNavigation } from "@react-navigation/native";
 import { dbr } from "../../firebase";
@@ -108,20 +110,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     onChildAdded(conversationRef, handleChildAdded);
 
     // Fetch initial messages
-    const fetchMessages = async () => {
-      try {
-        const snapshot = await get(query(conversationRef, limitToLast(2)));
-
-        const newMessages = snapshot.val() || [];
-
-        setMessages(Object.values(newMessages));
-        setLoading(false);
-        setGoDown(true);
-      } catch (error) {
-        console.error("Error fetching messages:", error.message);
-        setLoading(false);
-      }
-    };
 
     fetchMessages();
 
@@ -131,12 +119,55 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     };
   }, [conversationId]);
 
+  const fetchMessages = async () => {
+    try {
+      const snapshot = await get(query(conversationRef, limitToLast(2)));
+
+      const newMessages = snapshot.val() || [];
+
+      setMessages(Object.values(newMessages));
+      setLoading(false);
+      setGoDown(true);
+    } catch (error) {
+      console.error("Error fetching messages:", error.message);
+      setLoading(false);
+    }
+  };
+
   const fetchMoreMessages = async () => {
     const currentMessagesCount = messages.length;
-    const newLimit = currentMessagesCount + 2;
-    const snapshot = await get(query(conversationRef, limitToLast(newLimit)));
-    const newMessages = snapshot.val() || [];
-    setMessages(Object.values(newMessages));
+    const newLimit = 3; // Fetch a fixed number of new messages
+
+    try {
+      const lastMessage = messages[0];
+      const snapshot = await get(
+        query(
+          conversationRef,
+          orderByChild("_id"),
+          endAt(lastMessage ? lastMessage._id : ""), // Start at the last known _id
+          limitToLast(newLimit)
+        )
+      );
+
+      const newMessages = snapshot.val() || [];
+      const newMessagesArray = Object.values(newMessages);
+
+      // Filter out messages that are already present in the current messages array
+      const filteredNewMessages = newMessagesArray.filter(
+        (message: any) =>
+          !messages.some(
+            (existingMessage: any) => existingMessage._id === message?._id
+          )
+      );
+
+      // Update the state with the filtered messages
+      setMessages((prevMessages: any) => [
+        ...filteredNewMessages,
+        ...prevMessages,
+      ]);
+    } catch (error) {
+      console.error("Error fetching more messages:", error.message);
+    }
   };
 
   const handleSendMessage = async () => {
