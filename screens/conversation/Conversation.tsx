@@ -27,6 +27,8 @@ import {
   onChildAdded,
   startAt,
   endAt,
+  push,
+  child,
 } from "firebase/database";
 import { useNavigation } from "@react-navigation/native";
 import { dbr } from "../../firebase";
@@ -37,6 +39,7 @@ import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 
 import MessageBubble from "./component/MessageBubble";
 import RecordingSounds from "./component/RecordingSounds";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Message {
   text: string;
@@ -99,17 +102,21 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [goDowns, setGoDown] = useState(true);
   const [showPullUpMessage, setShowPullUpMessage] = useState(false);
 
-  const conversationRef = ref(dbr, `groups/${conversationId}/messages/`);
+  const conversationRef = ref(dbr, `groups/${conversationId}/messages`);
   useEffect(() => {
     const handleChildAdded = (snapshot) => {
       const newMessage = snapshot.val();
+
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
     // Subscribe to real-time updates using onChildAdded
-    onChildAdded(conversationRef, handleChildAdded);
-
-    // Fetch initial messages
+    const conversationQuery = query(conversationRef, limitToLast(2));
+    if (messages.length !== 0) {
+      onChildAdded(conversationRef, handleChildAdded);
+    } else {
+      onChildAdded(conversationQuery, handleChildAdded);
+    }
 
     fetchMessages();
 
@@ -117,7 +124,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     return () => {
       off(conversationRef, "child_added", handleChildAdded);
     };
-  }, [conversationId]);
+  }, []);
 
   const fetchMessages = async () => {
     try {
@@ -135,24 +142,26 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   };
 
   const fetchMoreMessages = async () => {
-    const currentMessagesCount = messages.length;
-    const newLimit = 3; // Fetch a fixed number of new messages
-
     try {
+      const conversationRef2 = ref(dbr, `groups/${conversationId}/messages`);
+      const currentMessagesCount = messages.length;
+      const newLimit = 3;
+
       const lastMessage = messages[0];
+
       const snapshot = await get(
         query(
-          conversationRef,
+          conversationRef2,
           orderByChild("_id"),
-          endAt(lastMessage ? lastMessage._id : ""), // Start at the last known _id
+          endAt(lastMessage ? lastMessage._id : ""),
           limitToLast(newLimit)
         )
       );
 
       const newMessages = snapshot.val() || [];
+
       const newMessagesArray = Object.values(newMessages);
 
-      // Filter out messages that are already present in the current messages array
       const filteredNewMessages = newMessagesArray.filter(
         (message: any) =>
           !messages.some(
@@ -160,7 +169,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           )
       );
 
-      // Update the state with the filtered messages
       setMessages((prevMessages: any) => [
         ...filteredNewMessages,
         ...prevMessages,
@@ -171,6 +179,8 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   };
 
   const handleSendMessage = async () => {
+    const conversationRef2 = ref(dbr, `groups/${conversationId}/messages`); // Correct path
+
     if (
       image ||
       video ||
@@ -182,32 +192,28 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       recordedVideo
     ) {
       try {
-        const snapshot = await get(conversationRef);
-        const currentMessages = snapshot.val()?.messages || [];
-        const currentMessagesArray = Array.isArray(currentMessages)
-          ? currentMessages
-          : Object.values(currentMessages);
+        const newMessageRef = push(conversationRef2); // Use the correct reference
+        const newMessageId = newMessageRef.key;
 
-        const updatedMessages = [
-          ...currentMessagesArray,
-          {
-            _id: `${new Date().getTime()}-${Math.random()}`,
-            createdAt: new Date().toISOString(),
-            user: user,
-            text: text ? text : "",
-            image: image ? image : "",
-            video: video ? video : "",
-            audio: audio ? audio : "",
-            file: file ? file : "",
-            audioRecord: audioRecord ? audioRecord : "",
-            imageRecord: imageRecord ? imageRecord : "",
-            recordedVideo: recordedVideo ? recordedVideo : "",
-          },
-        ];
+        const updatedMessage = {
+          _id: newMessageId,
+          createdAt: new Date().toISOString(),
+          user: user,
+          text: text ? text : "",
+          image: image ? image : "",
+          video: video ? video : "",
+          audio: audio ? audio : "",
+          file: file ? file : "",
+          audioRecord: audioRecord ? audioRecord : "",
+          imageRecord: imageRecord ? imageRecord : "",
+          recordedVideo: recordedVideo ? recordedVideo : "",
+        };
 
-        await set(conversationRef, {
-          messages: updatedMessages,
-        });
+        await set(newMessageRef, updatedMessage);
+
+        // Optionally, you can fetch the messages after adding a new one
+        // to keep your local state updated. Uncomment the line below if needed.
+        // fetchMessages();
 
         setImage("");
         setVideo("");
