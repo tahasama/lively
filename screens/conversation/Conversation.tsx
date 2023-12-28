@@ -103,6 +103,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [isRefreshing, setRefreshing] = useState(false);
   const [goDowns, setGoDown] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [disableButton, setDisableButton] = useState(false);
+  console.log(
+    "🚀 ~ file: Conversation.tsx:107 ~ disableButton:",
+    disableButton
+  );
 
   const conversationRef = ref(dbr, `groups/${conversationId}/messages`);
 
@@ -168,6 +173,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   };
 
   const handleSendMessage = async () => {
+    setDisableButton(true);
     const conversationRef2 = ref(dbr, `groups/${conversationId}/messages`); // Correct path
 
     let thumbnail = null;
@@ -221,6 +227,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         setGoDown(true);
 
         Keyboard.dismiss();
+        setDisableButton(false);
       } catch (error) {
         console.error("Error updating Realtime Database:", error.message);
       }
@@ -308,34 +315,40 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           onPress={handleSendMessage}
           style={styles.sendButton}
           disabled={
-            image ||
-            video ||
-            audio ||
-            file ||
-            text ||
-            audioRecord ||
-            imageRecord ||
-            recordedVideo
-              ? false
-              : true
-          }
-        >
-          <Ionicons
-            name="send"
-            size={22}
-            color={
-              image ||
+            (image ||
               video ||
               audio ||
               file ||
               text ||
               audioRecord ||
               imageRecord ||
-              recordedVideo
-                ? "#00A1C9"
-                : "black"
-            }
-          />
+              recordedVideo) &&
+            !disableButton
+              ? false
+              : true
+          }
+        >
+          {!disableButton ? (
+            <Ionicons
+              name="send"
+              size={22}
+              color={
+                (image ||
+                  video ||
+                  audio ||
+                  file ||
+                  text ||
+                  audioRecord ||
+                  imageRecord ||
+                  recordedVideo) &&
+                !disableButton
+                  ? "#00A1C9"
+                  : "black"
+              }
+            />
+          ) : (
+            <ActivityIndicator style={{ marginRight: 5 }} />
+          )}
         </TouchableOpacity>
       </View>
     </View>

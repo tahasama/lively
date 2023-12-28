@@ -27,6 +27,7 @@ const ImagePickerC = ({ type }) => {
     setFile,
     setAudio,
     uploadProgress,
+    setUploadProgress,
     setLoadingImage,
     setAudioRecord,
     loadingImage,
@@ -35,6 +36,7 @@ const ImagePickerC = ({ type }) => {
   const pickImageAsync = async () => {
     if (type !== "audioRecord" && type !== "imageRecord") {
       setLoadingImage(true);
+
       let result =
         type === "image"
           ? await ImagePicker.launchImageLibraryAsync({
@@ -44,7 +46,6 @@ const ImagePickerC = ({ type }) => {
           : type === "video"
           ? await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-
               allowsEditing: true,
               quality: 1,
             })
@@ -53,11 +54,13 @@ const ImagePickerC = ({ type }) => {
               type: "audio/*",
             })
           : type === "file" && (await DocumentPicker.getDocumentAsync());
+
       if (result.canceled) {
         setLoadingImage(false);
+        return;
       }
-      if (!result.canceled) {
-        // dispatch(updateUserImageState(result.assets[0].uri));
+
+      try {
         const response = await fetch(result.assets[0].uri);
         const blob = await response.blob();
 
@@ -75,30 +78,48 @@ const ImagePickerC = ({ type }) => {
                   ]
               );
 
-        uploadBytesResumable(storageRef, blob)
-          .then(async () => {
-            const res = await getDownloadURL(storageRef);
-            setTimeout(() => {
-              // dispatch(updateUserImage({ userImage: res, userId: user.id }));
-              type === "video"
-                ? setVideo(res)
-                : type === "image"
-                ? setImage(res)
-                : type === "audio"
-                ? setAudio(res)
-                : setFile(res);
-            }, 2000),
-              setLoadingImage(false);
-          })
+        const uploadTask = uploadBytesResumable(storageRef, blob);
 
-          .catch((error) => {
+        // Set up an event listener to track the upload progress
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Upload is ${progress}% done`);
+            setUploadProgress(progress);
+            // You can update the UI to show the progress to the user
+          },
+          (error) => {
+            console.error("Error during upload:", error);
+            // Handle errors
             setLoadingImage(false);
-          });
-      } else {
+          },
+          async () => {
+            // Upload completed successfully
+            try {
+              const res = await getDownloadURL(storageRef);
+              setTimeout(() => {
+                type === "video"
+                  ? setVideo(res)
+                  : type === "image"
+                  ? setImage(res)
+                  : type === "audio"
+                  ? setAudio(res)
+                  : setFile(res);
+              }, 2000);
+            } catch (error) {
+              console.error("Error getting download URL:", error);
+            } finally {
+              setLoadingImage(false);
+            }
+          }
+        );
+      } catch (error) {
+        console.error("Error fetching image data:", error);
         setLoadingImage(false);
       }
     }
-    setLoadingImage(false);
   };
 
   if (loadingImage) {
