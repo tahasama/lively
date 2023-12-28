@@ -31,7 +31,8 @@ import {
   child,
 } from "firebase/database";
 import { useNavigation } from "@react-navigation/native";
-import { dbr } from "../../firebase";
+import { dbr, storage } from "../../firebase";
+
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import ImagePickerC from "./component/ImagePickerC";
 import { useImage } from "../../AuthProvider/ImageProvider";
@@ -39,7 +40,9 @@ import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 
 import MessageBubble from "./component/MessageBubble";
 import RecordingSounds from "./component/RecordingSounds";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as VideoThumbnails from "expo-video-thumbnails";
+import { getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { generateThumbnail } from "./thumbnails";
 
 interface Message {
   text: string;
@@ -96,6 +99,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [showImagePicker, setShowImagePicker] = useState(false);
   const chatRef = useRef<FlatList<IMessage> | null>(null);
   const [messages, setMessages] = useState<IMessage[]>([]);
+  console.log("🚀 ~ file: Conversation.tsx:102 ~ messages:", messages);
   const [isRefreshing, setRefreshing] = useState(false);
   const [goDowns, setGoDown] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -108,7 +112,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       const newMessage = snapshot.val();
 
       setMessages((prevMessages) => [...prevMessages, newMessage]);
-      setLoading(false);
     };
 
     // Subscribe to real-time updates using onChildAdded
@@ -119,6 +122,9 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       onChildAdded(conversationQuery, handleChildAdded);
     }
 
+    setTimeout(() => {
+      setLoading(false);
+    }, 1200);
     return () => {
       off(conversationRef, "child_added", handleChildAdded);
     };
@@ -164,6 +170,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const handleSendMessage = async () => {
     const conversationRef2 = ref(dbr, `groups/${conversationId}/messages`); // Correct path
 
+    let thumbnail = null;
+
+    if (video || recordedVideo) {
+      thumbnail = await generateThumbnail(video || recordedVideo);
+    }
     if (
       image ||
       video ||
@@ -190,6 +201,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           audioRecord: audioRecord ? audioRecord : "",
           imageRecord: imageRecord ? imageRecord : "",
           recordedVideo: recordedVideo ? recordedVideo : "",
+          thumnail: thumbnail,
         };
 
         await set(newMessageRef, updatedMessage);

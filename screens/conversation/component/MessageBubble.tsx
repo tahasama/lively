@@ -104,7 +104,10 @@ const MessageBubble = ({ message, isSender }) => {
 
         {(message.video || message.recordedVideo) && (
           // Render your video component (e.g., using Video or other components)
-          <VideoPlayer source={message.video || message.recordedVideo} />
+          <VideoPlayer
+            source={message.video || message.recordedVideo}
+            thumbnail={message.thumnail}
+          />
         )}
         {(message.audio || message.audioRecord) && (
           <AudioPlayer audioUri={message.audio || message.audioRecord} />
