@@ -71,8 +71,7 @@ interface ConversationScreenProps {
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId, title } = route.params;
-
-  const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
   const { user } = useAuth();
   const {
     text,
@@ -95,51 +94,35 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   } = useImage();
 
   const [showImagePicker, setShowImagePicker] = useState(false);
-  const navigation = useNavigation<any>();
   const chatRef = useRef<FlatList<IMessage> | null>(null);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isRefreshing, setRefreshing] = useState(false);
   const [goDowns, setGoDown] = useState(true);
-  const [showPullUpMessage, setShowPullUpMessage] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const conversationRef = ref(dbr, `groups/${conversationId}/messages`);
+
   useEffect(() => {
+    navigation.setOptions({ title: title });
     const handleChildAdded = (snapshot) => {
       const newMessage = snapshot.val();
 
       setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setLoading(false);
     };
 
     // Subscribe to real-time updates using onChildAdded
-    const conversationQuery = query(conversationRef, limitToLast(2));
+    const conversationQuery = query(conversationRef, limitToLast(9));
     if (messages.length !== 0) {
       onChildAdded(conversationRef, handleChildAdded);
     } else {
       onChildAdded(conversationQuery, handleChildAdded);
     }
 
-    // fetchMessages();
-
-    // Unsubscribe when component unmounts
     return () => {
       off(conversationRef, "child_added", handleChildAdded);
     };
   }, []);
-
-  const fetchMessages = async () => {
-    try {
-      const snapshot = await get(query(conversationRef, limitToLast(2)));
-
-      const newMessages = snapshot.val() || [];
-
-      setMessages(Object.values(newMessages));
-      setLoading(false);
-      setGoDown(true);
-    } catch (error) {
-      console.error("Error fetching messages:", error.message);
-      setLoading(false);
-    }
-  };
 
   const fetchMoreMessages = async () => {
     try {
@@ -255,15 +238,13 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     "recordedVideo",
   ];
 
-  if (loading && messages.length === 0) {
+  if (loading) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size={60} />
       </View>
     );
   }
-
-  let previousOffset = 0;
 
   return (
     <View style={{ flex: 1, padding: 2 }}>
@@ -277,23 +258,10 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         onContentSizeChange={() =>
           goDowns && chatRef.current?.scrollToEnd({ animated: true })
         }
-        onStartReached={() => setShowPullUpMessage(true)}
         onEndReachedThreshold={0.1}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
-        onScroll={(event) => {
-          const currentOffset = event.nativeEvent.contentOffset.y;
-          const isScrollingUp =
-            currentOffset > 0 && currentOffset < previousOffset;
-          previousOffset = currentOffset;
-
-          if (isScrollingUp) {
-            setShowPullUpMessage(true);
-          } else {
-            setShowPullUpMessage(false);
-          }
-        }}
       />
 
       <View style={styles.inputContainer}>
