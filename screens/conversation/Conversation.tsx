@@ -104,6 +104,8 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [goDowns, setGoDown] = useState(true);
   const [loading, setLoading] = useState(true);
   const [disableButton, setDisableButton] = useState(false);
+  const [showPullMessage, setShowPullMessage] = useState(true);
+
   console.log(
     "🚀 ~ file: Conversation.tsx:107 ~ disableButton:",
     disableButton
@@ -120,13 +122,13 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     };
 
     // Subscribe to real-time updates using onChildAdded
-    const conversationQuery = query(conversationRef, limitToLast(9));
+    const conversationQuery = query(conversationRef, limitToLast(4));
     if (messages.length !== 0) {
       onChildAdded(conversationRef, handleChildAdded);
     } else {
       onChildAdded(conversationQuery, handleChildAdded);
     }
-
+    messages.length < 6 && setShowImagePicker(true);
     setTimeout(() => {
       setLoading(false);
     }, 1200);
@@ -267,6 +269,13 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
   return (
     <View style={{ flex: 1, padding: 2 }}>
+      {showPullMessage && (
+        <View style={styles.tipContainer}>
+          <Text style={styles.tipText}>
+            Tips: From this point, pull down to load older messages
+          </Text>
+        </View>
+      )}
       <FlatList
         ref={chatRef}
         data={messages}
@@ -277,6 +286,9 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         onContentSizeChange={() =>
           goDowns && chatRef.current?.scrollToEnd({ animated: true })
         }
+        onScroll={() => setShowPullMessage(false)}
+        // onStartReached={() => setShowPullMessage(true)}
+        // onEndReached={() => setShowPullMessage(false)}
         onEndReachedThreshold={0.1}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
@@ -287,7 +299,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         <TouchableOpacity onPress={handleImagePickerToggle}>
           <Ionicons name="add" size={32} color="black" />
         </TouchableOpacity>
-        {!showImagePicker ? (
+        {showImagePicker ? (
           <TextInput
             style={styles.textInput}
             value={text}
@@ -370,12 +382,12 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     paddingHorizontal: 10,
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#ccc",
     color: "#333",
-    marginRight: 20,
+    marginRight: 2,
   },
   type: {
     flex: 1,
@@ -393,6 +405,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  tipContainer: {
+    backgroundColor: "#ececec", // Background color
+    padding: 10,
+    alignItems: "center",
+  },
+  tipText: {
+    color: "#333", // Text color
+    fontSize: 14,
+    fontStyle: "italic",
   },
 });
 
