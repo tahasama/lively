@@ -28,7 +28,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const { user, setUser } = useAuth();
+  const { user, setUser, expoPushToken, notification } = useAuth();
   console.log("🚀 ~ file: Register.tsx:32 ~ user:", user);
 
   const handleRegister = async () => {
@@ -58,6 +58,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         timestamp: serverTimestamp(),
         image: "",
         email: email,
+        expoPushToken: expoPushToken,
       });
       const xx = await signInWithEmailAndPassword(auth, email, password);
       console.log("🚀 ~ file: Register.tsx:63 ~ handleRegister ~ xx:", xx);

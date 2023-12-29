@@ -6,6 +6,10 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 interface AuthContextType {
   user: any;
   setUser: any;
+  expoPushToken: any;
+  setExpoPushToken: any;
+  notification: any;
+  setNotification: any;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,6 +18,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState<any>(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
@@ -39,7 +45,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        expoPushToken,
+        setExpoPushToken,
+        notification,
+        setNotification,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

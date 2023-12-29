@@ -44,6 +44,7 @@ const ConversationItem: React.FC<{
     navigation.navigate("Conversation", {
       conversationId: conversation.id,
       title: conversation.name,
+      participants: conversation.users,
     });
   };
 

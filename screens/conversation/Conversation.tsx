@@ -31,7 +31,7 @@ import {
   child,
 } from "firebase/database";
 import { useNavigation } from "@react-navigation/native";
-import { dbr, storage } from "../../firebase";
+import { db, dbr, storage } from "../../firebase";
 
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import ImagePickerC from "./component/ImagePickerC";
@@ -43,6 +43,7 @@ import RecordingSounds from "./component/RecordingSounds";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import { getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { generateThumbnail } from "./thumbnails";
+import { doc, getDoc } from "firebase/firestore";
 
 interface Message {
   text: string;
@@ -59,6 +60,7 @@ interface IMessage {
   video: string;
   audio: string;
   file: string;
+  expoPushToken: string;
 }
 
 interface Conversation {
@@ -69,13 +71,21 @@ interface Conversation {
 }
 
 interface ConversationScreenProps {
-  route: { params: { conversationId: string; title: string; index: any } };
+  route: {
+    params: {
+      conversationId: string;
+      title: string;
+      index: any;
+      participants: string[];
+    };
+  };
 }
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
-  const { conversationId, title } = route.params;
+  const { conversationId, title, participants } = route.params;
   const navigation = useNavigation();
   const { user } = useAuth();
+  console.log("🚀 ~ file: Conversation.tsx:79 ~ user:", user);
   const {
     text,
     image,
@@ -105,6 +115,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [disableButton, setDisableButton] = useState(false);
   const [showPullMessage, setShowPullMessage] = useState(true);
+  const [usersPushToken, setUsersPushToken] = useState<string[]>([]);
 
   console.log(
     "🚀 ~ file: Conversation.tsx:107 ~ disableButton:",
@@ -115,6 +126,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
   useEffect(() => {
     navigation.setOptions({ title: title });
+    getParticipantsExpoPushToken();
     const handleChildAdded = (snapshot) => {
       const newMessage = snapshot.val();
 
@@ -128,7 +140,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     } else {
       onChildAdded(conversationQuery, handleChildAdded);
     }
-    messages.length < 6 && setShowImagePicker(true);
+    // messages.length < 6 && setShowPullMessage(true);
     setTimeout(() => {
       setLoading(false);
     }, 1200);
@@ -136,6 +148,22 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       off(conversationRef, "child_added", handleChildAdded);
     };
   }, []);
+
+  const getParticipantsExpoPushToken = () => {
+    const restOfParticipants = participants.filter(
+      (participant) => participant !== user.id
+    );
+    restOfParticipants.map(async (participant: any) => {
+      try {
+        const docSnap = await getDoc(doc(db, "users", participant));
+        if (docSnap.exists()) {
+          setUsersPushToken(docSnap.data().expoPushToken);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error.message);
+      }
+    });
+  };
 
   const fetchMoreMessages = async () => {
     try {
@@ -227,7 +255,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         setImageRecord("");
         setRecordedVideo("");
         setGoDown(true);
-
+        schedulePushNotification();
         Keyboard.dismiss();
         setDisableButton(false);
       } catch (error) {
@@ -235,6 +263,24 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       }
     }
   };
+
+  function schedulePushNotification() {
+    let response = fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: usersPushToken,
+        title: `${user.username} sent you a message`,
+        body: `In your Conversation ${title}`,
+
+        data: {},
+        // channelId: "vvv",
+      }),
+    });
+  }
 
   const handleImagePickerToggle = () => {
     setShowImagePicker(!showImagePicker);
@@ -299,7 +345,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         <TouchableOpacity onPress={handleImagePickerToggle}>
           <Ionicons name="add" size={32} color="black" />
         </TouchableOpacity>
-        {showImagePicker ? (
+        {!showImagePicker ? (
           <TextInput
             style={styles.textInput}
             value={text}
