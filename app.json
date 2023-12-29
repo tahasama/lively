@@ -30,6 +30,17 @@
           "cameraPermission": "Allow Lively Chat to access your camera.",
           "microphonePermission": "Allow Lively Chat to access your camera."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": ".assets/icon.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./local/assets/notification-sound.wav",
+            "./local/assets/notification-sound-other.wav"
+          ]
+        }
       ]
     ],
     "assetBundlePatterns": ["**/*"],
