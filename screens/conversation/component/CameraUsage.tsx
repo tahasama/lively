@@ -37,8 +37,8 @@ function CameraUsage() {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const cameraRef = useRef(null);
-  const { width } = Dimensions.get("window");
-  const height = Math.round((width * 16) / 9);
+  const { width, height } = Dimensions.get("window");
+  // const height = Math.round((width * 16) / 9);
   const { user } = useAuth();
 
   const handleCameraReady = () => {
@@ -175,8 +175,8 @@ function CameraUsage() {
             ratio="16:9"
             // style={styles.camera}
             style={{
-              height: height,
-              width: "100%",
+              height: height - 100,
+              width: width,
             }}
             type={type}
             ref={cameraRef}

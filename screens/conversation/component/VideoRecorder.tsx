@@ -35,8 +35,8 @@ const VideoRecorder = () => {
   const [isModalVisible, setModalVisible] = useState(false);
 
   const cameraRef = useRef(null);
-  const { width } = Dimensions.get("window");
-  const height = Math.round((width * 16) / 9);
+  const { width, height } = Dimensions.get("window");
+  // const height = Math.round((width * 16) / 9);
 
   // Import necessary components and libraries
 
@@ -186,8 +186,8 @@ const VideoRecorder = () => {
         <View style={{ flex: 1, backgroundColor: "black" }}>
           <Camera
             style={{
-              height: height,
-              width: "100%",
+              height: height - 100,
+              width: width,
             }}
             type={type}
             ref={cameraRef}
