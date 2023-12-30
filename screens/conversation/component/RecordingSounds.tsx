@@ -1,21 +1,75 @@
-import * as React from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Modal,
+  TouchableOpacity,
+  Text,
+  StatusBar,
+  StyleSheet,
+  Animated,
+  Easing,
+} from "react-native";
 import { Audio } from "expo-av";
-import AudioPlayer from "./AudioPlayer";
-import { useState } from "react";
-import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Import Firebase storage functions
 import { useAuth } from "../../../AuthProvider/AuthProvider";
 import { useImage } from "../../../AuthProvider/ImageProvider";
 import { storage } from "../../../firebase";
 
 const RecordingSounds = () => {
-  const [recording, setRecording] = useState<any>();
   const { user } = useAuth();
-  const { audioRecord, setAudioRecord, setLoadingImage } = useImage();
+  const { setUploadProgress, setAudioRecord, setLoadingImage } = useImage();
 
-  async function startRecording() {
+  const [recording, setRecording] = useState<any>();
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [status, setStatus] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const pingAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animatePing = () => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pingAnim, {
+            toValue: 1,
+            duration: 800,
+            easing: Easing.ease,
+            useNativeDriver: false,
+          }),
+          Animated.timing(pingAnim, {
+            toValue: 0,
+            duration: 0,
+            useNativeDriver: false,
+          }),
+        ])
+      ).start();
+    };
+
+    animatePing(); // Start the ping animation when the component mounts
+
+    return () => {
+      // Clean up animation on component unmount
+      pingAnim.stopAnimation();
+    };
+  }, [pingAnim]);
+
+  const pingStyle = {
+    transform: [
+      {
+        scale: pingAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [1, 1.2],
+        }),
+      },
+    ],
+  };
+
+  const startRecording = async () => {
+    setStatus(true);
     try {
       console.log("Requesting permissions..");
       await Audio.requestPermissionsAsync();
@@ -29,57 +83,141 @@ const RecordingSounds = () => {
         Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
       setRecording(recording);
+
       console.log("Recording started");
     } catch (err) {
       console.error("Failed to start recording", err);
     }
-  }
+  };
 
-  async function stopRecording() {
-    console.log("Stopping recording..");
-    setRecording(undefined);
-    await recording.stopAndUnloadAsync();
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-    });
-    const uri = recording.getURI();
-    console.log("Recording stopped and stored at", uri);
-    const storageRef = ref(storage, `${user.id}_${Date.now().toString()}.m4a`);
-    const response = await fetch(uri);
-
-    const blob = await response.blob();
-
-    uploadBytesResumable(storageRef, blob)
-      .then(async () => {
-        const res = await getDownloadURL(storageRef);
-        setTimeout(() => {
-          // dispatch(updateUserImage({ userImage: res, userId: user.id }));
-          setAudioRecord(res);
-        }, 2000),
-          setLoadingImage(false);
-      })
-
-      .catch((error) => {
-        setLoadingImage(false);
+  const stopRecording = async () => {
+    setStatus(false);
+    setTimeout(() => {
+      toggleModal();
+    }, 750);
+    try {
+      console.log("Stopping recording..");
+      setRecording(undefined);
+      await recording.stopAndUnloadAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
       });
+      const uri = recording.getURI();
+      console.log("Recording stopped and stored at", uri);
 
-    setLoadingImage(false);
-  }
+      const storageRef = ref(
+        storage,
+        `${user.id}_${Date.now().toString()}.m4a`
+      );
+      const response = await fetch(uri);
+      const blob = await response.blob();
+
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+
+      // Set up an event listener to track the upload progress
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Upload is ${progress}% done`);
+          setUploadProgress(progress);
+          // You can update the UI to show the progress to the user
+        },
+        (error) => {
+          console.error("Error during upload:", error);
+          // Handle errors
+        },
+        async () => {
+          const res = await getDownloadURL(storageRef);
+
+          setTimeout(() => {
+            setAudioRecord(res);
+            setLoadingImage(false);
+          }, 2000);
+        }
+      );
+    } catch (error) {
+      console.error("Error during recording", error);
+      setLoadingImage(false);
+    }
+  };
 
   return (
-    <View
-    // style={styles.container}
-    >
-      <TouchableOpacity onPress={recording ? stopRecording : startRecording}>
+    <View>
+      <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+        <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
+
+        <TouchableOpacity style={styles.modalBackground} onPress={toggleModal}>
+          <View style={styles.modalContainer}>
+            <TouchableOpacity onPress={startRecording}>
+              <Animated.View
+                style={[styles.pingContainer, status && pingStyle]}
+              >
+                <MaterialCommunityIcons
+                  name="microphone"
+                  size={30}
+                  color="white"
+                />
+              </Animated.View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={stopRecording}>
+              <MaterialCommunityIcons
+                name="stop-circle"
+                size={56}
+                color="blue"
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={toggleModal}>
+              <MaterialCommunityIcons
+                name="close-circle"
+                size={54}
+                color="gray"
+              />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
         <MaterialCommunityIcons
           name={`microphone${!recording ? "" : "-off"}`}
           size={27}
           color="black"
         />
       </TouchableOpacity>
-      {/* <AudioPlayer audioUri={audioUri} /> */}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  modalBackground: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+  closeButton: {
+    color: "blue",
+    fontSize: 18,
+    marginBottom: 0,
+  },
+  pingContainer: {
+    backgroundColor: "rgba(255, 0, 0, 0.3)",
+    borderRadius: 50,
+    padding: 10,
+  },
+});
 
 export default RecordingSounds;

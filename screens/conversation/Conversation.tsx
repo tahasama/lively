@@ -105,6 +105,10 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setImageRecord,
     setRecordedVideo,
   } = useImage();
+  console.log(
+    "🚀 ~ file: Conversation.tsx:108 ~ uploadProgress:",
+    uploadProgress
+  );
 
   const [showImagePicker, setShowImagePicker] = useState(false);
   const chatRef = useRef<FlatList<IMessage> | null>(null);
