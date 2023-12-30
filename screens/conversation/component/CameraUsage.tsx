@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // position: "relative",
     // height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    backgroundColor: "rgba(0, 0, 0, 1)",
 
     // bottom: 0,
     // justifyContent: "flex-end", // Align content at the bottom
@@ -236,9 +236,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 20,
-    position: "absolute",
-    bottom: 20,
+
     width: "100%",
+    alignItems: "center",
   },
   iconButton: {
     padding: 15,

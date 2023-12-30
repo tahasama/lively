@@ -25,6 +25,7 @@ const VideoRecorder = () => {
   const [isRecording, setRecording] = useState(false);
   const { user } = useAuth();
   const { setUploadProgress } = useImage();
+  const [type, setType] = useState(CameraType.back);
 
   const { recordedVideo, setRecordedVideo } = useImage();
   console.log(
@@ -112,6 +113,12 @@ const VideoRecorder = () => {
     // setRecordedVideo(null);
   };
 
+  const toggleCameraType = () => {
+    setType((current) =>
+      current === CameraType.back ? CameraType.front : CameraType.back
+    );
+  };
+
   if (
     !permissionResponse ||
     !permission ||
@@ -130,52 +137,40 @@ const VideoRecorder = () => {
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.9)" />
 
           <View
-            style={[
-              styles.modalContainer,
-              {
-                justifyContent: "center",
-                alignItems: "center",
-              },
-            ]}
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              padding: 20,
+              position: "absolute",
+              bottom: 0,
+              width: "100%",
+              backgroundColor: "rgba(255, 255, 255, 0.8)", // Lighter background color
+            }}
           >
-            <Text
-              style={{
-                textAlign: "center",
-                color: "white",
-                fontSize: 18,
-                marginHorizontal: 5,
-              }}
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={toggleRecording}
             >
-              We need your permission to access the camera and the microphone
-            </Text>
-            <View
-              style={{
-                maxWidth: "50%",
-                // alignItems: "center",
-                justifyContent: "center",
-                gap: 30,
-                marginTop: 40,
-                // borderRadius: 50,
-              }}
-            >
-              <Button
-                onPress={requestPermission}
-                title={
-                  !permission?.granted ? "Grant Camera Permission" : "granted"
-                }
+              <FontAwesome5
+                name={isRecording ? "stop" : "video"}
+                size={24}
+                color={isRecording ? "red" : "black"}
               />
-              <Button
-                onPress={requestPermissionAudio}
-                title={
-                  !permission?.granted ? "Grant Audio Permission" : "granted"
-                }
-              />
-              <Button
+            </TouchableOpacity>
+            {recordedVideo ? (
+              <TouchableOpacity
+                style={styles.iconButton}
                 onPress={closeVideoRecorderModal}
-                title="Close"
-                color={"purple"}
-              />
-            </View>
+              >
+                <FontAwesome5 name="check" size={24} color="black" />
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.iconButton}>
+                <TouchableOpacity onPress={closeVideoRecorderModal}>
+                  <FontAwesome5 name="times" size={24} color="black" />
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </Modal>
         <TouchableOpacity onPress={openVideoRecorderModal}>
@@ -194,7 +189,7 @@ const VideoRecorder = () => {
               height: height,
               width: "100%",
             }}
-            type={CameraType.back}
+            type={type}
             ref={cameraRef}
           />
           <View
@@ -205,8 +200,15 @@ const VideoRecorder = () => {
               position: "absolute",
               bottom: 0,
               width: "100%",
+              backgroundColor: "rgba(255, 255, 255, 0)", // Lighter background color
             }}
           >
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={toggleCameraType}
+            >
+              <FontAwesome5 name="sync" size={24} color="white" />
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.iconButton}
               onPress={toggleRecording}
@@ -214,7 +216,7 @@ const VideoRecorder = () => {
               <FontAwesome5
                 name={isRecording ? "stop" : "video"}
                 size={24}
-                color={isRecording ? "red" : "white"}
+                color={isRecording ? "red" : "#f8f4ff"} // Assuming your original color was white
               />
             </TouchableOpacity>
             {recordedVideo ? (
@@ -222,12 +224,12 @@ const VideoRecorder = () => {
                 style={styles.iconButton}
                 onPress={closeVideoRecorderModal}
               >
-                <FontAwesome5 name="check" size={24} color="white" />
+                <FontAwesome5 name="check" size={24} color="black" />
               </TouchableOpacity>
             ) : (
               <View style={styles.iconButton}>
                 <TouchableOpacity onPress={closeVideoRecorderModal}>
-                  <FontAwesome5 name="times" size={24} color="white" />
+                  <FontAwesome5 name="times" size={24} color="#f8f4ff" />
                 </TouchableOpacity>
               </View>
             )}
@@ -251,14 +253,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     minWidth: 55,
-  },
-  modalContainer: {
-    flex: 1,
-    // position: "relative",
-    // height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.9)",
-
-    // bottom: 0,
-    // justifyContent: "flex-end", // Align content at the bottom
   },
 });
