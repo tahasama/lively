@@ -15,26 +15,53 @@ import { Feather } from "@expo/vector-icons"; // Assuming you're using expo vect
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import { renderUserAvatar } from "../conversation/component/MessageBubble";
 import RenderUserInformation from "../conversation/component/renderUserInformation";
+import ImagePickerC from "../conversation/component/ImagePickerC";
+import { useImage } from "../../AuthProvider/ImageProvider";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
+import { useNavigation } from "@react-navigation/native";
 
 const Profile: React.FC = () => {
-  const { user, converations } = useAuth();
+  const { user, setUser, converations } = useAuth();
+  const { image, setImage } = useImage();
+  console.log("🚀 ~ file: Profile.tsx:27 ~ image0000000000000:", image);
   const [isModalVisible, setModalVisible] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const [newImage, setNewImage] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const handleUpdate = () => {
-    // Add logic to update user information using updateUserProfile function
-    // You can customize this based on your authentication context implementation
-    //   updateUserProfile({
-    //     username: newUsername,
-    //     profilePicture: newImage,
-    //   });
-    setModalVisible(false);
+  const handleUpdate = async () => {
+    try {
+      // Check if image is not empty and update it
+      const updatedData: any = {};
+
+      if (newUsername.trim()) {
+        updatedData.username = newUsername;
+      }
+
+      if (image && image.trim()) {
+        updatedData.image = image;
+      }
+
+      console.log("🚀 ~ file: Profile.tsx:55 ~ handleUpdate ~ user:", user.id);
+      if (Object.keys(updatedData).length > 0) {
+        await updateDoc(doc(db, "users", user.id), updatedData);
+      }
+
+      const updatedUserData = await getDoc(doc(db, "users", user.id));
+
+      setUser({ id: updatedUserData.id, ...updatedUserData.data() });
+
+      // Clear input fields and close modal
+      setImage("");
+      setNewUsername("");
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Error updating user data:", error.message);
+    }
   };
 
   return (
@@ -70,12 +97,19 @@ const Profile: React.FC = () => {
                   value={newUsername}
                   onChangeText={(text) => setNewUsername(text)}
                 />
-                <TextInput
-                  style={styles.input}
-                  placeholder="New Image URL"
-                  value={newImage}
-                  onChangeText={(text) => setNewImage(text)}
-                />
+                <Text style={{ fontSize: 16, color: "#333", marginTop: 10 }}>
+                  Click on the icon to update your profile image:
+                </Text>
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: 40,
+                    marginVertical: 10,
+                  }}
+                >
+                  <ImagePickerC type={"image"} size={36} color={"#4682B4"} />
+                </View>
                 <Button title="Update" onPress={handleUpdate} />
               </View>
             ) : (

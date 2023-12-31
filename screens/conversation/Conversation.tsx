@@ -361,7 +361,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           <View style={[styles.type]}>
             {Types.map((type, index) => (
               <View key={index} style={[styles.types]}>
-                <ImagePickerC type={type} />
+                <ImagePickerC type={type} size={24} color={"black"} />
               </View>
             ))}
           </View>

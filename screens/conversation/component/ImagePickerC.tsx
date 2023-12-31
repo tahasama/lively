@@ -17,7 +17,7 @@ import { useImage } from "../../../AuthProvider/ImageProvider";
 import RecordingSounds from "./RecordingSounds";
 import CameraUsage from "./CameraUsage";
 import VideoRecorder from "./VideoRecorder";
-const ImagePickerC = ({ type }) => {
+const ImagePickerC = ({ type, size, color }) => {
   console.log("🚀 ~ file: ImagePickerC.tsx:18 ~ ImagePickerC ~ type:", type);
   const { user } = useAuth();
   const {
@@ -111,7 +111,9 @@ const ImagePickerC = ({ type }) => {
             } catch (error) {
               console.error("Error getting download URL:", error);
             } finally {
-              setLoadingImage(false);
+              setTimeout(() => {
+                setLoadingImage(false);
+              }, 300);
             }
           }
         );
@@ -133,7 +135,7 @@ const ImagePickerC = ({ type }) => {
 
   return (
     <TouchableOpacity style={{ marginLeft: 0 }} onPress={pickImageAsync}>
-      {type === "image" && <Entypo name="image" size={24} color="black" />}
+      {type === "image" && <Entypo name="image" size={size} color={color} />}
       {type === "video" && (
         <Foundation name="play-video" size={34} color="black" />
       )}

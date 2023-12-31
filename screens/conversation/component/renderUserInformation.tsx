@@ -23,16 +23,17 @@ const RenderUserInformation = ({ sender }: any) => {
         }
       }
     };
-    fetchUserData();
+    // fetchUserData();
+    user && fetchUserData();
   }, [sender]);
 
-  if (!userData && sender !== user.id) {
+  if (!userData && user && sender !== user.id) {
     // Render loading state or placeholder content
     return <ActivityIndicator />;
   }
   return (
     <View>
-      {sender !== user.id && (
+      {user && sender !== user.id && (
         <Text style={styles.messageSender}>{userData?.username},</Text>
       )}
     </View>

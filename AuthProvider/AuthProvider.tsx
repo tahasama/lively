@@ -28,10 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
         const usersCollection = collection(db, "users");
-        const q = query(
-          usersCollection,
-          where("username", "==", authUser.displayName)
-        );
+        const q = query(usersCollection, where("uid", "==", authUser.uid));
 
         const querySnapshot = await getDocs(q);
 
