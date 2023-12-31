@@ -96,21 +96,6 @@ const ConversationItem: React.FC<{
           style={styles.usersList}
         />
       </View>
-      {latestMessage && (
-        <>
-          <View style={styles.messageContainer}>
-            <Text style={styles.message}>{senderName} :</Text>
-            <Text style={styles.message}>{latestMessage.text}</Text>
-          </View>
-          <View style={styles.detailsContainer}>
-            <MaterialIcons name="mail-outline" size={18} color="#555" />
-
-            <Text style={styles.dateCreated}>{` ${latestMessage.createdAt
-              .toDate()
-              .toLocaleString()}`}</Text>
-          </View>
-        </>
-      )}
     </TouchableOpacity>
   );
 };

@@ -21,6 +21,7 @@ import { useState, useEffect, useRef } from "react";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { doc, updateDoc } from "firebase/firestore";
+import Profile from "./screens/Profile/Profile";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -131,7 +132,18 @@ const Index = () => {
               name="Home"
               component={HomeScreen}
               options={({ route }) => ({
-                headerRight: () => <LogOut />,
+                headerRight: () => (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      gap: 20,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Profile />
+                    <LogOut />
+                  </View>
+                ),
               })}
             />
             <Stack.Screen

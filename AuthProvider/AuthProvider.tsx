@@ -10,6 +10,8 @@ interface AuthContextType {
   setExpoPushToken: any;
   notification: any;
   setNotification: any;
+  converations: any;
+  setConverations: any;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,6 +22,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState<any>(false);
+  const [converations, setConverations] = useState<any[]>([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
@@ -53,6 +56,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setExpoPushToken,
         notification,
         setNotification,
+        converations,
+        setConverations,
       }}
     >
       {children}

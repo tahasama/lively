@@ -39,9 +39,8 @@ interface HomeScreenProps {
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  const { user } = useAuth();
+  const { user, converations, setConverations } = useAuth();
   const { getHome, setGetHome } = useImage();
-  const [converations, setConverations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
 
   const getCoversations = async () => {

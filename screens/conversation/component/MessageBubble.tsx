@@ -53,26 +53,6 @@ const MessageBubble = ({ message, isSender }) => {
     setModalVisible(false);
   };
 
-  const renderUserAvatar = () => {
-    if (userData && userData.image !== "") {
-      return (
-        <View style={styles.userAvatarContainer}>
-          <Image source={{ uri: userData.image }} style={styles.userAvatar} />
-        </View>
-      );
-    } else {
-      // If image is an empty string, render a circle with the first letter of the username
-      const initials = userData.username
-        ? userData.username[0].toUpperCase()
-        : "";
-      return (
-        <View style={styles.emptyAvatarContainer}>
-          <Text style={styles.emptyAvatarText}>{initials}</Text>
-        </View>
-      );
-    }
-  };
-
   return (
     <View
       style={[
@@ -138,7 +118,7 @@ const MessageBubble = ({ message, isSender }) => {
             {userData && !isSender && (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <View style={styles.userAvatarContainer}>
-                  {renderUserAvatar()}
+                  {renderUserAvatar(userData, 30)}
                 </View>
                 <Text style={styles.messageText}>~ {userData.username}</Text>
               </View>
@@ -205,8 +185,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyAvatarContainer: {
-    width: 30,
-    height: 30,
     borderRadius: 15,
     backgroundColor: "#2db4e2",
     justifyContent: "center",
@@ -219,3 +197,28 @@ const styles = StyleSheet.create({
 });
 
 export default MessageBubble;
+
+export const renderUserAvatar = (userData, dimensions) => {
+  if (userData && userData.image !== "") {
+    return (
+      <View style={styles.userAvatarContainer}>
+        <Image source={{ uri: userData.image }} style={styles.userAvatar} />
+      </View>
+    );
+  } else {
+    // If image is an empty string, render a circle with the first letter of the username
+    const initials = userData.username
+      ? userData.username[0].toUpperCase()
+      : "";
+    return (
+      <View
+        style={[
+          styles.emptyAvatarContainer,
+          { width: dimensions, height: dimensions },
+        ]}
+      >
+        <Text style={styles.emptyAvatarText}>{initials}</Text>
+      </View>
+    );
+  }
+};
