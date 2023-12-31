@@ -99,6 +99,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           renderItem={({ item }) => (
             <ConversationItem conversation={item} navigation={navigation} />
           )}
+          // horizontal
         />
       ) : (
         <View style={styles.empty}>

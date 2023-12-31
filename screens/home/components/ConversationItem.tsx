@@ -93,7 +93,7 @@ const ConversationItem: React.FC<{
           data={conversation.users}
           keyExtractor={(index) => index}
           renderItem={({ item }) => <RenderUserInformation sender={item} />}
-          style={styles.usersList}
+          horizontal
         />
       </View>
     </TouchableOpacity>
@@ -133,23 +133,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 4,
-  },
-  participants: {
-    fontSize: 16,
-    color: "#555",
-    marginLeft: 4,
-  },
-  dateCreated: {
-    fontSize: 14,
-    color: "#777",
-    marginLeft: 4,
-  },
-  usersList: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-    gap: 0,
+    gap: 5,
   },
 });
 

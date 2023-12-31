@@ -88,21 +88,20 @@ const Profile: React.FC = () => {
                   data={converations}
                   keyExtractor={(item) => item.id}
                   renderItem={({ item }) => (
-                    <>
+                    <View style={styles.participantsContainer}>
                       <Text style={styles.discussionItem}>{item.name}</Text>
-                      <Text style={styles.usersList}>
-                        <View style={{ position: "relative", top: 10 }}>
-                          <Text>with :</Text>
-                        </View>
-                        {item.users
-                          .filter((userx) => userx !== user.id)
-                          .map((userx) => (
-                            <Text key={userx}>
-                              <RenderUserInformation sender={userx} />
-                            </Text>
-                          ))}
-                      </Text>
-                    </>
+                      <View style={styles.participantsContainer}>
+                        <Text style={styles.textContainer}>with :</Text>
+                        <FlatList
+                          data={item.users}
+                          keyExtractor={(index) => index}
+                          renderItem={({ item }) => (
+                            <RenderUserInformation sender={item} />
+                          )}
+                          horizontal // Arrange items horizontally
+                        />
+                      </View>
+                    </View>
                   )}
                 />
               </View>
@@ -209,6 +208,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "black",
     marginBottom: 5,
+  },
+  participantsContainer: {
+    flexDirection: "row",
+    alignItems: "center", // Align items vertically in the center
+  },
+
+  textContainer: {
+    flexShrink: 0, // Avoid text shrinking
+    marginHorizontal: 5, // Add margin if needed
   },
 });
 

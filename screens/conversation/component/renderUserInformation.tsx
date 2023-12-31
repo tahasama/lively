@@ -1,16 +1,18 @@
 import { doc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import { db, dbr } from "../../../firebase";
 import { ref, set } from "firebase/database";
+import { useAuth } from "../../../AuthProvider/AuthProvider";
 
 const RenderUserInformation = ({ sender }: any) => {
   // Fetch user information using the sender ID
+  const { user } = useAuth();
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (sender) {
+      if (sender && user && sender !== user.id) {
         try {
           const docSnap = await getDoc(doc(db, "users", sender));
           if (docSnap.exists()) {
@@ -21,17 +23,17 @@ const RenderUserInformation = ({ sender }: any) => {
         }
       }
     };
-
     fetchUserData();
   }, [sender]);
 
+  if (!userData && sender !== user.id) {
+    // Render loading state or placeholder content
+    return <ActivityIndicator />;
+  }
   return (
     <View>
-      {userData && (
-        <>
-          <Text style={styles.messageSender}>{userData.username},</Text>
-          {/* Add other user information as needed */}
-        </>
+      {sender !== user.id && (
+        <Text style={styles.messageSender}>{userData?.username},</Text>
       )}
     </View>
   );
@@ -41,9 +43,6 @@ const styles = StyleSheet.create({
   messageSender: {
     color: "#555",
     fontSize: 12,
-    marginTop: 8,
-    marginBottom: 3,
-    marginLeft: 8,
     textTransform: "capitalize",
   },
 });
