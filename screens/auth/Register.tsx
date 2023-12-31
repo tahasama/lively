@@ -15,7 +15,14 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  serverTimestamp,
+  where,
+} from "firebase/firestore";
 import { useAuth } from "../../AuthProvider/AuthProvider";
 
 interface RegisterScreenProps {
@@ -38,6 +45,20 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         return;
       }
 
+      // Check if the username is already taken
+      const usersCollection = collection(db, "users");
+      const usernameQuery = query(
+        usersCollection,
+        where("username", "==", username)
+      );
+
+      const usernameQuerySnapshot = await getDocs(usernameQuery);
+
+      if (!usernameQuerySnapshot.empty) {
+        setError("Username is already taken. Please choose another one.");
+        return;
+      }
+
       // Create the user in Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -51,7 +72,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
       });
 
       // Add the user to the Firestore collection 'users'
-      const usersCollection = collection(db, "users");
       await addDoc(usersCollection, {
         uid: userCredential.user.uid,
         username: username,
@@ -60,9 +80,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         email: email,
         expoPushToken: expoPushToken,
       });
+
       const xx = await signInWithEmailAndPassword(auth, email, password);
-      console.log("🚀 ~ file: Register.tsx:63 ~ handleRegister ~ xx:", xx);
       setUser(xx);
+
       setTimeout(() => {
         navigation.navigate("Home");
       }, 1500);

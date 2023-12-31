@@ -45,12 +45,12 @@ const Profile: React.FC = () => {
         <TouchableOpacity style={styles.modalBackground} onPress={toggleModal}>
           <View style={styles.modalContainer}>
             <View style={styles.header}>
-              {renderUserAvatar(user, 70)}
+              {user && renderUserAvatar(user, 70)}
               <View style={styles.userInfoContainer}>
-                <Text style={styles.username}>Hello, {user.username}</Text>
-                <Text style={styles.email}>{user.email}</Text>
+                <Text style={styles.username}>Hello, {user?.username}</Text>
+                <Text style={styles.email}>{user?.email}</Text>
                 <Text style={styles.joinDate}>
-                  Member since: {formatJoinDate(user.timestamp)}
+                  Member since: {formatJoinDate(user?.timestamp)}
                 </Text>
               </View>
             </View>
@@ -121,7 +121,7 @@ const formatJoinDate = (timestamp: {
   seconds: number;
   nanoseconds: number;
 }) => {
-  const joinDate = new Date(timestamp.seconds * 1000); // Convert seconds to milliseconds
+  const joinDate = new Date(timestamp?.seconds * 1000); // Convert seconds to milliseconds
   return joinDate.toDateString();
 };
 

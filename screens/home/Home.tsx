@@ -53,8 +53,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     const q = query(
       groupsCollection,
       or(
-        where("creator.id", "==", user.id),
-        where("users", "array-contains", user.id)
+        where("creator.id", "==", user?.id),
+        where("users", "array-contains", user?.id)
       )
     );
 
