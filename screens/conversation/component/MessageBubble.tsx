@@ -165,11 +165,7 @@ const styles = StyleSheet.create({
   userAvatarContainer: {
     marginRight: 8,
   },
-  userAvatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-  },
+
   messageContent: {
     maxWidth: 280,
     flexDirection: "column", // Align avatar and message text horizontally
@@ -202,7 +198,10 @@ export const renderUserAvatar = (userData, dimensions) => {
   if (userData && userData.image !== "") {
     return (
       <View style={styles.userAvatarContainer}>
-        <Image source={{ uri: userData.image }} style={styles.userAvatar} />
+        <Image
+          source={{ uri: userData.image }}
+          style={{ width: dimensions, height: dimensions, borderRadius: 15 }}
+        />
       </View>
     );
   } else {
