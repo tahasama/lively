@@ -121,14 +121,14 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
           // Close the modal
           toggleModal();
 
-          setTimeout(() => {
-            // Navigate to the screen for conversation
-            navigation.navigate("Conversation", {
-              conversationId: newGroupRef.id,
-              title: item.username + "-" + user.username,
-              participants: usersArray,
-            });
-          }, 500);
+          // Navigate to the screen for conversation
+          navigation.navigate("Conversation", {
+            conversationId: newGroupRef.id,
+            title: item.username + "-" + user.username,
+            participants: usersArray,
+          });
+
+          schedulePushNotification(item, newGroupRef.id);
 
           setGetHome(true);
         } else {
@@ -152,7 +152,7 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
           });
           setGetHome(true);
           toggleModal();
-          schedulePushNotification(item);
+          schedulePushNotification(item, conversationId);
         } else {
           // User is already in the group, do nothing
           setError(`${item.username} is already in this group`);
@@ -161,7 +161,7 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
     }
   };
 
-  function schedulePushNotification(item: any) {
+  function schedulePushNotification(item: any, newGroupRefId: any) {
     let response = fetch("https://exp.host/--/api/v2/push/send", {
       method: "POST",
       headers: {
@@ -169,13 +169,13 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        to: item.usersPushToken,
+        to: item.expoPushToken,
         title: `${user.username} added you ${
-          title !== user.username ? `to Conversation ${title}` : ""
+          title !== user.username ? `to a Conversation ${title}` : ""
         }`,
-        body: "Please refresh your conversation list, (hint: pull down on list)",
+        body: "Please check your conversation list",
 
-        data: {},
+        data: { conversationId: newGroupRefId },
         // channelId: "vvv",
       }),
     });

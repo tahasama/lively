@@ -40,7 +40,7 @@ interface HomeScreenProps {
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  const { user, converations, setConverations } = useAuth();
+  const { user, converations, setConverations, first, setfirst } = useAuth();
   const { getHome, setGetHome } = useImage();
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
@@ -77,6 +77,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       setGetHome(false);
     }, 1200);
   }, [getHome, user]);
+
+  useEffect(() => {
+    first !== "" && getCoversations();
+
+    return () => {
+      setfirst("");
+    };
+  }, [first]);
 
   const onRefresh = async () => {
     setRefreshing(true);
