@@ -15,6 +15,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import RenderUserInformation from "../../conversation/component/renderUserInformation";
+import { useAuth } from "../../../AuthProvider/AuthProvider";
 
 interface Message {
   text: string;
@@ -42,6 +43,7 @@ const ConversationItem: React.FC<{
 
   const [senderName, setSenderName] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
+  const { setfirst } = useAuth();
 
   const handlePress = () => {
     // Navigate to the ConversationScreen with the conversation details
@@ -92,6 +94,7 @@ const ConversationItem: React.FC<{
   const removeDiscussion = async () => {
     const ref = doc(db, "groups", conversation.id);
     await deleteDoc(ref);
+    setfirst(true);
   };
 
   return (
