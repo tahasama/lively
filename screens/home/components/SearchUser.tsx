@@ -73,6 +73,7 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
       setUsers(foundUsers);
 
       setLoading(false);
+      Keyboard.dismiss();
       setCanShowNotFound(true);
     } catch (error) {
       setError("Error searching for user");

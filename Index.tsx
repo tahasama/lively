@@ -34,7 +34,7 @@ Notifications.setNotificationHandler({
 const Stack = createStackNavigator();
 
 const Index = () => {
-  const { user, setfirst } = useAuth();
+  const { user } = useAuth();
   const { setExpoPushToken, setNotification } = useAuth();
   const notificationListener = useRef<any>();
   const responseListener = useRef<any>();
@@ -50,13 +50,12 @@ const Index = () => {
           "🚀 ~ file: Notifications.tsx:29 ~ Notifications.addNotificationReceivedListener ~ notification:",
           notification.request.content.data.conversationId
         );
-        setNotification(notification);
-        setfirst(notification.request.content.data.conversationId);
       });
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
+        setNotification(response.notification.request.content.data);
       });
 
     return () => {

@@ -16,7 +16,7 @@ import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db, dbr } from "../../../firebase";
 import RenderUserInformation from "../../conversation/component/renderUserInformation";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
-import { ref, remove } from "firebase/database";
+import { onValue, push, ref, remove, set } from "firebase/database";
 
 interface Message {
   text: string;
@@ -44,49 +44,47 @@ const ConversationItem: React.FC<{
 
   const [senderName, setSenderName] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
-  const { setfirst } = useAuth();
+  const { user } = useAuth();
+  const [expoPushToken, setExpoPushToken] = useState("");
+  console.log(
+    "🚀 ~ file: ConversationItem.tsx:48 ~ expoPushToken:",
+    expoPushToken
+  );
+
+  useEffect(() => {
+    getParticipantsExpoPushToken();
+  }, []);
+
+  const getParticipantsExpoPushToken = async () => {
+    const tokens: any = await Promise.all(
+      conversation.users?.map(async (participant: any) => {
+        try {
+          const docSnap = await getDoc(doc(db, "users", participant));
+          if (docSnap.exists()) {
+            return docSnap.data().expoPushToken;
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error.message);
+          return null;
+        }
+      })
+    );
+
+    setExpoPushToken(tokens);
+  };
 
   const handlePress = () => {
     // Navigate to the ConversationScreen with the conversation details
+
     navigation.navigate("Conversation", {
       conversationId: conversation.id,
       title: conversation.name,
       participants: conversation.users,
     });
   };
-
-  const getUser = async () => {
-    if (
-      conversation.messages &&
-      conversation.messages[conversation.messages.length - 1]?.sender
-    ) {
-      try {
-        const docSnap = await getDoc(
-          doc(
-            db,
-            "users",
-            conversation.messages[conversation.messages.length - 1].sender
-          )
-        );
-        if (docSnap.exists()) {
-          console.log("Document data:", docSnap.data());
-          setSenderName(docSnap.data().username);
-        } else {
-          // docSnap.data() will be undefined in this case
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: ConversationItem.tsx:54 ~ getUser ~ error:",
-          error
-        );
-      }
-    }
-  };
-
-  useEffect(() => {
-    getUser();
-  }, []);
+  console.log(
+    "🚀 ~ file: ConversationItem.tsx:8666666666666666666666666666666666"
+  );
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -94,6 +92,7 @@ const ConversationItem: React.FC<{
 
   const removeDiscussion = async () => {
     // Delete from Firestore
+
     const firestoreRef = doc(db, "groups", conversation.id);
     await deleteDoc(firestoreRef);
 
@@ -103,8 +102,28 @@ const ConversationItem: React.FC<{
 
     await remove(conversationRef);
 
-    setfirst(true);
+    schedulePushNotification();
+    setModalVisible(false);
   };
+
+  function schedulePushNotification() {
+    let response = fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: expoPushToken,
+        title: `there has been an update in your list`,
+        body: ``,
+
+        data: { type: "remove" },
+        // channelId: "vvv",
+      }),
+    });
+  }
+
   return (
     <TouchableOpacity
       onPress={handlePress}

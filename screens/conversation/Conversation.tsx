@@ -84,7 +84,7 @@ interface ConversationScreenProps {
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId, title, participants } = route.params;
   console.log("🚀 ~ file: Conversation.tsx:86 ~ title:", title);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const { user } = useAuth();
   const {
     text,
@@ -116,6 +116,10 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [disableButton, setDisableButton] = useState(false);
   const [showPullMessage, setShowPullMessage] = useState(true);
   const [usersPushToken, setUsersPushToken] = useState<string[]>([]);
+  console.log(
+    "🚀 ~ file: Conversation.tsx:120 ~ usersPushToken:",
+    usersPushToken
+  );
 
   const conversationRef = ref(dbr, `groups/${conversationId}/messages`);
 
@@ -271,7 +275,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         title: `${user.username} sent you a message`,
         body: `In your Conversation ${title}`,
 
-        data: {},
+        data: { conversationId: conversationId, title: title, type: "message" },
         // channelId: "vvv",
       }),
     });

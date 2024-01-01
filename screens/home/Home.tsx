@@ -40,7 +40,9 @@ interface HomeScreenProps {
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  const { user, converations, setConverations, first, setfirst } = useAuth();
+  const { user, converations, setConverations, notification, setNotification } =
+    useAuth();
+  console.log("🚀 ~ file: Home.tsx:54 ~ notification:", notification);
   const { getHome, setGetHome } = useImage();
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
@@ -79,12 +81,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   }, [getHome, user]);
 
   useEffect(() => {
-    first !== "" && getCoversations();
-
+    notification.type === "message" &&
+      navigation.navigate("Conversation", {
+        conversationId: notification.conversationId,
+        title: notification.title,
+      });
+    notification.type === "remove" && getCoversations();
     return () => {
-      setfirst("");
+      setNotification("");
     };
-  }, [first]);
+  }, [notification]);
 
   const onRefresh = async () => {
     setRefreshing(true);
