@@ -29,6 +29,8 @@ import {
   endAt,
   push,
   child,
+  onChildRemoved,
+  onChildChanged,
 } from "firebase/database";
 import { useNavigation } from "@react-navigation/native";
 import { db, dbr, storage } from "../../firebase";
@@ -116,10 +118,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [disableButton, setDisableButton] = useState(false);
   const [showPullMessage, setShowPullMessage] = useState(true);
   const [usersPushToken, setUsersPushToken] = useState<string[]>([]);
-  console.log(
-    "🚀 ~ file: Conversation.tsx:120 ~ usersPushToken:",
-    usersPushToken
-  );
+  console.log("🚀 ~ file: Conversation.tsx:120 ~ usersPushToken:", messages);
 
   const conversationRef = ref(dbr, `groups/${conversationId}/messages`);
 
@@ -132,12 +131,35 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
+    // const handleChildRemoved = (snapshot) => {
+    //   // Handle child removed logic here
+    //   const removedMessage = snapshot.val();
+    //   // Update state to remove the message
+    //   setMessages((prevMessages) =>
+    //     prevMessages.filter((message) => message._id !== removedMessage._id)
+    //   );
+    // };
+
+    const handleChildUpdated = (snapshot) => {
+      // Handle child removed logic here
+      const updatedMessage = snapshot.val();
+
+      // Update state to replace the removed message with a new one
+      setMessages((prevMessages) =>
+        prevMessages.map((message) =>
+          message._id === updatedMessage._id ? updatedMessage : message
+        )
+      );
+    };
+
     // Subscribe to real-time updates using onChildAdded
     const conversationQuery = query(conversationRef, limitToLast(4));
     if (messages.length !== 0) {
       onChildAdded(conversationRef, handleChildAdded);
+      onChildChanged(conversationRef, handleChildUpdated);
     } else {
       onChildAdded(conversationQuery, handleChildAdded);
+      onChildChanged(conversationQuery, handleChildUpdated);
     }
     // messages.length < 6 && setShowPullMessage(true);
     setTimeout(() => {
@@ -145,6 +167,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     }, 1200);
     return () => {
       off(conversationRef, "child_added", handleChildAdded);
+      off(conversationRef, "child_changed", handleChildUpdated);
     };
   }, []);
 
@@ -237,6 +260,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           imageRecord: imageRecord ? imageRecord : "",
           recordedVideo: recordedVideo ? recordedVideo : "",
           thumnail: thumbnail,
+          alert: "",
         };
 
         await set(newMessageRef, updatedMessage);
@@ -326,7 +350,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         data={messages}
         keyExtractor={(item) => item._id}
         renderItem={({ item, index }) => (
-          <MessageBubble message={item} isSender={item.user.id === user.id} />
+          <MessageBubble
+            message={item}
+            isSender={item.user.id === user.id}
+            conversationId={conversationId}
+          />
         )}
         onContentSizeChange={() =>
           goDowns && chatRef.current?.scrollToEnd({ animated: true })

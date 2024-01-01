@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  TouchableHighlight,
 } from "react-native";
 import ConversationItem from "./components/ConversationItem";
 import { useAuth } from "../../AuthProvider/AuthProvider";
