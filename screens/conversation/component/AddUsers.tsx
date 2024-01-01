@@ -5,7 +5,11 @@ import SearchUser from "../../home/components/SearchUser";
 import { useNavigation } from "@react-navigation/native";
 
 const AddUsers = ({ route }) => {
-  const { conversationId } = route.params;
+  const { conversationId, title } = route.params;
+  console.log(
+    "🚀 ~ file: AddUsers.tsx:9 ~ AddUsers ~ route.params:",
+    route.params
+  );
 
   const navigation = useNavigation();
   const handleHeaderButtonPress = () => {
@@ -18,6 +22,7 @@ const AddUsers = ({ route }) => {
         navigation={navigation}
         icon={"adduser"}
         conversationId={conversationId}
+        title={title}
       />
     </TouchableOpacity>
   );

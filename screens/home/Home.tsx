@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import ConversationItem from "./components/ConversationItem";
 import { useAuth } from "../../AuthProvider/AuthProvider";
@@ -42,6 +43,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { user, converations, setConverations } = useAuth();
   const { getHome, setGetHome } = useImage();
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setRefreshing] = useState(false);
 
   const getCoversations = async () => {
     setLoading(true);
@@ -76,6 +78,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     }, 1200);
   }, [getHome, user]);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    await getCoversations();
+
+    setRefreshing(false);
+  };
+
   if (loading) {
     return (
       <View style={styles.loading}>
@@ -87,7 +97,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.search}>
-        <SearchUser navigation={navigation} icon={""} conversationId={""} />
+        <SearchUser
+          navigation={navigation}
+          icon={""}
+          conversationId={""}
+          title={""}
+        />
       </View>
       <View style={styles.add}>
         <CreateGroup />
@@ -100,6 +115,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             <ConversationItem conversation={item} navigation={navigation} />
           )}
           // horizontal
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+          }
         />
       ) : (
         <View style={styles.empty}>

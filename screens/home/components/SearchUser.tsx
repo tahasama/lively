@@ -30,7 +30,7 @@ import { EvilIcons, AntDesign } from "@expo/vector-icons";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
 import { useImage } from "../../../AuthProvider/ImageProvider";
 
-const SearchUser = ({ navigation, icon, conversationId }) => {
+const SearchUser = ({ navigation, icon, conversationId, title }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState([]);
@@ -149,13 +149,35 @@ const SearchUser = ({ navigation, icon, conversationId }) => {
             users: arrayUnion(item.id),
           });
           setGetHome(true);
+          toggleModal();
+          schedulePushNotification(item);
         } else {
           // User is already in the group, do nothing
-          console.log("User is already in the group");
+          setError(`${item.username} is already in this group`);
         }
       }
     }
   };
+
+  function schedulePushNotification(item: any) {
+    let response = fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: item.usersPushToken,
+        title: `${user.username} added you ${
+          title !== user.username ? `to Conversation ${title}` : ""
+        }`,
+        body: "Please refresh your conversation list, (hint: pull down on list)",
+
+        data: {},
+        // channelId: "vvv",
+      }),
+    });
+  }
 
   return (
     <View style={styles.container}>
