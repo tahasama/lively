@@ -18,7 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
 
 const CreateGroup = () => {
-  const { user } = useAuth();
+  const { user, setNotification } = useAuth();
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [groupName, setGroupName] = useState("");
@@ -42,7 +42,7 @@ const CreateGroup = () => {
 
       // Close the modal
       toggleModal();
-
+      setNotification({ type: "remove" });
       // Navigate to the screen for adding users to the group
       // Pass the new group's ID to the next screen
       //   navigation.navigate("AddUsersToGroup", { groupId: newGroupRef.id });

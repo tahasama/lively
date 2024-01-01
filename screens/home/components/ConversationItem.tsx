@@ -44,8 +44,8 @@ const ConversationItem: React.FC<{
 
   const [senderName, setSenderName] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
-  const { user } = useAuth();
-  const [expoPushToken, setExpoPushToken] = useState("");
+  const { user, setNotification } = useAuth();
+  const [expoPushToken, setExpoPushToken] = useState([]);
   console.log(
     "🚀 ~ file: ConversationItem.tsx:48 ~ expoPushToken:",
     expoPushToken
@@ -82,9 +82,6 @@ const ConversationItem: React.FC<{
       participants: conversation.users,
     });
   };
-  console.log(
-    "🚀 ~ file: ConversationItem.tsx:8666666666666666666666666666666666"
-  );
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -104,6 +101,7 @@ const ConversationItem: React.FC<{
 
     schedulePushNotification();
     setModalVisible(false);
+    setNotification({ type: "remove" });
   };
 
   function schedulePushNotification() {
@@ -114,7 +112,7 @@ const ConversationItem: React.FC<{
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        to: expoPushToken,
+        to: expoPushToken.filter((t) => t !== user.expoPushToken),
         title: `there has been an update in your list`,
         body: ``,
 

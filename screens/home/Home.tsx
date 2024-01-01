@@ -52,7 +52,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     const groupsCollection = collection(db, "groups");
 
     // Check if a group with these users already exists
-    console.log("🚀 ~ file: Home.tsx:57 ~ getCoversations ~ user.id:", user.id);
 
     const q = query(
       groupsCollection,

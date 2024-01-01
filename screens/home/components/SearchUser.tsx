@@ -176,7 +176,7 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
         }`,
         body: "Please check your conversation list",
 
-        data: { conversationId: newGroupRefId },
+        data: { conversationId: newGroupRefId, type: "remove" },
         // channelId: "vvv",
       }),
     });
