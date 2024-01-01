@@ -273,7 +273,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       body: JSON.stringify({
         to: usersPushToken,
         title: `${user.username} sent you a message`,
-        body: `In your Conversation ${title}`,
+        body: `Press to check your Conversation ${title}`,
 
         data: { conversationId: conversationId, title: title, type: "message" },
         // channelId: "vvv",

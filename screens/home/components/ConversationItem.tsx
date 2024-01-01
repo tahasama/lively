@@ -113,8 +113,8 @@ const ConversationItem: React.FC<{
       },
       body: JSON.stringify({
         to: expoPushToken.filter((t) => t !== user.expoPushToken),
-        title: `there has been an update in your list`,
-        body: ``,
+        title: `There has been an update in your list`,
+        body: `Press notification or pull down in your conversations list to update`,
 
         data: { type: "remove" },
         // channelId: "vvv",
