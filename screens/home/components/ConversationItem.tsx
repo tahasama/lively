@@ -13,9 +13,10 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
-import { db } from "../../../firebase";
+import { db, dbr } from "../../../firebase";
 import RenderUserInformation from "../../conversation/component/renderUserInformation";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { ref, remove } from "firebase/database";
 
 interface Message {
   text: string;
@@ -92,11 +93,18 @@ const ConversationItem: React.FC<{
   };
 
   const removeDiscussion = async () => {
-    const ref = doc(db, "groups", conversation.id);
-    await deleteDoc(ref);
+    // Delete from Firestore
+    const firestoreRef = doc(db, "groups", conversation.id);
+    await deleteDoc(firestoreRef);
+
+    // Delete from Realtime Database
+    const rtdb = `groups/${conversation.id}`;
+    const conversationRef = ref(dbr, rtdb);
+
+    await remove(conversationRef);
+
     setfirst(true);
   };
-
   return (
     <TouchableOpacity
       onPress={handlePress}
