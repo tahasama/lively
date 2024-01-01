@@ -83,6 +83,10 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
   };
 
   const handleCreateGroup = async (item: any) => {
+    console.log(
+      "🚀 ~ file: SearchUser.tsx:86 ~ handleCreateGroup ~ item:",
+      item
+    );
     if (conversationId === "") {
       try {
         // Create a new group in Firestore
@@ -105,33 +109,35 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
         });
 
         if (foundGroup.length === 0) {
-          // Use doc with a specific ID instead of addDoc
-          const newGroupRef = await addDoc(groupsCollection, {
-            name: item.username + "-" + user.username,
-            creator: user,
-            users: usersArray,
-            messages: [],
-            createdAt: serverTimestamp(),
-            // Add more group data as needed
-          });
-          console.log(
-            "🚀 ~ file: SearchUser.tsx:116 ~ handleCreateGroup ~ newGroupRef:",
-            newGroupRef.id
-          );
+          if (user.id !== item.id) {
+            // Use doc with a specific ID instead of addDoc
+            const newGroupRef = await addDoc(groupsCollection, {
+              name: item.username + "-" + user.username,
+              creator: user,
+              users: usersArray,
+              messages: [],
+              createdAt: serverTimestamp(),
+              // Add more group data as needed
+            });
+            console.log(
+              "🚀 ~ file: SearchUser.tsx:116 ~ handleCreateGroup ~ newGroupRef:",
+              newGroupRef.id
+            );
 
-          // Close the modal
-          toggleModal();
+            // Close the modal
+            toggleModal();
 
-          // Navigate to the screen for conversation
-          navigation.navigate("Conversation", {
-            conversationId: newGroupRef.id,
-            title: item.username + "-" + user.username,
-            participants: usersArray,
-          });
-
-          schedulePushNotification(item, newGroupRef.id);
-
-          setGetHome(true);
+            // Navigate to the screen for conversation
+            navigation.navigate("Conversation", {
+              conversationId: newGroupRef.id,
+              title: item.username + "-" + user.username,
+              participants: usersArray,
+            });
+            schedulePushNotification(item, newGroupRef.id);
+            setGetHome(true);
+          } else {
+            setError("You can't talk with yourself!");
+          }
         } else {
           console.log("Group already exists", foundGroup[0].id);
           navigation.navigate("Conversation", {
