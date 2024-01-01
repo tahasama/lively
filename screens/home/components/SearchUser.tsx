@@ -106,28 +106,30 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
         if (foundGroup.length === 0) {
           // Use doc with a specific ID instead of addDoc
           const newGroupRef = await addDoc(groupsCollection, {
-            name: item.username,
+            name: item.username + "-" + user.username,
             creator: user,
             users: usersArray,
             messages: [],
             createdAt: serverTimestamp(),
             // Add more group data as needed
           });
+          console.log(
+            "🚀 ~ file: SearchUser.tsx:116 ~ handleCreateGroup ~ newGroupRef:",
+            newGroupRef.id
+          );
 
           // Close the modal
           toggleModal();
 
-          // Navigate to the screen for conversation
-          navigation.navigate("Conversation", {
-            conversation: {
-              id: newGroupRef.id,
-              name: item.username + "-" + user.username,
-              creator: user,
-              users: usersArray,
-              createdAt: serverTimestamp(),
-              messages: [],
-            },
-          });
+          setTimeout(() => {
+            // Navigate to the screen for conversation
+            navigation.navigate("Conversation", {
+              conversationId: newGroupRef.id,
+              title: item.username + "-" + user.username,
+              participants: usersArray,
+            });
+          }, 500);
+
           setGetHome(true);
         } else {
           console.log("Group already exists", foundGroup[0].id);

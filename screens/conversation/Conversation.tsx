@@ -83,9 +83,9 @@ interface ConversationScreenProps {
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId, title, participants } = route.params;
+  console.log("🚀 ~ file: Conversation.tsx:86 ~ title:", title);
   const navigation = useNavigation();
   const { user } = useAuth();
-  console.log("🚀 ~ file: Conversation.tsx:79 ~ user:", user);
   const {
     text,
     image,
@@ -105,10 +105,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setImageRecord,
     setRecordedVideo,
   } = useImage();
-  console.log(
-    "🚀 ~ file: Conversation.tsx:108 ~ uploadProgress:",
-    uploadProgress
-  );
 
   const [showImagePicker, setShowImagePicker] = useState(false);
   const chatRef = useRef<FlatList<IMessage> | null>(null);
@@ -120,11 +116,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [disableButton, setDisableButton] = useState(false);
   const [showPullMessage, setShowPullMessage] = useState(true);
   const [usersPushToken, setUsersPushToken] = useState<string[]>([]);
-
-  console.log(
-    "🚀 ~ file: Conversation.tsx:107 ~ disableButton:",
-    disableButton
-  );
 
   const conversationRef = ref(dbr, `groups/${conversationId}/messages`);
 
@@ -154,10 +145,10 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   }, []);
 
   const getParticipantsExpoPushToken = () => {
-    const restOfParticipants = participants.filter(
+    const restOfParticipants = participants?.filter(
       (participant) => participant !== user.id
     );
-    restOfParticipants.map(async (participant: any) => {
+    restOfParticipants?.map(async (participant: any) => {
       try {
         const docSnap = await getDoc(doc(db, "users", participant));
         if (docSnap.exists()) {
