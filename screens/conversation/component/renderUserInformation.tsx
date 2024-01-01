@@ -34,7 +34,7 @@ const RenderUserInformation = ({ sender }: any) => {
   return (
     <View>
       {user && sender !== user.id && (
-        <Text style={styles.messageSender}>{userData?.username},</Text>
+        <Text style={styles.messageSender}>{userData?.username}, </Text>
       )}
     </View>
   );
