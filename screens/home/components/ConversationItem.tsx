@@ -5,11 +5,14 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  Modal,
+  TouchableWithoutFeedback,
+  StatusBar,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { doc, getDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import RenderUserInformation from "../../conversation/component/renderUserInformation";
 
@@ -38,6 +41,7 @@ const ConversationItem: React.FC<{
       : "";
 
   const [senderName, setSenderName] = useState("");
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const handlePress = () => {
     // Navigate to the ConversationScreen with the conversation details
@@ -81,10 +85,20 @@ const ConversationItem: React.FC<{
     getUser();
   }, []);
 
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const removeDiscussion = async () => {
+    const ref = doc(db, "groups", conversation.id);
+    await deleteDoc(ref);
+  };
+
   return (
     <TouchableOpacity
       onPress={handlePress}
       style={styles.conversationContainer}
+      onLongPress={toggleModal}
     >
       <Text style={styles.title}>{conversation.name}</Text>
       <View style={styles.detailsContainer}>
@@ -96,6 +110,45 @@ const ConversationItem: React.FC<{
           horizontal
         />
       </View>
+
+      <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.modalBackground}
+          onPress={() => {
+            toggleModal();
+          }}
+        >
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
+
+          <TouchableWithoutFeedback>
+            <View style={styles.modalContainer}>
+              <View style={styles.barContainer}>
+                <View style={styles.bar}></View>
+              </View>
+              {/* Input for group name */}
+
+              {/* Button to create the group */}
+              <TouchableOpacity
+                style={styles.createButton}
+                onPress={removeDiscussion}
+              >
+                <Text style={styles.buttonText}>Delete?</Text>
+              </TouchableOpacity>
+
+              {/* Button to close the modal */}
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={toggleModal}
+              >
+                <Text style={[styles.buttonText, { color: "#4e5a65" }]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableWithoutFeedback>
+        </TouchableOpacity>
+      </Modal>
     </TouchableOpacity>
   );
 };
@@ -134,6 +187,49 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContainer: {
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 8,
+    width: "100%",
+  },
+  barContainer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bar: {
+    width: 80,
+    height: 8,
+    backgroundColor: "#708090",
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  createButton: {
+    backgroundColor: "#4285F4",
+    paddingVertical: 12,
+    borderRadius: 5,
+    marginTop: 16,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  cancelButton: {
+    backgroundColor: "#ddd",
+    paddingVertical: 12,
+    borderRadius: 5,
+    marginTop: 8,
+    alignItems: "center",
   },
 });
 
