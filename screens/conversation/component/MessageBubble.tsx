@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  FlatList,
+} from "react-native";
 import { collection, doc, getDoc } from "firebase/firestore"; // Import Firebase Firestore functions
 import { db, dbr } from "../../../firebase";
 import VideoPlayer from "./VideoPlayer";
@@ -69,23 +76,45 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
     setReaction(false);
   };
 
+  const handleReactionSelection = async (reaction) => {
+    const rtdb = `groups/${conversationId}/messages/${message._id}`;
+    const conversationRef = ref(dbr, rtdb);
+
+    const existingReactions = message?.reactions ? message.reactions : [];
+
+    // await update(conversationRef, { reaction: reaction });
+    const updatedReactions = [...existingReactions, reaction];
+
+    // Step 3: Update the database with the modified array
+    await update(conversationRef, { reactions: updatedReactions });
+    setReaction(false);
+  };
+
+  const reactions = ["❤️", "😊", "😆", "😲", "😫", "👍", "👎"];
+
   const reactionMenu = (
     <View>
       {/* Common JSX for both sender and receiver */}
       {/* <Text>Common Content</Text> */}
 
-      {message.user.id !== user.id ? (
+      {message.user.id === user.id ? (
         // JSX for sender
-        <Text>Sender Content</Text>
-      ) : (
-        // JSX for receiver
         <TouchableOpacity onPress={removeMessage}>
           <Text>Remove</Text>
         </TouchableOpacity>
+      ) : (
+        // JSX for receiver
+        <FlatList
+          data={reactions}
+          keyExtractor={(item) => item}
+          style={{ flexDirection: "row", gap: 5 }}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleReactionSelection(item)}>
+              <Text style={{ fontSize: 18 }}>{item}</Text>
+            </TouchableOpacity>
+          )}
+        />
       )}
-
-      {/* More common JSX for both sender and receiver */}
-      {/* <Text>More Common Content</Text> */}
     </View>
   );
 
@@ -199,6 +228,41 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
           </View>
         )}
       </View>
+      {message?.reactions && (
+        <FlatList
+          data={message?.reactions}
+          keyExtractor={(item) => item}
+          style={{
+            flexDirection: "row",
+            gap: -5,
+            flexWrap: "wrap",
+            position: "relative",
+            alignSelf: message.user.id !== user.id ? "flex-start" : "flex-end",
+          }}
+          renderItem={({ item }) => (
+            <Text
+              style={{
+                // position: "relative",
+                // bottom: 16,
+                // left:
+                //   message.user.id !== user.id
+                //     ? 100
+                //     : Dimensions.get("screen").width * 0.8,
+
+                zIndex: 40,
+                fontSize: 16,
+                backgroundColor: "white",
+                borderRadius: 50,
+                elevation: 3,
+                padding: 1,
+                paddingHorizontal: 3,
+              }}
+            >
+              {item}
+            </Text>
+          )}
+        />
+      )}
     </View>
   );
 };
