@@ -80,14 +80,21 @@ interface ConversationScreenProps {
       index: any;
       participants: string[];
     };
+    name: string;
   };
 }
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId, title, participants } = route.params;
-  console.log("🚀 ~ file: Conversation.tsx:86 ~ title:", title);
+  console.log("🚀 ~ file: Conversation.tsx:86 ~ 44444:", route);
   const navigation = useNavigation<any>();
-  const { user } = useAuth();
+  const {
+    user,
+    notification,
+    setNotificationR,
+    setNotification,
+    notificationR,
+  } = useAuth();
   const {
     text,
     image,
@@ -121,6 +128,33 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   console.log("🚀 ~ file: Conversation.tsx:120 ~ usersPushToken:", messages);
 
   const conversationRef = ref(dbr, `groups/${conversationId}/messages`);
+  console.log(
+    "🚀 ~ file: Conversation.tsx:173 ~ useEffect ~ conversationId:",
+    conversationId
+  );
+
+  useEffect(() => {
+    console.log(
+      "🚀 ~ file: Conversation.tsx:140 ~ useEffect ~ notification.conversationId === conversationId :",
+      notificationR
+    );
+    notification &&
+      notification.type === "message" &&
+      notification.conversationId !== conversationId &&
+      navigation.replace("Conversation", {
+        conversationId: notification.conversationId,
+        title: notification.title,
+      });
+    notificationR &&
+      notificationR.conversationId === conversationId &&
+      notificationR.type === "remove" &&
+      navigation.navigate("Home");
+
+    return () => {
+      setNotification("");
+      // setNotificationR("");
+    };
+  }, [notification, notificationR]);
 
   useEffect(() => {
     navigation.setOptions({ title: title });
@@ -130,7 +164,6 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
-
     // const handleChildRemoved = (snapshot) => {
     //   // Handle child removed logic here
     //   const removedMessage = snapshot.val();

@@ -44,7 +44,7 @@ const ConversationItem: React.FC<{
 
   const [senderName, setSenderName] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
-  const { user, setNotification } = useAuth();
+  const { user, setNotification, setNotificationR } = useAuth();
   const [expoPushToken, setExpoPushToken] = useState([]);
   console.log(
     "🚀 ~ file: ConversationItem.tsx:48 ~ expoPushToken:",
@@ -75,7 +75,10 @@ const ConversationItem: React.FC<{
 
   const handlePress = () => {
     // Navigate to the ConversationScreen with the conversation details
-
+    console.log(
+      "🚀 ~ file: ConversationItem.tsx:84 ~ handlePress ~ conversation.id:",
+      conversation
+    );
     navigation.navigate("Conversation", {
       conversationId: conversation.id,
       title: conversation.name,
@@ -102,6 +105,7 @@ const ConversationItem: React.FC<{
     schedulePushNotification();
     setModalVisible(false);
     setNotification({ type: "remove" });
+    // setNotificationR({ type: "remove" }); // to get back if remove not navigate
   };
 
   function schedulePushNotification() {
@@ -116,7 +120,7 @@ const ConversationItem: React.FC<{
         title: `There has been an update in your list`,
         body: `Press notification or pull down in your conversations list to update`,
 
-        data: { type: "remove" },
+        data: { conversationId: conversation.id, type: "remove" },
         // channelId: "vvv",
       }),
     });

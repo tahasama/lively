@@ -35,7 +35,7 @@ const Stack = createStackNavigator();
 
 const Index = () => {
   const { user } = useAuth();
-  const { setExpoPushToken, setNotification } = useAuth();
+  const { setExpoPushToken, setNotification, setNotificationR } = useAuth();
   const notificationListener = useRef<any>();
   const responseListener = useRef<any>();
 
@@ -50,12 +50,14 @@ const Index = () => {
           "🚀 ~ file: Notifications.tsx:29 ~ Notifications.addNotificationReceivedListener ~ notification:",
           notification.request.content.data.conversationId
         );
+        setNotificationR(notification.request.content.data);
       });
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
         setNotification(response.notification.request.content.data);
+        setNotificationR(""); //to get back if remove not navigate
       });
 
     return () => {
@@ -149,6 +151,11 @@ const Index = () => {
             <Stack.Screen
               name="Conversation"
               component={ConversationScreen}
+              initialParams={{
+                conversationId: "",
+                title: "",
+                participants: [],
+              }}
               options={({ route }) => ({
                 headerRight: () => <AddUsers route={route} />,
               })}

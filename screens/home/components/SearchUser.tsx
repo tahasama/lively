@@ -182,7 +182,7 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
         }`,
         body: "Please check your conversation list",
 
-        data: { conversationId: newGroupRefId, type: "remove" },
+        data: { conversationId: newGroupRefId, title: title, type: "create" },
         // channelId: "vvv",
       }),
     });

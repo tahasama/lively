@@ -38,12 +38,22 @@ interface Conversation {
 
 interface HomeScreenProps {
   navigation: any;
+  route: any;
 }
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  const { user, converations, setConverations, notification, setNotification } =
-    useAuth();
-  console.log("🚀 ~ file: Home.tsx:54 ~ notification:", notification);
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation, route }) => {
+  const {
+    user,
+    converations,
+    setConverations,
+    notification,
+    notificationR,
+    setNotification,
+    setNotificationR,
+  } = useAuth();
+  console.log("🚀 ~ file: Home.tsx:46 ~ notification:", notification);
+  console.log("🚀 ~ file: Home.tsx:46 ~ notificationR:", notificationR);
+
   const { getHome, setGetHome } = useImage();
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
@@ -81,16 +91,23 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   }, [getHome, user]);
 
   useEffect(() => {
-    notification.type === "message" &&
+    (notification.type === "message" || notification.type === "create") &&
       navigation.navigate("Conversation", {
         conversationId: notification.conversationId,
         title: notification.title,
       });
-    notification.type === "remove" && getCoversations();
+    (notificationR.type === "remove" ||
+      notification.type === "remove" ||
+      notification.type === "create" ||
+      notificationR.type === "create") &&
+      route.name === "Home" &&
+      getCoversations().then(() => setNotificationR(""));
+    //
+
     return () => {
       setNotification("");
     };
-  }, [notification]);
+  }, [notification, notificationR]);
 
   const onRefresh = async () => {
     setRefreshing(true);
