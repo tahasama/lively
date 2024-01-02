@@ -4,11 +4,20 @@ import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import { db, dbr } from "../../../firebase";
 import { ref, set } from "firebase/database";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { renderUserAvatar } from "./MessageBubble";
 
 const RenderUserInformation = ({ sender }: any) => {
   // Fetch user information using the sender ID
   const { user } = useAuth();
+  console.log(
+    "🚀 ~ file: renderUserInformation.tsx:12 ~ RenderUserInformation ~ user:",
+    user
+  );
   const [userData, setUserData] = useState(null);
+  console.log(
+    "🚀 ~ file: renderUserInformation.tsx:17 ~ RenderUserInformation ~ userData:",
+    userData
+  );
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -16,7 +25,7 @@ const RenderUserInformation = ({ sender }: any) => {
         try {
           const docSnap = await getDoc(doc(db, "users", sender));
           if (docSnap.exists()) {
-            setUserData(docSnap.data());
+            setUserData({ id: docSnap.id, ...docSnap.data() });
           }
         } catch (error) {
           console.error("Error fetching user data:", error.message);
@@ -32,7 +41,8 @@ const RenderUserInformation = ({ sender }: any) => {
     return <ActivityIndicator />;
   }
   return (
-    <View>
+    <View style={styles.userInfo}>
+      {renderUserAvatar(userData, 22)}
       {user && sender !== user.id && (
         <Text style={styles.messageSender}>{userData?.username}, </Text>
       )}
@@ -41,6 +51,10 @@ const RenderUserInformation = ({ sender }: any) => {
 };
 
 const styles = StyleSheet.create({
+  userInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   messageSender: {
     color: "#555",
     fontSize: 12,

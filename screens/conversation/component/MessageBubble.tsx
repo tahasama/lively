@@ -263,20 +263,29 @@ const styles = StyleSheet.create({
 export default MessageBubble;
 
 export const renderUserAvatar = (userData, dimensions) => {
+  console.log(
+    "🚀 ~ file: MessageBubble.tsx:266 ~ renderUserAvatar ~ userData:",
+    userData
+  );
   if (userData && userData.image !== "") {
     return (
       <View style={styles.userAvatarContainer}>
         <Image
           source={{ uri: userData.image }}
-          style={{ width: dimensions, height: dimensions, borderRadius: 15 }}
+          style={{
+            width: dimensions,
+            height: dimensions,
+            borderRadius: 15,
+            borderColor: "gray",
+            borderWidth: 0.3,
+          }}
         />
       </View>
     );
-  } else {
+  } else if (userData && userData.username !== undefined) {
     // If image is an empty string, render a circle with the first letter of the username
-    const initials = userData.username
-      ? userData.username[0].toUpperCase()
-      : "";
+    const initials =
+      userData && userData?.username ? userData.username[0].toUpperCase() : "";
     return (
       <View
         style={[
