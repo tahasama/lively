@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#e3e3e3", // Set receiver background color
   },
   userAvatarContainer: {
-    marginRight: 8,
+    marginRight: 4,
   },
 
   messageContent: {
@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2db4e2",
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 4,
   },
   emptyAvatarText: {
     color: "white",

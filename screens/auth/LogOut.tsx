@@ -18,7 +18,7 @@ const LogOut: React.FC = () => {
     signOut(auth);
     setUser(null);
     navigation.navigate("Login");
-    await AsyncStorage.clear();
+    await AsyncStorage.removeItem("userData");
   };
   return (
     <TouchableOpacity onPress={logOut} style={{ marginRight: 18 }}>
