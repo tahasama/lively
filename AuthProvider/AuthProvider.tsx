@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AuthContextType {
   user: any;
@@ -28,23 +29,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [converations, setConverations] = useState<any[]>([]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-      if (authUser) {
-        const usersCollection = collection(db, "users");
-        const q = query(usersCollection, where("uid", "==", authUser.uid));
+    const fetchData = async () => {
+      try {
+        const storedUserData: any = await AsyncStorage.getItem("userData");
 
-        const querySnapshot = await getDocs(q);
+        if (storedUserData) {
+          setUser(JSON.parse(storedUserData));
+        } else {
+          const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+            if (authUser) {
+              const usersCollection = collection(db, "users");
+              const q = query(
+                usersCollection,
+                where("uid", "==", authUser.uid)
+              );
 
-        const foundUsers = [];
-        querySnapshot.forEach((doc) => {
-          foundUsers.push({ id: doc.id, ...doc.data() });
-        });
+              const querySnapshot = await getDocs(q);
 
-        setUser(foundUsers[0]);
+              const foundUsers = [];
+              querySnapshot.forEach((doc) => {
+                foundUsers.push({ id: doc.id, ...doc.data() });
+              });
+
+              // Use a callback when setting the user data to handle async behavior
+              setUser(foundUsers[0]);
+              await AsyncStorage.setItem(
+                "userData",
+                JSON.stringify(foundUsers[0])
+              );
+            }
+
+            return () => unsubscribe();
+          });
+        }
+      } catch (error) {
+        // Handle errors
+        console.error("Error fetching or setting user data:", error);
       }
-    });
+    };
 
-    return () => unsubscribe();
+    // Invoke the async function inside useEffect
+    fetchData();
   }, []);
 
   return (

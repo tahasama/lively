@@ -15,6 +15,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../../firebase";
 import { useAuth } from "../../AuthProvider/AuthProvider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface LoginScreenProps {
   navigation: any;
@@ -31,6 +32,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     try {
       const xx = await signInWithEmailAndPassword(auth, email, password);
       setUser(xx);
+      // AsyncStorage.setItem("userData", JSON.stringify(xx));
       setTimeout(() => {
         navigation.navigate("Home");
       }, 1500);

@@ -5,6 +5,7 @@ import React from "react";
 import { Feather, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../AuthProvider/AuthProvider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // interface LogoutScreenProps {
 //   navigation: any;
@@ -17,6 +18,7 @@ const LogOut: React.FC = () => {
     signOut(auth);
     setUser(null);
     navigation.navigate("Login");
+    await AsyncStorage.clear();
   };
   return (
     <TouchableOpacity onPress={logOut} style={{ marginRight: 18 }}>

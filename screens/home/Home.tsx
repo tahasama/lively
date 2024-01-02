@@ -51,6 +51,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation, route }) => {
     setNotification,
     setNotificationR,
   } = useAuth();
+  console.log("🚀 ~ file: Home.tsx:54 ~ user:", user);
   console.log("🚀 ~ file: Home.tsx:46 ~ notification:", notification);
   console.log("🚀 ~ file: Home.tsx:46 ~ notificationR:", notificationR);
 

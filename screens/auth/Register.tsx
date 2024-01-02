@@ -24,6 +24,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useAuth } from "../../AuthProvider/AuthProvider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface RegisterScreenProps {
   navigation: any;
@@ -83,7 +84,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 
       const xx = await signInWithEmailAndPassword(auth, email, password);
       setUser(xx);
-
+      // AsyncStorage.setItem("userData", JSON.stringify(xx));
       setTimeout(() => {
         navigation.navigate("Home");
       }, 1500);
