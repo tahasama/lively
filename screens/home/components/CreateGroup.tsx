@@ -22,6 +22,7 @@ const CreateGroup = () => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [groupName, setGroupName] = useState("");
+  const [error, setError] = useState("");
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -94,7 +95,10 @@ const CreateGroup = () => {
                 style={styles.input}
                 placeholder=" Add Group Name..."
                 value={groupName}
-                onChangeText={setGroupName}
+                onChangeText={(text) => {
+                  setGroupName(text);
+                  setError("");
+                }}
               />
               {/* Button to create the group */}
               <TouchableOpacity

@@ -229,7 +229,10 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
                 style={styles.input}
                 placeholder=" Search by username..."
                 value={searchTerm}
-                onChangeText={setSearchTerm}
+                onChangeText={(text) => {
+                  setSearchTerm(text);
+                  setError("");
+                }}
               />
               {/* Button to create the group */}
               <TouchableOpacity

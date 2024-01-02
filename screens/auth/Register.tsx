@@ -103,7 +103,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         style={styles.input}
         placeholder="Email"
         value={email}
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={(text) => {
+          setEmail(text);
+          setError("");
+        }}
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -111,7 +114,9 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         style={styles.input}
         placeholder="Username"
         value={username}
-        onChangeText={(text) => setUsername(text)}
+        onChangeText={(text) => {
+          setUsername(text), setError("");
+        }}
         autoCapitalize="none"
       />
       <View style={styles.passwordContainer}>
@@ -119,7 +124,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
           style={styles.passwordInput}
           placeholder="Password"
           value={password}
-          onChangeText={(text) => setPassword(text)}
+          onChangeText={(text) => {
+            setPassword(text);
+            setError("");
+          }}
           secureTextEntry={!showPassword}
         />
         <TouchableOpacity
