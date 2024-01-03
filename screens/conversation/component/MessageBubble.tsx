@@ -70,13 +70,12 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
   };
 
   const countReactions = (selectedReactionId) => {
-    const usersWithReaction = message?.reactions
-      ?.filter(
-        (userReaction) => userReaction.reaction.id === selectedReactionId
-      )
-      .map((userReaction) => userReaction.userId);
+    const usersWithReaction = message?.reactions?.filter(
+      (userReaction) => userReaction.reaction.id === selectedReactionId
+    );
+    // .map((userReaction) => userReaction.userId);
 
-    return usersWithReaction && usersWithReaction.length > 1
+    return usersWithReaction && usersWithReaction.length > 0
       ? usersWithReaction.length
       : "";
   };
