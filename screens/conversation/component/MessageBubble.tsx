@@ -69,6 +69,18 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
     setReaction(true);
   };
 
+  const countReactions = (selectedReactionId) => {
+    const usersWithReaction = message?.reactions
+      ?.filter(
+        (userReaction) => userReaction.reaction.id === selectedReactionId
+      )
+      .map((userReaction) => userReaction.userId);
+
+    return usersWithReaction && usersWithReaction.length > 1
+      ? usersWithReaction.length
+      : "";
+  };
+
   return (
     <View style={{ position: "relative" }}>
       <View
@@ -209,7 +221,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                 paddingHorizontal: 3,
               }}
             >
-              {item.reaction.emoji}
+              {item.reaction.emoji} {countReactions(item.reaction.id)}
             </Text>
           )}
         />
