@@ -75,7 +75,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
     );
     // .map((userReaction) => userReaction.userId);
 
-    return usersWithReaction && usersWithReaction.length > 0
+    return usersWithReaction && usersWithReaction.length > 1
       ? usersWithReaction.length
       : "";
   };
