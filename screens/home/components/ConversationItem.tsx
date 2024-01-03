@@ -16,7 +16,24 @@ import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db, dbr } from "../../../firebase";
 import RenderUserInformation from "../../conversation/component/renderUserInformation";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
-import { onValue, push, ref, remove, set } from "firebase/database";
+import {
+  get,
+  off,
+  onChildAdded,
+  onValue,
+  push,
+  ref,
+  remove,
+  set,
+} from "firebase/database";
+import {
+  FontAwesome5,
+  MaterialCommunityIcons,
+  FontAwesome,
+  Ionicons,
+  Entypo,
+  Foundation,
+} from "@expo/vector-icons";
 
 interface Message {
   text: string;
@@ -46,9 +63,33 @@ const ConversationItem: React.FC<{
   const [isModalVisible, setModalVisible] = useState(false);
   const { user, setNotification, setNotificationR } = useAuth();
   const [expoPushToken, setExpoPushToken] = useState([]);
+  const [lastMessage, setLatMessage] = useState<any>("");
+
+  useEffect(() => {
+    const conversationRef = ref(dbr, `groups/${conversation.id}/messages`);
+
+    onChildAdded(conversationRef, fetchLastMessage);
+    return () => off(conversationRef, "child_added", fetchLastMessage);
+  }, []);
+
+  const fetchLastMessage = async () => {
+    const rtdbPath = `groups/${conversation.id}`;
+    const conversationRef = ref(dbr, rtdbPath);
+    const conversationSnapshot = await get(conversationRef);
+
+    if (conversationSnapshot.exists()) {
+      // const { messages } = conversationSnapshot.val();
+      const { messages } = conversationSnapshot.val();
+      const messagesArray = Object.values(messages);
+      const lastMessage: any = messagesArray[messagesArray.length - 1];
+
+      setLatMessage(lastMessage);
+    }
+  };
 
   useEffect(() => {
     getParticipantsExpoPushToken();
+    fetchLastMessage();
   }, []);
 
   const getParticipantsExpoPushToken = async () => {
@@ -119,6 +160,52 @@ const ConversationItem: React.FC<{
     });
   }
 
+  const getMessageContent = (lastMessage: any) => {
+    const {
+      user,
+      file,
+      audio,
+      image,
+      video,
+      audioRecord,
+      imageRecord,
+      recordedVideo,
+      text,
+    } = lastMessage;
+
+    if (file) return <Ionicons name="attach" size={20} color="skyblue" />;
+    if (audio)
+      return <MaterialIcons name="audiotrack" size={20} color="skyblue" />;
+    if (image) return <Entypo name="image" size={20} color={"skyblue"} />;
+    if (video)
+      return <Foundation name="play-video" size={22} color="skyblue" />;
+    if (audioRecord)
+      return (
+        <MaterialCommunityIcons name="microphone" size={20} color="skyblue" />
+      );
+    if (imageRecord)
+      return <MaterialCommunityIcons name="camera" size={20} color="skyblue" />;
+    if (recordedVideo)
+      return <FontAwesome5 name="video" size={16} color="skyblue" />;
+    if (text) return text.substring(0, 30); // Display the first 30 characters of text messages
+
+    return "Unknown message type";
+  };
+
+  const formattedDate =
+    lastMessage && lastMessage.createdAt
+      ? new Date(lastMessage.createdAt)
+      : new Date();
+
+  const formattedTime = formattedDate.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "short",
+    year: "2-digit",
+    hour12: false,
+  });
+
   return (
     <TouchableOpacity
       onPress={handlePress}
@@ -126,6 +213,10 @@ const ConversationItem: React.FC<{
       onLongPress={toggleModal}
     >
       <Text style={styles.title}>{conversation.name}</Text>
+      {/* <Text style={styles.title}>{lastMessage.createdAt}</Text> */}
+      <Text style={styles.message}>
+        {user.username} sent : {getMessageContent(lastMessage)}
+      </Text>
       <View style={styles.detailsContainer}>
         <MaterialIcons name="people" size={18} color="#555" />
         <FlatList
@@ -134,6 +225,7 @@ const ConversationItem: React.FC<{
           renderItem={({ item }) => <RenderUserInformation sender={item} />}
           horizontal
         />
+        <Text style={styles.date}>Last Message : {formattedTime}</Text>
       </View>
 
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
@@ -187,7 +279,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#fff",
     elevation: 3,
-    shadowColor: "#000",
+    shadowColor: "#aaa",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -198,20 +290,34 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     color: "#333",
   },
-  messageContainer: {
-    flex: 1,
-    flexDirection: "row",
-    marginBottom: 7,
-  },
   message: {
     fontSize: 16,
-    textTransform: "capitalize",
-    marginLeft: 3,
+    color: "#555",
+    marginTop: 0,
+    marginBottom: 12,
   },
   detailsContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     gap: 5,
+  },
+  userInformationContainer: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  userAvatar: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+  },
+  userName: {
+    fontSize: 14,
+    color: "#777",
+  },
+  date: {
+    color: "#888",
+    fontSize: 12,
   },
   modalBackground: {
     flex: 1,
@@ -257,5 +363,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+// ...
 
 export default ConversationItem;
