@@ -15,7 +15,10 @@ import FileLink from "./FilePlayer";
 import { useImage } from "../../../AuthProvider/ImageProvider";
 import FilePlayer from "./FilePlayer";
 import EnlargedImage from "./EnlargedImage";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native-gesture-handler";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
 import { ref, remove, update } from "firebase/database";
 import Reactions from "./Reactions";
@@ -23,8 +26,13 @@ import Reactions from "./Reactions";
 const MessageBubble = ({ message, isSender, conversationId }: any) => {
   const { user } = useAuth();
   const { reaction, setReaction } = useImage();
+  console.log(
+    "🚀 ~ file: MessageBubble.tsx:26 ~ MessageBubble ~ reaction:",
+    reaction
+  );
   const [userData, setUserData] = useState(null);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
+  const [pressedMessage, setPressedMessage] = useState(null); // Added state
 
   const fetchUserData = async () => {
     if (message.user.id) {
@@ -66,6 +74,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
   };
 
   const handleMessage = () => {
+    setPressedMessage(message);
     setReaction(true);
   };
 
@@ -81,7 +90,10 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
   };
 
   return (
-    <View style={{ position: "relative" }}>
+    <TouchableWithoutFeedback
+      style={{ position: "relative" }}
+      onPress={() => setReaction(false)}
+    >
       <View
         style={[
           styles.messageContainer,
@@ -173,7 +185,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
         ) : (
           <Text>{message?.alert} </Text>
         )}
-        {reaction && (
+        {reaction && pressedMessage === message && (
           <View
             style={{
               bottom: -3,
@@ -200,6 +212,8 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
             flexWrap: "wrap",
             position: "relative",
             alignSelf: message.user.id !== user.id ? "flex-start" : "flex-end",
+            top: -16,
+            zIndex: 30,
           }}
           renderItem={({ item }) => (
             <Text
@@ -211,12 +225,11 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                 //     ? 100
                 //     : Dimensions.get("screen").width * 0.8,
 
-                zIndex: 40,
                 fontSize: 16,
                 backgroundColor: "white",
                 borderRadius: 50,
                 elevation: 3,
-                padding: 1,
+                paddingTop: 1,
                 paddingHorizontal: 3,
               }}
             >
@@ -225,7 +238,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
           )}
         />
       )}
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

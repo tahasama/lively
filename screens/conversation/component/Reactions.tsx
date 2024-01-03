@@ -79,7 +79,7 @@ const Reactions = ({ message, conversationId }) => {
         <FlatList
           data={reactions}
           keyExtractor={(item) => item.id.toString()}
-          style={{ flexDirection: "row", gap: 5 }}
+          style={{ flexDirection: "row", gap: 5, zIndex: 40 }}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => handleReactionSelection(item)}>
               <Text style={{ fontSize: 18 }}>{item.emoji}</Text>
