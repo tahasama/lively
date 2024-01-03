@@ -18,12 +18,13 @@ import EnlargedImage from "./EnlargedImage";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useAuth } from "../../../AuthProvider/AuthProvider";
 import { ref, remove, update } from "firebase/database";
+import Reactions from "./Reactions";
 
 const MessageBubble = ({ message, isSender, conversationId }: any) => {
   const { user } = useAuth();
+  const { reaction, setReaction } = useImage();
   const [userData, setUserData] = useState(null);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
-  const [reaction, setReaction] = useState<boolean>(false);
 
   const fetchUserData = async () => {
     if (message.user.id) {
@@ -67,56 +68,6 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
   const handleMessage = () => {
     setReaction(true);
   };
-
-  const removeMessage = async () => {
-    const rtdb = `groups/${conversationId}/messages/${message._id}`;
-    const conversationRef = ref(dbr, rtdb);
-
-    await update(conversationRef, { alert: "This message was removed" });
-    setReaction(false);
-  };
-
-  const handleReactionSelection = async (reaction) => {
-    const rtdb = `groups/${conversationId}/messages/${message._id}`;
-    const conversationRef = ref(dbr, rtdb);
-
-    const existingReactions = message?.reactions ? message.reactions : [];
-
-    // await update(conversationRef, { reaction: reaction });
-    const updatedReactions = [...existingReactions, reaction];
-
-    // Step 3: Update the database with the modified array
-    await update(conversationRef, { reactions: updatedReactions });
-    setReaction(false);
-  };
-
-  const reactions = ["❤️", "😊", "😆", "😲", "😫", "👍", "👎"];
-
-  const reactionMenu = (
-    <View>
-      {/* Common JSX for both sender and receiver */}
-      {/* <Text>Common Content</Text> */}
-
-      {message.user.id === user.id ? (
-        // JSX for sender
-        <TouchableOpacity onPress={removeMessage}>
-          <Text>Remove</Text>
-        </TouchableOpacity>
-      ) : (
-        // JSX for receiver
-        <FlatList
-          data={reactions}
-          keyExtractor={(item) => item}
-          style={{ flexDirection: "row", gap: 5 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleReactionSelection(item)}>
-              <Text style={{ fontSize: 18 }}>{item}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      )}
-    </View>
-  );
 
   return (
     <View style={{ position: "relative" }}>
@@ -224,14 +175,14 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
               elevation: 5,
             }}
           >
-            {reactionMenu}
+            <Reactions message={message} conversationId={conversationId} />
           </View>
         )}
       </View>
       {message?.reactions && (
         <FlatList
           data={message?.reactions}
-          keyExtractor={(item) => item}
+          keyExtractor={(item, index) => index.toString()}
           style={{
             flexDirection: "row",
             gap: -5,
@@ -258,7 +209,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                 paddingHorizontal: 3,
               }}
             >
-              {item}
+              {item.reaction.emoji}
             </Text>
           )}
         />
