@@ -189,7 +189,7 @@ const ConversationItem: React.FC<{
       return <FontAwesome5 name="video" size={16} color="skyblue" />;
     if (text) return text.substring(0, 30); // Display the first 30 characters of text messages
 
-    return "Unknown message type";
+    return "";
   };
 
   const formattedDate =
@@ -214,9 +214,13 @@ const ConversationItem: React.FC<{
     >
       <Text style={styles.title}>{conversation.name}</Text>
       {/* <Text style={styles.title}>{lastMessage.createdAt}</Text> */}
-      <Text style={styles.message}>
-        {user.username} sent : {getMessageContent(lastMessage)}
-      </Text>
+      {lastMessage ? (
+        <Text style={styles.message}>
+          {lastMessage.user.username} sent : {getMessageContent(lastMessage)}
+        </Text>
+      ) : (
+        <Text style={styles.message}></Text>
+      )}
       <View style={styles.detailsContainer}>
         <MaterialIcons name="people" size={18} color="#555" />
         <FlatList
