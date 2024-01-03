@@ -83,10 +83,6 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
   };
 
   const handleCreateGroup = async (item: any) => {
-    console.log(
-      "🚀 ~ file: SearchUser.tsx:86 ~ handleCreateGroup ~ item:",
-      item
-    );
     if (conversationId === "") {
       try {
         // Create a new group in Firestore
@@ -102,10 +98,6 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
         const foundGroup = [];
         querySnapshot.forEach((doc) => {
           foundGroup.push({ id: doc.id, ...doc.data() });
-          console.log(
-            "🚀 ~ file: SearchUser.tsx:100 ~ handleCreateGroup ~ foundGroup:",
-            foundGroup
-          );
         });
 
         if (foundGroup.length === 0) {
@@ -119,10 +111,6 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
               createdAt: serverTimestamp(),
               // Add more group data as needed
             });
-            console.log(
-              "🚀 ~ file: SearchUser.tsx:116 ~ handleCreateGroup ~ newGroupRef:",
-              newGroupRef.id
-            );
 
             // Close the modal
             toggleModal();

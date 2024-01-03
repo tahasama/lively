@@ -71,20 +71,16 @@ const RecordingSounds = () => {
   const startRecording = async () => {
     setStatus(true);
     try {
-      console.log("Requesting permissions..");
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
 
-      console.log("Starting recording..");
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
       setRecording(recording);
-
-      console.log("Recording started");
     } catch (err) {
       console.error("Failed to start recording", err);
     }
@@ -96,14 +92,12 @@ const RecordingSounds = () => {
       toggleModal();
     }, 750);
     try {
-      console.log("Stopping recording..");
       setRecording(undefined);
       await recording.stopAndUnloadAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
       });
       const uri = recording.getURI();
-      console.log("Recording stopped and stored at", uri);
 
       const storageRef = ref(
         storage,
@@ -120,7 +114,6 @@ const RecordingSounds = () => {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload is ${progress}% done`);
           setUploadProgress(progress);
           // You can update the UI to show the progress to the user
         },

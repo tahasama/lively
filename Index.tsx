@@ -46,16 +46,11 @@ const Index = () => {
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification: any) => {
-        console.log(
-          "🚀 ~ file: Notifications.tsx:29 ~ Notifications.addNotificationReceivedListener ~ notification:",
-          notification.request.content.data.conversationId
-        );
         setNotificationR(notification.request.content.data);
       });
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
         setNotification(response.notification.request.content.data);
         setNotificationR(""); //to get back if remove not navigate
       });
@@ -99,19 +94,11 @@ const Index = () => {
           projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID,
         })
       ).data;
-      console.log(token);
-      console.log(
-        "🚀 ~ file: Index.tsx:101 ~ registerForPushNotificationsAsync ~ user && (!user.expoPushToken || user.expoPushToken !== token:",
-        user && (!user.expoPushToken || user.expoPushToken !== token)
-      );
+
       if (user && (!user.expoPushToken || user.expoPushToken !== token)) {
         const userDocRef = doc(db, "users", user.id);
 
         const xxx = await updateDoc(userDocRef, { expoPushToken: token });
-        console.log(
-          "🚀 ~ file: Index.tsx:108 ~ registerForPushNotificationsAsync ~ xxx:",
-          xxx
-        );
       }
     } else {
       alert("Must use physical device for Push Notifications");

@@ -37,7 +37,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
   const { user, setUser, expoPushToken, notification } = useAuth();
-  console.log("🚀 ~ file: Register.tsx:32 ~ user:", user);
 
   const handleRegister = async () => {
     try {

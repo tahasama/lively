@@ -328,10 +328,6 @@ const styles = StyleSheet.create({
 export default MessageBubble;
 
 export const renderUserAvatar = (userData, dimensions) => {
-  console.log(
-    "🚀 ~ file: MessageBubble.tsx:266 ~ renderUserAvatar ~ userData:",
-    userData
-  );
   if (userData && userData.image !== "") {
     return (
       <View style={styles.userAvatarContainer}>

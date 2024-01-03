@@ -86,7 +86,6 @@ interface ConversationScreenProps {
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const { conversationId, title, participants } = route.params;
-  console.log("🚀 ~ file: Conversation.tsx:86 ~ 44444:", route);
   const navigation = useNavigation<any>();
   const {
     user,
@@ -118,26 +117,16 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   const [showImagePicker, setShowImagePicker] = useState(false);
   const chatRef = useRef<FlatList<IMessage> | null>(null);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  console.log("🚀 ~ file: Conversation.tsx:102 ~ messages:", messages);
   const [isRefreshing, setRefreshing] = useState(false);
   const [goDowns, setGoDown] = useState(true);
   const [loading, setLoading] = useState(true);
   const [disableButton, setDisableButton] = useState(false);
   const [showPullMessage, setShowPullMessage] = useState(true);
   const [usersPushToken, setUsersPushToken] = useState<string[]>([]);
-  console.log("🚀 ~ file: Conversation.tsx:120 ~ usersPushToken:", messages);
 
   const conversationRef = ref(dbr, `groups/${conversationId}/messages`);
-  console.log(
-    "🚀 ~ file: Conversation.tsx:173 ~ useEffect ~ conversationId:",
-    conversationId
-  );
 
   useEffect(() => {
-    console.log(
-      "🚀 ~ file: Conversation.tsx:140 ~ useEffect ~ notification.conversationId === conversationId :",
-      notificationR
-    );
     notification &&
       notification.type === "message" &&
       notification.conversationId !== conversationId &&

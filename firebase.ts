@@ -15,9 +15,6 @@ import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 
-const yo = process.env.EXPO_PUBLIC_YO;
-console.log("🚀 ~ file: firebase.ts:19 ~ yo:", yo);
-
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_API_KEY,
   authDomain: process.env.EXPO_PUBLIC_AUTH_DOMAIN,

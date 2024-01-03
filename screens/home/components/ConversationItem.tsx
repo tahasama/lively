@@ -46,10 +46,6 @@ const ConversationItem: React.FC<{
   const [isModalVisible, setModalVisible] = useState(false);
   const { user, setNotification, setNotificationR } = useAuth();
   const [expoPushToken, setExpoPushToken] = useState([]);
-  console.log(
-    "🚀 ~ file: ConversationItem.tsx:48 ~ expoPushToken:",
-    expoPushToken
-  );
 
   useEffect(() => {
     getParticipantsExpoPushToken();
@@ -75,10 +71,7 @@ const ConversationItem: React.FC<{
 
   const handlePress = () => {
     // Navigate to the ConversationScreen with the conversation details
-    console.log(
-      "🚀 ~ file: ConversationItem.tsx:84 ~ handlePress ~ conversation.id:",
-      conversation
-    );
+
     navigation.navigate("Conversation", {
       conversationId: conversation.id,
       title: conversation.name,

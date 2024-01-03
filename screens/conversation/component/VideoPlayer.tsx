@@ -11,10 +11,6 @@ import { Video } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
 
 const VideoPlayer = ({ source, thumbnail }) => {
-  console.log(
-    "🚀 ~ file: VideoPlayer.tsx:14 ~ VideoPlayer ~ thumbnail:",
-    thumbnail
-  );
   const handlePlay = async () => {
     // Check if the URL is valid before attempting to open it
     if (Linking.canOpenURL(source)) {

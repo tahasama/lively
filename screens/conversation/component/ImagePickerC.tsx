@@ -18,7 +18,6 @@ import RecordingSounds from "./RecordingSounds";
 import CameraUsage from "./CameraUsage";
 import VideoRecorder from "./VideoRecorder";
 const ImagePickerC = ({ type, size, color }) => {
-  console.log("🚀 ~ file: ImagePickerC.tsx:18 ~ ImagePickerC ~ type:", type);
   const { user } = useAuth();
   const {
     image,
@@ -86,7 +85,6 @@ const ImagePickerC = ({ type, size, color }) => {
           (snapshot) => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log(`Upload is ${progress}% done`);
             setUploadProgress(progress);
             // You can update the UI to show the progress to the user
           },

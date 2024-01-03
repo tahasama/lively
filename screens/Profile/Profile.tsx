@@ -24,7 +24,6 @@ import { useNavigation } from "@react-navigation/native";
 const Profile: React.FC = () => {
   const { user, setUser, converations } = useAuth();
   const { image, setImage } = useImage();
-  console.log("🚀 ~ file: Profile.tsx:27 ~ image0000000000000:", image);
   const [isModalVisible, setModalVisible] = useState(false);
   const [newUsername, setNewUsername] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -46,7 +45,6 @@ const Profile: React.FC = () => {
         updatedData.image = image;
       }
 
-      console.log("🚀 ~ file: Profile.tsx:55 ~ handleUpdate ~ user:", user.id);
       if (Object.keys(updatedData).length > 0) {
         await updateDoc(doc(db, "users", user.id), updatedData);
       }

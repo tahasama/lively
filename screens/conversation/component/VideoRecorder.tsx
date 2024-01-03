@@ -28,10 +28,7 @@ const VideoRecorder = () => {
   const [type, setType] = useState(CameraType.back);
 
   const { recordedVideo, setRecordedVideo } = useImage();
-  console.log(
-    "🚀 ~ file: VideoRecorder.tsx:36 ~ VideoRecorder ~ recordedVideo:",
-    recordedVideo
-  );
+
   const [isModalVisible, setModalVisible] = useState(false);
 
   const cameraRef = useRef(null);
@@ -61,7 +58,6 @@ const VideoRecorder = () => {
           (snapshot) => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log(`Upload is ${progress}% done`);
             setUploadProgress(progress);
             // You can update the UI to show the progress to the user
           },

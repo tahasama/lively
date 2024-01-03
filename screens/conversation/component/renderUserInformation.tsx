@@ -9,15 +9,8 @@ import { renderUserAvatar } from "./MessageBubble";
 const RenderUserInformation = ({ sender }: any) => {
   // Fetch user information using the sender ID
   const { user } = useAuth();
-  console.log(
-    "🚀 ~ file: renderUserInformation.tsx:12 ~ RenderUserInformation ~ user:",
-    user
-  );
+
   const [userData, setUserData] = useState(null);
-  console.log(
-    "🚀 ~ file: renderUserInformation.tsx:17 ~ RenderUserInformation ~ userData:",
-    userData
-  );
 
   useEffect(() => {
     const fetchUserData = async () => {

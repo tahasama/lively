@@ -6,10 +6,6 @@ import { useNavigation } from "@react-navigation/native";
 
 const AddUsers = ({ route }) => {
   const { conversationId, title } = route.params;
-  console.log(
-    "🚀 ~ file: AddUsers.tsx:9 ~ AddUsers ~ route.params:",
-    route.params
-  );
 
   const navigation = useNavigation();
   const handleHeaderButtonPress = () => {

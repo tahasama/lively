@@ -99,9 +99,7 @@ function CameraUsage() {
   };
 
   const openCameraModal = () => {
-    console.log("clicked");
     setModalVisible(true);
-    console.log("clicked2");
   };
 
   const closeCameraModal = () => {
