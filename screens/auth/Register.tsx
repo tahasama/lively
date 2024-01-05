@@ -82,7 +82,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
       });
 
       const xx = await signInWithEmailAndPassword(auth, email, password);
-      console.log("🚀 ~ file: Register.tsx:85 ~ handleRegister ~ xx:", xx);
       // setUser(xx);
       // AsyncStorage.setItem("userData", JSON.stringify(xx));
       setTimeout(() => {
