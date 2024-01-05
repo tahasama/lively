@@ -23,6 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  console.log("🚀 ~ file: AuthProvider.tsx:26 ~ user:", user);
   const [expoPushToken, setExpoPushToken] = useState<string[]>([]);
   const [notification, setNotification] = useState<any>(false);
   const [notificationR, setNotificationR] = useState<any>(false);
@@ -53,6 +54,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
               // Use a callback when setting the user data to handle async behavior
               setUser(foundUsers[0]);
+              console.log(
+                "🚀 ~ file: AuthProvider.tsx:57 ~ unsubscribe ~ foundUsers[0]:",
+                foundUsers[0]
+              );
               await AsyncStorage.setItem(
                 "userData",
                 JSON.stringify(foundUsers[0])

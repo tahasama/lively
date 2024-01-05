@@ -75,14 +75,15 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
       await addDoc(usersCollection, {
         uid: userCredential.user.uid,
         username: username,
-        timestamp: serverTimestamp(),
+        timestamp: new Date(),
         image: "",
         email: email,
         expoPushToken: expoPushToken,
       });
 
       const xx = await signInWithEmailAndPassword(auth, email, password);
-      setUser(xx);
+      console.log("🚀 ~ file: Register.tsx:85 ~ handleRegister ~ xx:", xx);
+      // setUser(xx);
       // AsyncStorage.setItem("userData", JSON.stringify(xx));
       setTimeout(() => {
         navigation.navigate("Home");

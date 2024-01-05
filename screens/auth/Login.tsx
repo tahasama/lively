@@ -31,7 +31,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       const xx = await signInWithEmailAndPassword(auth, email, password);
-      setUser(xx);
+      // setUser(xx);
       // AsyncStorage.setItem("userData", JSON.stringify(xx));
       setTimeout(() => {
         navigation.navigate("Home");
