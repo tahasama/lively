@@ -66,14 +66,14 @@ const ConversationItem: React.FC<{
   const [lastMessage, setLatMessage] = useState<any>("");
 
   useEffect(() => {
-    const conversationRef = ref(dbr, `groups/${conversation.id}/messages`);
+    const conversationRef = ref(dbr, `groups/${conversation?.id}/messages`);
 
     onChildAdded(conversationRef, fetchLastMessage);
     return () => off(conversationRef, "child_added", fetchLastMessage);
   }, []);
 
   const fetchLastMessage = async () => {
-    const rtdbPath = `groups/${conversation.id}`;
+    const rtdbPath = `groups/${conversation?.id}`;
     const conversationRef = ref(dbr, rtdbPath);
     const conversationSnapshot = await get(conversationRef);
 
@@ -114,7 +114,7 @@ const ConversationItem: React.FC<{
     // Navigate to the ConversationScreen with the conversation details
 
     navigation.navigate("Conversation", {
-      conversationId: conversation.id,
+      conversationId: conversation?.id,
       title: conversation.name,
       participants: conversation.users,
     });
@@ -127,11 +127,11 @@ const ConversationItem: React.FC<{
   const removeDiscussion = async () => {
     // Delete from Firestore
 
-    const firestoreRef = doc(db, "groups", conversation.id);
+    const firestoreRef = doc(db, "groups", conversation?.id);
     await deleteDoc(firestoreRef);
 
     // Delete from Realtime Database
-    const rtdb = `groups/${conversation.id}`;
+    const rtdb = `groups/${conversation?.id}`;
     const conversationRef = ref(dbr, rtdb);
 
     await remove(conversationRef);
@@ -154,7 +154,7 @@ const ConversationItem: React.FC<{
         title: `There has been an update in your list`,
         body: `Press notification or pull down in your conversations list to update`,
 
-        data: { conversationId: conversation.id, type: "remove" },
+        data: { conversationId: conversation?.id, type: "remove" },
         // channelId: "vvv",
       }),
     });
@@ -209,13 +209,25 @@ const ConversationItem: React.FC<{
   return (
     <TouchableOpacity
       onPress={handlePress}
-      style={styles.conversationContainer}
+      style={[
+        styles.conversationContainer,
+        {
+          backgroundColor: lastMessage.status !== "read" ? "#D1E0F0" : "white",
+        },
+      ]}
       onLongPress={toggleModal}
     >
       <Text style={styles.title}>{conversation.name}</Text>
       {/* <Text style={styles.title}>{lastMessage.createdAt}</Text> */}
-      {lastMessage ? (
-        <Text style={styles.message}>
+      {lastMessage && lastMessage.user ? (
+        <Text
+          style={[
+            styles.message,
+            {
+              fontWeight: lastMessage.status !== "read" ? "700" : "400",
+            },
+          ]}
+        >
           {lastMessage.user.username} sent : {getMessageContent(lastMessage)}
         </Text>
       ) : (

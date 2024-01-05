@@ -57,6 +57,20 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
     fetchUserData();
   }, [message.userId]);
 
+  useEffect(() => {
+    const updateStatus = async () => {
+      const conversationRef = ref(
+        dbr,
+        `groups/${conversationId}/messages/${message._id}`
+      );
+
+      // Update only the status field
+      await update(conversationRef, { status: "read" });
+    };
+
+    updateStatus();
+  }, []);
+
   const formatTimestamp = (timestamp) => {
     // Implement your timestamp formatting logic here
     return new Date(timestamp).toLocaleTimeString([], {

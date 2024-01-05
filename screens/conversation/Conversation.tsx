@@ -195,7 +195,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
   const getParticipantsExpoPushToken = () => {
     const restOfParticipants = participants?.filter(
-      (participant) => participant !== user.id
+      (participant) => participant !== user?.id
     );
     restOfParticipants?.map(async (participant: any) => {
       try {
@@ -283,6 +283,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           recordedVideo: recordedVideo ? recordedVideo : "",
           thumnail: thumbnail,
           alert: "",
+          status: "sent",
         };
 
         await set(newMessageRef, updatedMessage);
@@ -367,6 +368,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           </Text>
         </View>
       )}
+      {/* {messages && ( */}
       <FlatList
         ref={chatRef}
         data={messages}
@@ -374,7 +376,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         renderItem={({ item, index }) => (
           <MessageBubble
             message={item}
-            isSender={item.user.id === user.id}
+            isSender={item?.user?.id === user?.id}
             conversationId={conversationId}
           />
         )}
@@ -385,10 +387,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         // onStartReached={() => setShowPullMessage(true)}
         // onEndReached={() => setShowPullMessage(false)}
         onEndReachedThreshold={0.1}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-        }
+        // refreshControl={
+        //   <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        // }
       />
+      {/* )} */}
 
       <View style={styles.inputContainer}>
         <TouchableOpacity onPress={handleImagePickerToggle}>
