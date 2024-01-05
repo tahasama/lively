@@ -212,7 +212,10 @@ const ConversationItem: React.FC<{
       style={[
         styles.conversationContainer,
         {
-          backgroundColor: lastMessage.status !== "read" ? "#D1E0F0" : "white",
+          backgroundColor:
+            lastMessage.user !== user.id && lastMessage.status !== "read"
+              ? "#D1E0F0"
+              : "white",
         },
       ]}
       onLongPress={toggleModal}
@@ -224,7 +227,10 @@ const ConversationItem: React.FC<{
           style={[
             styles.message,
             {
-              fontWeight: lastMessage.status !== "read" ? "700" : "400",
+              fontWeight:
+                lastMessage.user !== user.id && lastMessage.status !== "read"
+                  ? "700"
+                  : "400",
             },
           ]}
         >
