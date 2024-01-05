@@ -74,8 +74,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     // Invoke the async function inside useEffect
-    fetchData();
-  }, []);
+    !user && fetchData();
+  }, [user]);
 
   return (
     <AuthContext.Provider
