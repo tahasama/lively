@@ -13,10 +13,9 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth, db } from "../../firebase";
+import { auth } from "../../firebase";
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { doc, updateDoc } from "firebase/firestore";
 
 interface LoginScreenProps {
   navigation: any;
@@ -27,24 +26,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user, setUser, expoPushToken } = useAuth();
+  const { user, setUser } = useAuth();
 
   const handleLogin = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user: any = userCredential.user;
-      console.log("🚀 ~ file: Login.tsx:40 ~ handleLogin ~ user:", user.uid);
-
-      // Update the user's data in your database with the new push token
-      const userDocRef = doc(db, "users", user.id);
-
-      await updateDoc(userDocRef, { expoPushToken: expoPushToken });
-
-      // Navigate to the Home screen after successful login
+      const xx = await signInWithEmailAndPassword(auth, email, password);
+      // setUser(xx);
+      // AsyncStorage.setItem("userData", JSON.stringify(xx));
       setTimeout(() => {
         navigation.navigate("Home");
       }, 1500);
