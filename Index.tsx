@@ -111,7 +111,7 @@ const Index = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
-        {!user ? (
+        {!user || user === null ? (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
