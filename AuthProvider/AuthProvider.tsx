@@ -1,7 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth, db } from "../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AuthContextType {
@@ -23,7 +30,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  console.log("🚀 ~ file: AuthProvider.tsx:26 ~ user:", user);
   const [expoPushToken, setExpoPushToken] = useState<string[]>([]);
   const [notification, setNotification] = useState<any>(false);
   const [notificationR, setNotificationR] = useState<any>(false);
@@ -48,20 +54,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               const querySnapshot = await getDocs(q);
 
               const foundUsers = [];
-              querySnapshot.forEach((doc) => {
-                foundUsers.push({ id: doc.id, ...doc.data() });
-              });
+              querySnapshot.forEach(async (docs) => {
+                // Update the expoPushToken field in the user data
+                const updatedUser: any = {
+                  id: docs.id,
+                  ...docs.data(),
+                  expoPushToken: expoPushToken,
+                };
+                foundUsers.push(updatedUser);
 
-              // Use a callback when setting the user data to handle async behavior
-              setUser(foundUsers[0]);
-              console.log(
-                "🚀 ~ file: AuthProvider.tsx:57 ~ unsubscribe ~ foundUsers[0]:",
-                foundUsers[0]
-              );
-              await AsyncStorage.setItem(
-                "userData",
-                JSON.stringify(foundUsers[0])
-              );
+                // Update the expoPushToken field in Firestore
+                const userDocRef = doc(db, "users", docs.id);
+                updatedUser?.expoPushToken !== expoPushToken &&
+                  (await updateDoc(userDocRef, {
+                    expoPushToken: expoPushToken,
+                  }));
+
+                // Use a callback when setting the user data to handle async behavior
+                setUser(updatedUser);
+                await AsyncStorage.setItem(
+                  "userData",
+                  JSON.stringify(updatedUser)
+                );
+              });
             }
 
             return () => unsubscribe();

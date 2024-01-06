@@ -68,7 +68,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
       await update(conversationRef, { status: "read" });
     };
 
-    updateStatus();
+    message.user.id !== user.id && updateStatus();
   }, []);
 
   const formatTimestamp = (timestamp) => {

@@ -40,9 +40,10 @@ const Index = () => {
   const responseListener = useRef<any>();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
+    registerForPushNotificationsAsync().then((token) => {
+      console.log("🚀 ~ file: Index.tsx:65 ~ useEffect ~ token:", token);
+      return setExpoPushToken(token);
+    });
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification: any) => {

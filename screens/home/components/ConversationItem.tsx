@@ -20,6 +20,7 @@ import {
   get,
   off,
   onChildAdded,
+  onChildChanged,
   onValue,
   push,
   ref,
@@ -54,22 +55,25 @@ const ConversationItem: React.FC<{
   conversation: Conversation;
   navigation: any;
 }> = ({ conversation, navigation }) => {
-  const latestMessage =
-    conversation.messages.length > 0
-      ? conversation.messages[conversation.messages.length - 1]
-      : "";
-
   const [senderName, setSenderName] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
   const { user, setNotification, setNotificationR } = useAuth();
   const [expoPushToken, setExpoPushToken] = useState([]);
   const [lastMessage, setLatMessage] = useState<any>("");
+  console.log(
+    "🚀 ~ file: ConversationItem.tsx:243 ~ lastMessage.user.id !== user.id:",
+    lastMessage && lastMessage.user.id !== user.id ? "yes" : "no"
+  );
 
   useEffect(() => {
     const conversationRef = ref(dbr, `groups/${conversation?.id}/messages`);
 
     onChildAdded(conversationRef, fetchLastMessage);
-    return () => off(conversationRef, "child_added", fetchLastMessage);
+    onChildChanged(conversationRef, fetchLastMessage);
+    return () => {
+      off(conversationRef, "child_added", fetchLastMessage);
+      off(conversationRef, "child_changed", fetchLastMessage);
+    };
   }, []);
 
   const fetchLastMessage = async () => {
@@ -213,7 +217,10 @@ const ConversationItem: React.FC<{
         styles.conversationContainer,
         {
           backgroundColor:
-            lastMessage.user !== user.id && lastMessage.status !== "read"
+            lastMessage &&
+            lastMessage.user &&
+            lastMessage.user.id !== user.id &&
+            lastMessage.status !== "read"
               ? "#D1E0F0"
               : "white",
         },
@@ -228,7 +235,10 @@ const ConversationItem: React.FC<{
             styles.message,
             {
               fontWeight:
-                lastMessage.user !== user.id && lastMessage.status !== "read"
+                lastMessage &&
+                lastMessage.user &&
+                lastMessage.user.id !== user.id &&
+                lastMessage.status !== "read"
                   ? "700"
                   : "400",
             },
