@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -22,7 +22,7 @@ import { db } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
 
 const Profile: React.FC = () => {
-  const { user, setUser, converations } = useAuth();
+  const { user, setUser, converations, expoPushToken } = useAuth();
   const { image, setImage } = useImage();
   const [isModalVisible, setModalVisible] = useState(false);
   const [newUsername, setNewUsername] = useState("");
@@ -31,6 +31,14 @@ const Profile: React.FC = () => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+
+  useEffect(() => {
+    const updateToken = async () => {
+      const userDocRef = doc(db, "users", user.id);
+      await updateDoc(userDocRef, { expoPushToken: expoPushToken });
+    };
+    expoPushToken !== "" && updateToken();
+  }, []);
 
   const handleUpdate = async () => {
     try {

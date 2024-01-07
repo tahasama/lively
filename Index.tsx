@@ -40,7 +40,7 @@ const Index = () => {
   const responseListener = useRef<any>();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => {
+    registerForPushNotificationsAsync().then(async (token) => {
       console.log("🚀 ~ file: Index.tsx:65 ~ useEffect ~ token:", token);
       return setExpoPushToken(token);
     });
@@ -96,11 +96,15 @@ const Index = () => {
         })
       ).data;
 
-      if (user && (!user.expoPushToken || user.expoPushToken !== token)) {
-        const userDocRef = doc(db, "users", user.id);
+      // if (user && (!user.expoPushToken || user.expoPushToken !== token)) {
+      //   console.log(
+      //     "🚀 ~ file: Index.tsx:100 ~ registerForPushNotificationsAsync ~ token:",
+      //     token
+      //   );
+      //   const userDocRef = doc(db, "users", user.id);
 
-        const xxx = await updateDoc(userDocRef, { expoPushToken: token });
-      }
+      //   const xxx = await updateDoc(userDocRef, { expoPushToken: token });
+      // }
     } else {
       alert("Must use physical device for Push Notifications");
     }
