@@ -38,7 +38,7 @@ const Profile: React.FC = () => {
       await updateDoc(userDocRef, { expoPushToken: expoPushToken });
     };
     expoPushToken !== "" && updateToken();
-  }, []);
+  }, [expoPushToken]);
 
   const handleUpdate = async () => {
     try {
