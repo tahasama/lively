@@ -26,10 +26,6 @@ import Reactions from "./Reactions";
 const MessageBubble = ({ message, isSender, conversationId }: any) => {
   const { user } = useAuth();
   const { reaction, setReaction } = useImage();
-  console.log(
-    "🚀 ~ file: MessageBubble.tsx:26 ~ MessageBubble ~ reaction:",
-    reaction
-  );
   const [userData, setUserData] = useState(null);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const [pressedMessage, setPressedMessage] = useState(null); // Added state

@@ -23,7 +23,6 @@ import { useNavigation } from "@react-navigation/native";
 
 const Profile: React.FC = () => {
   const { user, setUser, converations } = useAuth();
-  console.log("🚀 ~ file: Profile.tsx:26 ~ user:", user);
   const { image, setImage } = useImage();
   const [isModalVisible, setModalVisible] = useState(false);
   const [newUsername, setNewUsername] = useState("");
