@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "673209507632",
+    "firebase_url": "https://lively-5824e-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "lively-5824e",
+    "storage_bucket": "lively-5824e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673209507632:android:446f83abe69d59aba632f5",
+        "android_client_info": {
+          "package_name": "com.tahasama.lively"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "673209507632-3agnarihke4d9t5t16tlbe0pej6gi60s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tahasama.lively",
+            "certificate_hash": "deff15b2e1679fac8ea212abed3990b341657996"
+          }
+        },
+        {
+          "client_id": "673209507632-1qj5eafsjp4onk1h7bebufual7l5s004.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCodVVuyIbHgYjagMpHf0vwst35Qv-IYlk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "673209507632-1qj5eafsjp4onk1h7bebufual7l5s004.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

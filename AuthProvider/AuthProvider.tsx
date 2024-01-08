@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [expoPushToken, setExpoPushToken] = useState<string[]>([]);
+  const [expoPushToken, setExpoPushToken] = useState<any>("");
   const [notification, setNotification] = useState<any>(false);
   const [notificationR, setNotificationR] = useState<any>(false);
   const [converations, setConverations] = useState<any[]>([]);
@@ -59,13 +59,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 const updatedUser: any = {
                   id: docs.id,
                   ...docs.data(),
-                  expoPushToken: expoPushToken,
                 };
                 foundUsers.push(updatedUser);
 
                 // Update the expoPushToken field in Firestore
                 const userDocRef = doc(db, "users", docs.id);
-                updatedUser?.expoPushToken !== expoPushToken &&
+                expoPushToken !== "" &&
+                  updatedUser?.expoPushToken !== expoPushToken &&
                   (await updateDoc(userDocRef, {
                     expoPushToken: expoPushToken,
                   }));
