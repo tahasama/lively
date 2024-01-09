@@ -50,7 +50,8 @@
       },
       "package": "com.tahasama.lively",
       "versionCode": 21,
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -65,6 +66,8 @@
     },
     "updates": {
       "url": "https://u.expo.dev/bdc93857-b5ca-43a2-8da0-de853cfbc056"
-    }
+    },
+    "owner": "tahasama",
+    "scheme": "com.tahasama.lively"
   }
 }
