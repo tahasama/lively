@@ -24,6 +24,7 @@ const firebaseConfig = {
   storageBucket: "lively-5824e.appspot.com",
   messagingSenderId: "673209507632",
   appId: "1:673209507632:web:c92a39a69f1df730a632f5",
+  measurementId: "G-PJ05DR689Z",
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

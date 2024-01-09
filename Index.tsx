@@ -92,7 +92,7 @@ const Index = () => {
       // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
       token = (
         await Notifications.getExpoPushTokenAsync({
-          projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID,
+          projectId: "bdc93857-b5ca-43a2-8da0-de853cfbc056",
         })
       ).data;
 

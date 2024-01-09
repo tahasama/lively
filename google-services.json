@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "673209507632-3agnarihke4d9t5t16tlbe0pej6gi60s.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.tahasama.lively",
-            "certificate_hash": "deff15b2e1679fac8ea212abed3990b341657996"
-          }
-        },
-        {
           "client_id": "673209507632-1qj5eafsjp4onk1h7bebufual7l5s004.apps.googleusercontent.com",
           "client_type": 3
         }
