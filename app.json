@@ -2,7 +2,7 @@
   "expo": {
     "name": "lively",
     "slug": "lively",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -21,7 +21,7 @@
       [
         "expo-updates",
         {
-          "username": "tahasama"
+          "username": "tahakun"
         }
       ],
       [
@@ -48,17 +48,21 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.tahasama.lively",
-      "versionCode": 22,
+      "package": "com.tahakun.lively",
+      "versionCode": 23,
       "googleServicesFile": "./google-services.json",
-      "useNextNotificationsApi": true
+      "useNextNotificationsApi": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "bdc93857-b5ca-43a2-8da0-de853cfbc056"
+        "projectId": "085f72ec-c7b9-4fc1-af23-54c7f7fb064b"
       }
     },
     "runtimeVersion": {
@@ -67,7 +71,7 @@
     "updates": {
       "url": "https://u.expo.dev/bdc93857-b5ca-43a2-8da0-de853cfbc056"
     },
-    "owner": "tahasama",
-    "scheme": "com.tahasama.lively"
+    "owner": "tahakun",
+    "scheme": "com.tahakun.lively"
   }
 }
