@@ -13,9 +13,9 @@ import {
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "../../../firebase";
+import { db } from "../../firebase";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 
 const CreateGroup = () => {
   const { user, setNotification, setNotificationR } = useAuth();

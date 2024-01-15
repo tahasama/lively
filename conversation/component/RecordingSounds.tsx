@@ -12,9 +12,9 @@ import {
 import { Audio } from "expo-av";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Import Firebase storage functions
-import { useAuth } from "../../../AuthProvider/AuthProvider";
-import { useImage } from "../../../AuthProvider/ImageProvider";
-import { storage } from "../../../firebase";
+import { useAuth } from "../../AuthProvider/AuthProvider";
+import { useImage } from "../../AuthProvider/ImageProvider";
+import { storage } from "../../firebase";
 
 const RecordingSounds = () => {
   const { user } = useAuth();

@@ -12,8 +12,8 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../../../firebase";
-import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { storage } from "../../firebase";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 
 import {
   Foundation,
@@ -24,7 +24,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 
-import { useImage } from "../../../AuthProvider/ImageProvider";
+import { useImage } from "../../AuthProvider/ImageProvider";
 import RecordingSounds from "./RecordingSounds";
 import VideoRecorder from "./VideoRecorder";
 import { Camera, CameraType } from "expo-camera";

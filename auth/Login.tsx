@@ -13,9 +13,10 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../../firebase";
-import { useAuth } from "../../AuthProvider/AuthProvider";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "../AuthProvider/AuthProvider";
+import { auth } from "../firebase";
 
 interface LoginScreenProps {
   navigation: any;

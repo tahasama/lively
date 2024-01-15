@@ -1,11 +1,11 @@
 import { signOut } from "firebase/auth";
-import { auth } from "../../firebase";
 import { TouchableOpacity, Text } from "react-native";
 import React from "react";
 import { Feather, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useAuth } from "../../AuthProvider/AuthProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "../AuthProvider/AuthProvider";
+import { auth } from "../firebase";
 
 // interface LogoutScreenProps {
 //   navigation: any;

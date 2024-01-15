@@ -12,10 +12,10 @@ import {
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useImage } from "../../../AuthProvider/ImageProvider";
+import { useImage } from "../../AuthProvider/ImageProvider";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../../../firebase";
-import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { storage } from "../../firebase";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 import { Audio } from "expo-av";
 
 const VideoRecorder = () => {
@@ -133,40 +133,47 @@ const VideoRecorder = () => {
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.9)" />
 
           <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              padding: 20,
-              position: "absolute",
-              bottom: 0,
-              width: "100%",
-              backgroundColor: "rgba(255, 255, 255, 0.8)", // Lighter background color
-            }}
+            style={[
+              styles.modalContainer,
+              {
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            ]}
           >
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={toggleRecording}
+            <Text
+              style={{
+                textAlign: "center",
+                color: "white",
+                fontSize: 18,
+                marginHorizontal: 5,
+              }}
             >
-              <FontAwesome5
-                name={isRecording ? "stop" : "video"}
-                size={24}
-                color={isRecording ? "red" : "black"}
+              We need your permission to access the camera
+            </Text>
+            <View
+              style={{
+                maxWidth: "50%",
+                // alignItems: "center",
+                justifyContent: "center",
+                gap: 30,
+                marginTop: 40,
+                // borderRadius: 50,
+              }}
+            >
+              <Button
+                onPress={() => {
+                  requestPermission();
+                  requestPermissionAudio();
+                }}
+                title="Grant Permission"
               />
-            </TouchableOpacity>
-            {recordedVideo ? (
-              <TouchableOpacity
-                style={styles.iconButton}
+              <Button
                 onPress={closeVideoRecorderModal}
-              >
-                <FontAwesome5 name="check" size={24} color="black" />
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.iconButton}>
-                <TouchableOpacity onPress={closeVideoRecorderModal}>
-                  <FontAwesome5 name="times" size={24} color="black" />
-                </TouchableOpacity>
-              </View>
-            )}
+                title="Close"
+                color={"purple"}
+              />
+            </View>
           </View>
         </Modal>
         <TouchableOpacity onPress={openVideoRecorderModal}>
@@ -249,5 +256,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     minWidth: 55,
+  },
+  modalContainer: {
+    flex: 1,
+    // position: "relative",
+    // height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 1)",
+
+    // bottom: 0,
+    // justifyContent: "flex-end", // Align content at the bottom
   },
 });

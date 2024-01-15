@@ -8,18 +8,18 @@ import {
   FlatList,
 } from "react-native";
 import { collection, doc, getDoc } from "firebase/firestore"; // Import Firebase Firestore functions
-import { db, dbr } from "../../../firebase";
+import { db, dbr } from "../../firebase";
 import VideoPlayer from "./VideoPlayer";
 import AudioPlayer from "./AudioPlayer";
 import FileLink from "./FilePlayer";
-import { useImage } from "../../../AuthProvider/ImageProvider";
+import { useImage } from "../../AuthProvider/ImageProvider";
 import FilePlayer from "./FilePlayer";
 import EnlargedImage from "./EnlargedImage";
 import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
-import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 import { ref, remove, update } from "firebase/database";
 import Reactions from "./Reactions";
 

@@ -1,116 +1,20 @@
+import React, { useState, useEffect, useRef } from "react";
+import { Text, View, Button, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { StatusBar } from "expo-status-bar";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import LoginScreen from "./screens/auth/Login";
-import RegisterScreen from "./screens/auth/Register";
-import HomeScreen from "./screens/home/Home";
-import { auth, db } from "./firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import ConversationScreen from "./screens/conversation/Conversation";
 import { useAuth } from "./AuthProvider/AuthProvider";
-import AddUsers from "./screens/conversation/component/AddUsers";
-import LogOut from "./screens/auth/LogOut";
-import { useState, useEffect, useRef } from "react";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
-import { doc, updateDoc } from "firebase/firestore";
-import Profile from "./screens/Profile/Profile";
+import RegisterScreen from "./auth/Register";
+import LoginScreen from "./auth/Login";
+import { createStackNavigator as createStackNav } from "@react-navigation/stack";
+import LogOut from "./auth/LogOut";
+import Profile from "./Profile/Profile";
+import HomeScreen from "./home/Home";
+import ConversationScreen from "./conversation/Conversation";
+import AddUsers from "./conversation/component/AddUsers";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: true,
-  }),
-});
-
-const Stack = createStackNavigator();
+const Stack = createStackNav();
 
 const Index = () => {
   const { user } = useAuth();
-  const { setExpoPushToken, setNotification, setNotificationR } = useAuth();
-  const notificationListener = useRef<any>();
-  const responseListener = useRef<any>();
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then(async (token) => {
-      console.log("🚀 ~ file: Index.tsx:65 ~ useEffect ~ token:", token);
-      return setExpoPushToken(token);
-    });
-
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification: any) => {
-        setNotificationR(notification.request.content.data);
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        setNotification(response.notification.request.content.data);
-        setNotificationR(""); //to get back if remove not navigate
-      });
-
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
-  async function registerForPushNotificationsAsync() {
-    let token;
-
-    if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("default", {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
-      });
-    }
-
-    if (Device.isDevice) {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== "granted") {
-        alert("Failed to get push token for push notification!");
-        return;
-      }
-      // Learn more about projectId:
-      // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-      token = (
-        await Notifications.getExpoPushTokenAsync({
-          projectId: "bdc93857-b5ca-43a2-8da0-de853cfbc056",
-        })
-      ).data;
-
-      // if (user && (!user.expoPushToken || user.expoPushToken !== token)) {
-      //   console.log(
-      //     "🚀 ~ file: Index.tsx:100 ~ registerForPushNotificationsAsync ~ token:",
-      //     token
-      //   );
-      //   const userDocRef = doc(db, "users", user.id);
-
-      //   const xxx = await updateDoc(userDocRef, { expoPushToken: token });
-      // }
-    } else {
-      alert("Must use physical device for Push Notifications");
-    }
-
-    return token;
-  }
 
   return (
     <NavigationContainer>
@@ -161,3 +65,6 @@ const Index = () => {
 };
 
 export default Index;
+function createStackNavigator() {
+  throw new Error("Function not implemented.");
+}

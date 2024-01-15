@@ -1,9 +1,9 @@
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
-import { db, dbr } from "../../../firebase";
+import { db, dbr } from "../../firebase";
 import { ref, set } from "firebase/database";
-import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 import { renderUserAvatar } from "./MessageBubble";
 
 const RenderUserInformation = ({ sender }: any) => {

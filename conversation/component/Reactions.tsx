@@ -1,9 +1,9 @@
 import { ref, update } from "firebase/database";
 import React from "react";
 import { TouchableOpacity, View, Text, FlatList } from "react-native";
-import { dbr } from "../../../firebase";
-import { useImage } from "../../../AuthProvider/ImageProvider";
-import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { dbr } from "../../firebase";
+import { useImage } from "../../AuthProvider/ImageProvider";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 
 const Reactions = ({ message, conversationId }) => {
   const { reaction, setReaction } = useImage();

@@ -12,14 +12,12 @@ import {
   Button,
 } from "react-native";
 import { Feather } from "@expo/vector-icons"; // Assuming you're using expo vector icons
-import { useAuth } from "../../AuthProvider/AuthProvider";
-import { renderUserAvatar } from "../conversation/component/MessageBubble";
-import RenderUserInformation from "../conversation/component/renderUserInformation";
-import ImagePickerC from "../conversation/component/ImagePickerC";
-import { useImage } from "../../AuthProvider/ImageProvider";
+import { useImage } from "../AuthProvider/ImageProvider";
+import { useAuth } from "../AuthProvider/AuthProvider";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
-import { useNavigation } from "@react-navigation/native";
+import { db } from "../firebase";
+import RenderUserAvatar from "./RenderUserAvatar";
+import RenderUserInformation from "./RenderUserInformation";
 
 const Profile: React.FC = () => {
   const { user, setUser, converations, expoPushToken } = useAuth();
@@ -37,7 +35,9 @@ const Profile: React.FC = () => {
       const userDocRef = doc(db, "users", user.id);
       await updateDoc(userDocRef, { expoPushToken: expoPushToken });
     };
-    expoPushToken !== "" && updateToken();
+    expoPushToken !== "" &&
+      user.expoPushToken !== expoPushToken &&
+      updateToken();
   }, [expoPushToken]);
 
   const handleUpdate = async () => {
@@ -78,7 +78,7 @@ const Profile: React.FC = () => {
         <TouchableOpacity style={styles.modalBackground} onPress={toggleModal}>
           <View style={styles.modalContainer}>
             <View style={styles.header}>
-              {user && renderUserAvatar(user, 70)}
+              {user && RenderUserAvatar(user, 70)}
               <View style={styles.userInfoContainer}>
                 <Text style={styles.username}>Hello, {user?.username}</Text>
                 <Text style={styles.email}>{user?.email}</Text>
@@ -106,7 +106,7 @@ const Profile: React.FC = () => {
                 <Text style={{ fontSize: 16, color: "#333", marginTop: 10 }}>
                   Click on the icon to update your profile image:
                 </Text>
-                <View
+                {/* <View
                   style={{
                     justifyContent: "center",
                     alignItems: "center",
@@ -115,7 +115,7 @@ const Profile: React.FC = () => {
                   }}
                 >
                   <ImagePickerC type={"image"} size={36} color={"#4682B4"} />
-                </View>
+                </View> */}
                 <Button title="Update" onPress={handleUpdate} />
               </View>
             ) : (

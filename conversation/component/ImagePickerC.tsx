@@ -2,8 +2,8 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../../../firebase";
-import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { storage } from "../../firebase";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 import * as DocumentPicker from "expo-document-picker";
 
 import {
@@ -13,7 +13,7 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 
-import { useImage } from "../../../AuthProvider/ImageProvider";
+import { useImage } from "../../AuthProvider/ImageProvider";
 import RecordingSounds from "./RecordingSounds";
 import CameraUsage from "./CameraUsage";
 import VideoRecorder from "./VideoRecorder";

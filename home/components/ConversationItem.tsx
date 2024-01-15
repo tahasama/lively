@@ -13,9 +13,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
-import { db, dbr } from "../../../firebase";
+import { db, dbr } from "../../firebase";
 import RenderUserInformation from "../../conversation/component/renderUserInformation";
-import { useAuth } from "../../../AuthProvider/AuthProvider";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 import {
   get,
   off,

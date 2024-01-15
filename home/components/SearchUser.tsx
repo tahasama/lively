@@ -25,10 +25,10 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../../../firebase";
+import { db } from "../../firebase";
 import { EvilIcons, AntDesign } from "@expo/vector-icons";
-import { useAuth } from "../../../AuthProvider/AuthProvider";
-import { useImage } from "../../../AuthProvider/ImageProvider";
+import { useAuth } from "../../AuthProvider/AuthProvider";
+import { useImage } from "../../AuthProvider/ImageProvider";
 
 const SearchUser = ({ navigation, icon, conversationId, title }) => {
   const [isModalVisible, setModalVisible] = useState(false);

@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Feather } from "@expo/vector-icons"; // Import Feather icon from Expo vector-icons
-import { auth, db } from "../../firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -23,8 +22,9 @@ import {
   serverTimestamp,
   where,
 } from "firebase/firestore";
-import { useAuth } from "../../AuthProvider/AuthProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { auth, db } from "../firebase";
+import { useAuth } from "../AuthProvider/AuthProvider";
 
 interface RegisterScreenProps {
   navigation: any;

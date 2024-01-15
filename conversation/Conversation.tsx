@@ -33,11 +33,11 @@ import {
   onChildChanged,
 } from "firebase/database";
 import { useNavigation } from "@react-navigation/native";
-import { db, dbr, storage } from "../../firebase";
+import { db, dbr, storage } from "../firebase";
 
-import { useAuth } from "../../AuthProvider/AuthProvider";
+import { useAuth } from "../AuthProvider/AuthProvider";
 import ImagePickerC from "./component/ImagePickerC";
-import { useImage } from "../../AuthProvider/ImageProvider";
+import { useImage } from "../AuthProvider/ImageProvider";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 
 import MessageBubble from "./component/MessageBubble";
@@ -315,6 +315,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       method: "POST",
       headers: {
         Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

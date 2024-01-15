@@ -1,5 +1,5 @@
 import * as VideoThumbnails from "expo-video-thumbnails";
-import { storage } from "../../firebase";
+import { storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 export const generateThumbnail = async (source: string) => {
