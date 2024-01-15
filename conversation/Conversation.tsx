@@ -388,9 +388,9 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
         // onStartReached={() => setShowPullMessage(true)}
         // onEndReached={() => setShowPullMessage(false)}
         onEndReachedThreshold={0.1}
-        // refreshControl={
-        //   <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-        // }
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }
       />
       {/* )} */}
 
