@@ -39,7 +39,9 @@
         }
       ]
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -69,7 +71,7 @@
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/bdc93857-b5ca-43a2-8da0-de853cfbc056"
+      "url": "https://u.expo.dev/085f72ec-c7b9-4fc1-af23-54c7f7fb064b"
     },
     "owner": "tahakun",
     "scheme": "com.tahakun.lively"

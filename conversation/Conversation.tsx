@@ -213,7 +213,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     try {
       const conversationRef2 = ref(dbr, `groups/${conversationId}/messages`);
       const currentMessagesCount = messages.length;
-      const newLimit = 3;
+      const newLimit = 4;
 
       const lastMessage = messages[0];
 
