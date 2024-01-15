@@ -18,6 +18,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import RenderUserAvatar from "./RenderUserAvatar";
 import RenderUserInformation from "./RenderUserInformation";
+import ImagePickerC from "../conversation/component/ImagePickerC";
 
 const Profile: React.FC = () => {
   const { user, setUser, converations, expoPushToken } = useAuth();
@@ -106,7 +107,7 @@ const Profile: React.FC = () => {
                 <Text style={{ fontSize: 16, color: "#333", marginTop: 10 }}>
                   Click on the icon to update your profile image:
                 </Text>
-                {/* <View
+                <View
                   style={{
                     justifyContent: "center",
                     alignItems: "center",
@@ -115,7 +116,7 @@ const Profile: React.FC = () => {
                   }}
                 >
                   <ImagePickerC type={"image"} size={36} color={"#4682B4"} />
-                </View> */}
+                </View>
                 <Button title="Update" onPress={handleUpdate} />
               </View>
             ) : (
