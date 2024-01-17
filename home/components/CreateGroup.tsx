@@ -18,7 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../AuthProvider/AuthProvider";
 
 const CreateGroup = () => {
-  const { user, setNotification, setNotificationR } = useAuth();
+  const { user, setNotification, setNotificationR, darkMode } = useAuth();
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [groupName, setGroupName] = useState("");
@@ -86,13 +86,21 @@ const CreateGroup = () => {
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
 
           <TouchableWithoutFeedback>
-            <View style={styles.modalContainer}>
+            <View
+              style={[
+                styles.modalContainer,
+                { backgroundColor: !darkMode ? "#fff" : "black" },
+              ]}
+            >
               <View style={styles.barContainer}>
                 <View style={styles.bar}></View>
               </View>
               {/* Input for group name */}
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  { backgroundColor: darkMode ? "#666666" : "#f6f6f6" },
+                ]}
                 placeholder=" Add Group Name..."
                 value={groupName}
                 onChangeText={(text) => {
@@ -102,17 +110,28 @@ const CreateGroup = () => {
               />
               {/* Button to create the group */}
               <TouchableOpacity
-                style={styles.createButton}
+                style={[
+                  styles.createButton,
+                  { backgroundColor: darkMode ? "#274f92" : "#4285F4" },
+                ]}
                 onPress={handleCreateGroup}
               >
                 <Text style={styles.buttonText}>Create Group</Text>
               </TouchableOpacity>
               {/* Button to close the modal */}
               <TouchableOpacity
-                style={styles.cancelButton}
+                style={[
+                  styles.cancelButton,
+                  { backgroundColor: darkMode ? "#666666" : "#f6f6f6" },
+                ]}
                 onPress={toggleModal}
               >
-                <Text style={[styles.buttonText, { color: "#4e5a65" }]}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    { color: !darkMode ? "#666666" : "#f6f6f6" },
+                  ]}
+                >
                   Cancel
                 </Text>
               </TouchableOpacity>

@@ -38,7 +38,7 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
   const [error, setError] = useState("");
   const [canShowNotFound, setCanShowNotFound] = useState(false);
 
-  const { user } = useAuth();
+  const { user, darkMode } = useAuth();
   const { setGetHome } = useImage();
 
   // const navigation = useNavigation();
@@ -208,13 +208,21 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
 
           <TouchableWithoutFeedback>
-            <View style={styles.modalContainer}>
+            <View
+              style={[
+                styles.modalContainer,
+                { backgroundColor: !darkMode ? "#fff" : "black" },
+              ]}
+            >
               <View style={styles.barContainer}>
                 <View style={styles.bar}></View>
               </View>
               {/* Input for group name */}
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  { backgroundColor: darkMode ? "#666666" : "#f6f6f6" },
+                ]}
                 placeholder=" Search by username..."
                 value={searchTerm}
                 onChangeText={(text) => {
@@ -224,7 +232,10 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
               />
               {/* Button to create the group */}
               <TouchableOpacity
-                style={styles.createButton}
+                style={[
+                  styles.createButton,
+                  { backgroundColor: darkMode ? "#274f92" : "#4285F4" },
+                ]}
                 onPress={handleLookForUser}
                 disabled={loading} // Disable the button during loading
               >
@@ -261,10 +272,18 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
 
               {/* Button to close the modal */}
               <TouchableOpacity
-                style={styles.cancelButton}
+                style={[
+                  styles.cancelButton,
+                  { backgroundColor: darkMode ? "#666666" : "#f6f6f6" },
+                ]}
                 onPress={toggleModal}
               >
-                <Text style={[styles.buttonText, { color: "#4e5a65" }]}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    { color: !darkMode ? "#666666" : "#f6f6f6" },
+                  ]}
+                >
                   Cancel
                 </Text>
               </TouchableOpacity>
@@ -320,7 +339,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   modalContainer: {
-    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 8,
     width: "100%",
@@ -334,7 +352,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   createButton: {
-    backgroundColor: "#4285F4",
     paddingVertical: 12,
     borderRadius: 5,
     marginTop: 16,

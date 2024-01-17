@@ -29,7 +29,7 @@ import RecordingSounds from "./RecordingSounds";
 import VideoRecorder from "./VideoRecorder";
 import { Camera, CameraType } from "expo-camera";
 
-function CameraUsage() {
+function CameraUsage({ color }: any) {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
@@ -200,7 +200,7 @@ function CameraUsage() {
         </View>
       </Modal>
       <TouchableOpacity onPress={openCameraModal}>
-        <MaterialCommunityIcons name="camera" size={25} color="black" />
+        <MaterialCommunityIcons name="camera" size={25} color={color} />
       </TouchableOpacity>
     </View>
   );

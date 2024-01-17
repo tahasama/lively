@@ -22,6 +22,8 @@ interface AuthContextType {
   setNotificationR: any;
   converations: any;
   setConverations: any;
+  darkMode: any;
+  setDarkMode: any;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,6 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [notification, setNotification] = useState<any>(false);
   const [notificationR, setNotificationR] = useState<any>(false);
   const [converations, setConverations] = useState<any[]>([]);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,6 +108,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setConverations,
         notificationR,
         setNotificationR,
+        darkMode,
+        setDarkMode,
       }}
     >
       {children}

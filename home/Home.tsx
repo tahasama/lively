@@ -129,6 +129,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation, route }) => {
     setNotificationR,
     expoPushToken,
     setExpoPushToken,
+    darkMode,
   } = useAuth();
 
   const { getHome, setGetHome } = useImage();
@@ -228,7 +229,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation, route }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: darkMode ? "#262626" : "#f2f2f2" },
+      ]}
+    >
       <View style={styles.search}>
         <SearchUser
           navigation={navigation}
@@ -254,7 +260,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation, route }) => {
         />
       ) : (
         <View style={styles.empty}>
-          <Text style={styles.emptyText}>
+          <Text
+            style={[styles.emptyText, { color: !darkMode ? "black" : "white" }]}
+          >
             Look for you friends or create a group and add them!
           </Text>
         </View>

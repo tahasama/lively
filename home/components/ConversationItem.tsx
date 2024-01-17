@@ -57,7 +57,7 @@ const ConversationItem: React.FC<{
 }> = ({ conversation, navigation }) => {
   const [senderName, setSenderName] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
-  const { user, setNotification, setNotificationR } = useAuth();
+  const { user, setNotification, setNotificationR, darkMode } = useAuth();
   const [expoPushToken, setExpoPushToken] = useState([]);
   const [lastMessage, setLatMessage] = useState<any>("");
 
@@ -219,12 +219,18 @@ const ConversationItem: React.FC<{
             lastMessage.user?.id !== user?.id &&
             lastMessage.status !== "read"
               ? "#D1E0F0"
+              : darkMode
+              ? "#333333"
               : "white",
         },
       ]}
       onLongPress={toggleModal}
     >
-      <Text style={styles.title}>{conversation.name}</Text>
+      <Text
+        style={[styles.title, { color: !darkMode ? "#262626" : "#f2f2f2" }]}
+      >
+        {conversation.name}
+      </Text>
       {/* <Text style={styles.title}>{lastMessage.createdAt}</Text> */}
       {lastMessage && lastMessage.user ? (
         <Text
@@ -239,6 +245,7 @@ const ConversationItem: React.FC<{
                 lastMessage.status !== "read"
                   ? "700"
                   : "400",
+              color: !darkMode ? "#262626" : "#f2f2f2",
             },
           ]}
         >
@@ -248,15 +255,21 @@ const ConversationItem: React.FC<{
         <Text style={styles.message}></Text>
       )}
       <View style={styles.detailsContainer}>
-        <MaterialIcons name="people" size={18} color="#555" />
+        <MaterialIcons
+          name="people"
+          size={18}
+          color={!darkMode ? "#262626" : "#f2f2f2"}
+        />
         <FlatList
           data={conversation.users}
           keyExtractor={(index) => index}
           renderItem={({ item }) => <RenderUserInformation sender={item} />}
           horizontal
         />
-        <Text style={styles.date}>Last Message : {formattedTime}</Text>
       </View>
+      <Text style={[styles.date, { color: !darkMode ? "#262626" : "#f2f2f2" }]}>
+        Last Message : {formattedTime}
+      </Text>
 
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
         <TouchableOpacity
@@ -348,6 +361,7 @@ const styles = StyleSheet.create({
   date: {
     color: "#888",
     fontSize: 12,
+    textAlign: "right",
   },
   modalBackground: {
     flex: 1,

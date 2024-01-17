@@ -3,6 +3,7 @@ import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import SearchUser from "../../home/components/SearchUser";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../../AuthProvider/AuthProvider";
 
 const AddUsers = ({ route }) => {
   const { conversationId, title } = route.params;

@@ -8,8 +8,7 @@ import { renderUserAvatar } from "./MessageBubble";
 
 const RenderUserInformation = ({ sender }: any) => {
   // Fetch user information using the sender ID
-  const { user } = useAuth();
-
+  const { user, darkMode } = useAuth();
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -35,9 +34,16 @@ const RenderUserInformation = ({ sender }: any) => {
   }
   return (
     <View style={styles.userInfo}>
-      {renderUserAvatar(userData, 22)}
+      {renderUserAvatar(userData, 22, darkMode)}
       {user && sender !== user.id && (
-        <Text style={styles.messageSender}>{userData?.username}, </Text>
+        <Text
+          style={[
+            styles.messageSender,
+            { color: !darkMode ? "#262626" : "#f2f2f2" },
+          ]}
+        >
+          {userData?.username},{" "}
+        </Text>
       )}
     </View>
   );

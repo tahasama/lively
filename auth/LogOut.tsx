@@ -12,7 +12,7 @@ import { auth } from "../firebase";
 // }
 
 const LogOut: React.FC = () => {
-  const { setUser } = useAuth();
+  const { setUser, darkMode } = useAuth();
   const navigation = useNavigation<any>();
   const logOut = async () => {
     signOut(auth);
@@ -24,7 +24,11 @@ const LogOut: React.FC = () => {
   };
   return (
     <TouchableOpacity onPress={logOut} style={{ marginRight: 18 }}>
-      <AntDesign name="logout" size={24} color={"blue"} />
+      <AntDesign
+        name="logout"
+        size={24}
+        color={darkMode ? "#6666ff" : "blue"}
+      />
     </TouchableOpacity>
   );
 };

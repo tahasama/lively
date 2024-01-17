@@ -18,7 +18,7 @@ import { storage } from "../../firebase";
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import { Audio } from "expo-av";
 
-const VideoRecorder = () => {
+const VideoRecorder = ({ color }: any) => {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [permissionResponse, requestPermissionAudio] = Audio.usePermissions();
 
@@ -240,7 +240,7 @@ const VideoRecorder = () => {
         </View>
       </Modal>
       <TouchableOpacity onPress={openVideoRecorderModal}>
-        <FontAwesome5 name="video" size={24} color="black" />
+        <FontAwesome5 name="video" size={24} color={color} />
       </TouchableOpacity>
     </View>
   );

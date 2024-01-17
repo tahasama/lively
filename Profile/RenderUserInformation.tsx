@@ -7,7 +7,7 @@ import RenderUserAvatar from "./RenderUserAvatar";
 
 const RenderUserInformation = ({ sender }: any) => {
   // Fetch user information using the sender ID
-  const { user } = useAuth();
+  const { user, darkMode } = useAuth();
 
   const [userData, setUserData] = useState(null);
 
@@ -36,7 +36,14 @@ const RenderUserInformation = ({ sender }: any) => {
     <View style={styles.userInfo}>
       {RenderUserAvatar(userData, 22)}
       {user && sender !== user.id && (
-        <Text style={styles.messageSender}>{userData?.username}, </Text>
+        <Text
+          style={[
+            styles.messageSender,
+            { color: !darkMode ? "black" : "white" },
+          ]}
+        >
+          {userData?.username},{" "}
+        </Text>
       )}
     </View>
   );

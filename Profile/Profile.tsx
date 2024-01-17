@@ -19,9 +19,12 @@ import { db } from "../firebase";
 import RenderUserAvatar from "./RenderUserAvatar";
 import RenderUserInformation from "./RenderUserInformation";
 import ImagePickerC from "../conversation/component/ImagePickerC";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Entypo } from "@expo/vector-icons";
 
 const Profile: React.FC = () => {
-  const { user, setUser, converations, expoPushToken } = useAuth();
+  const { user, setUser, converations, expoPushToken, darkMode, setDarkMode } =
+    useAuth();
   const { image, setImage } = useImage();
   const [isModalVisible, setModalVisible] = useState(false);
   const [newUsername, setNewUsername] = useState("");
@@ -40,6 +43,10 @@ const Profile: React.FC = () => {
       user.expoPushToken !== expoPushToken &&
       updateToken();
   }, [expoPushToken]);
+
+  useEffect(() => {
+    AsyncStorage.setItem("modeData", JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const handleUpdate = async () => {
     try {
@@ -66,6 +73,7 @@ const Profile: React.FC = () => {
       setImage("");
       setNewUsername("");
       setModalVisible(false);
+      await AsyncStorage.removeItem("userData");
     } catch (error) {
       console.error("Error updating user data:", error.message);
     }
@@ -77,7 +85,12 @@ const Profile: React.FC = () => {
         <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
 
         <TouchableOpacity style={styles.modalBackground} onPress={toggleModal}>
-          <View style={styles.modalContainer}>
+          <View
+            style={[
+              styles.modalContainer,
+              { backgroundColor: darkMode ? "black" : "white" },
+            ]}
+          >
             <View style={styles.header}>
               {user && RenderUserAvatar(user, 70)}
               <View style={styles.userInfoContainer}>
@@ -121,10 +134,66 @@ const Profile: React.FC = () => {
               </View>
             ) : (
               <View>
-                <Text style={styles.discussionCount}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                    marginVertical: 10,
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => {
+                      setDarkMode(false);
+                    }}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 20,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                      borderRadius: 10,
+                      padding: 10,
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <Text>Light Mode</Text>
+                    <Entypo name="light-up" size={24} color="black" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setDarkMode(true);
+                    }}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 20,
+                      borderColor: "gray",
+                      borderWidth: 1,
+                      borderRadius: 10,
+                      padding: 10,
+                      backgroundColor: "#000000",
+                    }}
+                  >
+                    <Text style={{ color: "white" }}>Dark Mode</Text>
+                    <Feather name="moon" size={24} color="white" />
+                  </TouchableOpacity>
+                </View>
+                <Text
+                  style={[
+                    styles.discussionCount,
+                    { color: !darkMode ? "black" : "white" },
+                  ]}
+                >
                   Participated in {converations.length} discussions.
                 </Text>
-                <Text style={styles.discussionTitle}>Discussions:</Text>
+                <Text
+                  style={[
+                    styles.discussionTitle,
+                    { color: !darkMode ? "black" : "white" },
+                  ]}
+                >
+                  Discussions:
+                </Text>
                 <FlatList
                   data={converations}
                   keyExtractor={(item) => item.id}
@@ -132,7 +201,14 @@ const Profile: React.FC = () => {
                     <View style={styles.participantsContainer}>
                       <Text style={styles.discussionItem}>{item.name}</Text>
                       <View style={styles.participantsContainer}>
-                        <Text style={styles.textContainer}>with :</Text>
+                        <Text
+                          style={[
+                            styles.textContainer,
+                            { color: !darkMode ? "black" : "white" },
+                          ]}
+                        >
+                          with :
+                        </Text>
                         <FlatList
                           data={item.users}
                           keyExtractor={(index) => index}
@@ -151,7 +227,7 @@ const Profile: React.FC = () => {
         </TouchableOpacity>
       </Modal>
       <TouchableOpacity onPress={toggleModal}>
-        <Feather name="user" size={26} color="#333" />
+        <Feather name="user" size={26} color={!darkMode ? "#333" : "#ccccff"} />
       </TouchableOpacity>
     </View>
   );
@@ -173,7 +249,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContainer: {
-    backgroundColor: "#fff",
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

@@ -93,6 +93,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
     setNotificationR,
     setNotification,
     notificationR,
+    darkMode,
   } = useAuth();
   const {
     text,
@@ -361,10 +362,26 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
   }
 
   return (
-    <View style={{ flex: 1, padding: 2 }}>
+    <View
+      style={{
+        flex: 1,
+        padding: 2,
+        backgroundColor: darkMode ? "#262626" : "##e5e5e5",
+      }}
+    >
       {showPullMessage && (
-        <View style={styles.tipContainer}>
-          <Text style={styles.tipText}>
+        <View
+          style={[
+            styles.tipContainer,
+            { backgroundColor: !darkMode ? "#b2b2b2" : "#191919" },
+          ]}
+        >
+          <Text
+            style={[
+              styles.tipText,
+              { color: darkMode ? "#666666" : "#f2f2f2" },
+            ]}
+          >
             Tips: From this point, pull down to load older messages
           </Text>
         </View>
@@ -394,13 +411,25 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       />
       {/* )} */}
 
-      <View style={styles.inputContainer}>
+      <View
+        style={[
+          styles.inputContainer,
+          // { backgroundColor: darkMode ? "#333333" : "white" },
+        ]}
+      >
         <TouchableOpacity onPress={handleImagePickerToggle}>
-          <Ionicons name="add" size={32} color="black" />
+          <Ionicons
+            name="add"
+            size={32}
+            color={!darkMode ? "#333333" : "#666666"}
+          />
         </TouchableOpacity>
         {!showImagePicker ? (
           <TextInput
-            style={styles.textInput}
+            style={[
+              styles.textInput,
+              { backgroundColor: darkMode ? "#666666" : "#f6f6f6" },
+            ]}
             value={text}
             onChangeText={setText}
             placeholder="Type your message..."
@@ -410,7 +439,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           <View style={[styles.type]}>
             {Types.map((type, index) => (
               <View key={index} style={[styles.types]}>
-                <ImagePickerC type={type} size={24} color={"black"} />
+                <ImagePickerC
+                  type={type}
+                  size={24}
+                  color={!darkMode ? "#333333" : "#666666"}
+                />
               </View>
             ))}
           </View>
@@ -454,7 +487,9 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
                   recordedVideo) &&
                 !disableButton
                   ? "#00A1C9"
-                  : "black"
+                  : !darkMode
+                  ? "white"
+                  : "gray"
               }
             />
           ) : (
@@ -485,7 +520,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#ccc",
-    color: "#333",
+    // color: "#333",
     marginRight: 2,
   },
   type: {

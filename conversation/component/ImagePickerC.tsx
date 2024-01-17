@@ -135,15 +135,15 @@ const ImagePickerC = ({ type, size, color }) => {
     <TouchableOpacity style={{ marginLeft: 0 }} onPress={pickImageAsync}>
       {type === "image" && <Entypo name="image" size={size} color={color} />}
       {type === "video" && (
-        <Foundation name="play-video" size={34} color="black" />
+        <Foundation name="play-video" size={34} color={color} />
       )}
       {type === "audio" && (
-        <MaterialIcons name="audiotrack" size={24} color="black" />
+        <MaterialIcons name="audiotrack" size={24} color={color} />
       )}
-      {type === "file" && <Ionicons name="attach" size={30} color="black" />}
-      {type === "audioRecord" && <RecordingSounds />}
-      {type === "imageRecord" && <CameraUsage />}
-      {type === "recordedVideo" && <VideoRecorder />}
+      {type === "file" && <Ionicons name="attach" size={30} color={color} />}
+      {type === "audioRecord" && <RecordingSounds color={color} />}
+      {type === "imageRecord" && <CameraUsage color={color} />}
+      {type === "recordedVideo" && <VideoRecorder color={color} />}
     </TouchableOpacity>
   );
 };

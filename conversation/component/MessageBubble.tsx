@@ -24,7 +24,7 @@ import { ref, remove, update } from "firebase/database";
 import Reactions from "./Reactions";
 
 const MessageBubble = ({ message, isSender, conversationId }: any) => {
-  const { user } = useAuth();
+  const { user, darkMode } = useAuth();
   const { reaction, setReaction } = useImage();
   const [userData, setUserData] = useState(null);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
@@ -112,7 +112,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
       >
         {message?.alert === "" ? (
           <TouchableOpacity
-            style={styles.messageContent}
+            style={[styles.messageContent]}
             onLongPress={handleMessage}
           >
             <TouchableOpacity onPress={handleImageClick}>
@@ -173,7 +173,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                 {userData && !isSender && (
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <View style={styles.userAvatarContainer}>
-                      {renderUserAvatar(userData, 30)}
+                      {renderUserAvatar(userData, 30, darkMode)}
                     </View>
                     <Text style={styles.messageText}>
                       ~ {userData.username}
@@ -300,7 +300,6 @@ const styles = StyleSheet.create({
   emptyAvatarContainer: {
     borderRadius: 15,
     backgroundColor: "#2db4e2",
-    justifyContent: "center",
     alignItems: "center",
     marginRight: 4,
   },
@@ -312,7 +311,7 @@ const styles = StyleSheet.create({
 
 export default MessageBubble;
 
-export const renderUserAvatar = (userData, dimensions) => {
+export const renderUserAvatar = (userData, dimensions, darkMode) => {
   if (userData && userData.image !== "") {
     return (
       <View style={styles.userAvatarContainer}>
@@ -336,10 +335,21 @@ export const renderUserAvatar = (userData, dimensions) => {
       <View
         style={[
           styles.emptyAvatarContainer,
-          { width: dimensions, height: dimensions },
+          {
+            width: dimensions,
+            height: dimensions,
+            backgroundColor: !darkMode ? "#2db4e2" : "#f2f2f2",
+          },
         ]}
       >
-        <Text style={styles.emptyAvatarText}>{initials}</Text>
+        <Text
+          style={[
+            styles.emptyAvatarText,
+            { color: darkMode ? "#262626" : "#f2f2f2" },
+          ]}
+        >
+          {initials}
+        </Text>
       </View>
     );
   }

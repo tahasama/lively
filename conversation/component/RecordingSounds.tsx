@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Animated,
   Easing,
+  OpaqueColorValue,
 } from "react-native";
 import { Audio } from "expo-av";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -16,7 +17,8 @@ import { useAuth } from "../../AuthProvider/AuthProvider";
 import { useImage } from "../../AuthProvider/ImageProvider";
 import { storage } from "../../firebase";
 
-const RecordingSounds = () => {
+const RecordingSounds = ({ color }: any) => {
+  console.log("🚀 ~ RecordingSounds ~ color:", color);
   const { user } = useAuth();
   const { setUploadProgress, setAudioRecord, setLoadingImage } = useImage();
 
@@ -177,7 +179,7 @@ const RecordingSounds = () => {
         <MaterialCommunityIcons
           name={`microphone${!recording ? "" : "-off"}`}
           size={27}
-          color="black"
+          color={color}
         />
       </TouchableOpacity>
     </View>

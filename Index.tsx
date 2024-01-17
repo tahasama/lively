@@ -10,11 +10,20 @@ import Profile from "./Profile/Profile";
 import HomeScreen from "./home/Home";
 import ConversationScreen from "./conversation/Conversation";
 import AddUsers from "./conversation/component/AddUsers";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNav();
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, darkMode, setDarkMode } = useAuth();
+  useEffect(() => {
+    const getMode = async () => {
+      const storedUserData: any = await AsyncStorage.getItem("modeData");
+      console.log("🚀 ~ getMode ~ storedUserData:", storedUserData);
+      setDarkMode(JSON.parse(storedUserData));
+    };
+    getMode();
+  }, []);
 
   return (
     <NavigationContainer>
@@ -30,6 +39,10 @@ const Index = () => {
               name="Home"
               component={HomeScreen}
               options={({ route }) => ({
+                headerStyle: {
+                  backgroundColor: darkMode ? "#262626" : "#f2f2f2",
+                },
+                headerTintColor: !darkMode ? "#262626" : "#f2f2f2",
                 headerRight: () => (
                   <View
                     style={{
@@ -53,6 +66,10 @@ const Index = () => {
                 participants: [],
               }}
               options={({ route }) => ({
+                headerStyle: {
+                  backgroundColor: darkMode ? "#262626" : "#f2f2f2",
+                },
+                headerTintColor: !darkMode ? "#262626" : "#f2f2f2",
                 headerRight: () => <AddUsers route={route} />,
               })}
             />
