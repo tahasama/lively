@@ -2,7 +2,7 @@
   "expo": {
     "name": "lively",
     "slug": "lively",
-    "version": "1.2.7",
+    "version": "1.2.8",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -49,7 +49,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.tahakun.lively",
-      "versionCode": 28,
+      "versionCode": 29,
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
       "permissions": [
@@ -66,7 +66,7 @@
       }
     },
     "runtimeVersion": {
-      "policy": "appVersion"
+      "policy": "sdkVersion"
     },
     "updates": {
       "url": "https://u.expo.dev/085f72ec-c7b9-4fc1-af23-54c7f7fb064b"
