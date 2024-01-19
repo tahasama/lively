@@ -181,7 +181,10 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
       {/* Button to open the modal for creating a group */}
       <TouchableOpacity
         onPress={toggleModal}
-        style={icon !== "adduser" ? styles.addButton : styles.addUsers}
+        style={[
+          icon !== "adduser" ? styles.addButton : styles.addUsers,
+          { backgroundColor: !darkMode ? "#7272e5" : "#5b5bb7" },
+        ]}
       >
         {icon !== "adduser" ? (
           <EvilIcons
@@ -320,7 +323,6 @@ const styles = StyleSheet.create({
   addButton: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#7272e5",
     borderRadius: 40,
     height: 80,
     width: 80,

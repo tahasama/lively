@@ -108,6 +108,15 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
         style={[
           styles.messageContainer,
           isSender ? styles.senderMessage : styles.receiverMessage,
+          {
+            backgroundColor: isSender
+              ? darkMode
+                ? "#1b6c87"
+                : "#5b96bc"
+              : !darkMode
+              ? "#e3e3e3"
+              : "#9e9e9e",
+          },
         ]}
       >
         {message?.alert === "" ? (
@@ -304,8 +313,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   emptyAvatarText: {
-    color: "white",
-    fontSize: 16,
+    fontSize: 14,
   },
 });
 
@@ -338,14 +346,14 @@ export const renderUserAvatar = (userData, dimensions, darkMode) => {
           {
             width: dimensions,
             height: dimensions,
-            backgroundColor: !darkMode ? "#2db4e2" : "#f2f2f2",
+            backgroundColor: !darkMode ? "#2db4e2" : "#165a71",
           },
         ]}
       >
         <Text
           style={[
             styles.emptyAvatarText,
-            { color: darkMode ? "#262626" : "#f2f2f2" },
+            { color: darkMode ? "#adadad" : "#d9d9d9" },
           ]}
         >
           {initials}

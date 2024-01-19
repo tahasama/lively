@@ -27,7 +27,7 @@ const LogOut: React.FC = () => {
       <AntDesign
         name="logout"
         size={24}
-        color={darkMode ? "#6666ff" : "blue"}
+        color={darkMode ? "#517391" : "#6666ff"}
       />
     </TouchableOpacity>
   );

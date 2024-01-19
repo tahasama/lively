@@ -366,20 +366,20 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
       style={{
         flex: 1,
         padding: 2,
-        backgroundColor: darkMode ? "#262626" : "##e5e5e5",
+        backgroundColor: darkMode ? "#212121" : "#ececec",
       }}
     >
       {showPullMessage && (
         <View
           style={[
             styles.tipContainer,
-            { backgroundColor: !darkMode ? "#b2b2b2" : "#191919" },
+            { backgroundColor: !darkMode ? "#e0e0e0" : "#3c4e60" },
           ]}
         >
           <Text
             style={[
               styles.tipText,
-              { color: darkMode ? "#666666" : "#f2f2f2" },
+              { color: darkMode ? "#ecf0f1" : "#333333" },
             ]}
           >
             Tips: From this point, pull down to load older messages
@@ -428,7 +428,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
           <TextInput
             style={[
               styles.textInput,
-              { backgroundColor: darkMode ? "#666666" : "#f6f6f6" },
+              {
+                backgroundColor: darkMode ? "#37474F" : "#f2f2f2",
+                borderColor: darkMode ? "#333333" : "#ccc",
+                color: darkMode ? "#efefef" : "#333",
+              },
             ]}
             value={text}
             onChangeText={setText}
@@ -488,7 +492,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
                 !disableButton
                   ? "#00A1C9"
                   : !darkMode
-                  ? "white"
+                  ? "black"
                   : "gray"
               }
             />
@@ -519,7 +523,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#ccc",
+    // borderColor: "#ccc",
     // color: "#333",
     marginRight: 2,
   },

@@ -64,7 +64,13 @@ const CreateGroup = () => {
   return (
     <View style={styles.container}>
       {/* Button to open the modal for creating a group */}
-      <TouchableOpacity onPress={toggleModal} style={styles.addButton}>
+      <TouchableOpacity
+        onPress={toggleModal}
+        style={[
+          styles.addButton,
+          { backgroundColor: !darkMode ? "#4285F4" : "#346ac3" },
+        ]}
+      >
         <Ionicons
           name="add"
           size={44}
@@ -168,7 +174,6 @@ const styles = StyleSheet.create({
   addButton: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#4285F4",
     borderRadius: 40,
     height: 80,
     width: 80,

@@ -232,7 +232,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation, route }) => {
     <View
       style={[
         styles.container,
-        { backgroundColor: darkMode ? "#262626" : "#f2f2f2" },
+        {
+          backgroundColor: darkMode ? "#212121" : "#ececec",
+        },
       ]}
     >
       <View style={styles.search}>

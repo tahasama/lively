@@ -39,7 +39,7 @@ const RenderUserInformation = ({ sender }: any) => {
         <Text
           style={[
             styles.messageSender,
-            { color: !darkMode ? "#262626" : "#f2f2f2" },
+            { color: !darkMode ? "#262626" : "#d9d9d9" },
           ]}
         >
           {userData?.username},{" "}

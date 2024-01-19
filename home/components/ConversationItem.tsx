@@ -221,7 +221,8 @@ const ConversationItem: React.FC<{
               ? "#D1E0F0"
               : darkMode
               ? "#333333"
-              : "white",
+              : "#f4f4f4",
+          borderColor: darkMode ? "#555" : "#ddd",
         },
       ]}
       onLongPress={toggleModal}
@@ -245,7 +246,7 @@ const ConversationItem: React.FC<{
                 lastMessage.status !== "read"
                   ? "700"
                   : "400",
-              color: !darkMode ? "#262626" : "#f2f2f2",
+              color: !darkMode ? "#262626" : "#c1c1c1",
             },
           ]}
         >
@@ -258,7 +259,7 @@ const ConversationItem: React.FC<{
         <MaterialIcons
           name="people"
           size={18}
-          color={!darkMode ? "#262626" : "#f2f2f2"}
+          color={!darkMode ? "#262626" : "#c1c1c1"}
         />
         <FlatList
           data={conversation.users}
@@ -267,7 +268,7 @@ const ConversationItem: React.FC<{
           horizontal
         />
       </View>
-      <Text style={[styles.date, { color: !darkMode ? "#262626" : "#f2f2f2" }]}>
+      <Text style={[styles.date, { color: !darkMode ? "#262626" : "#c1c1c1" }]}>
         Last Message : {formattedTime}
       </Text>
 
@@ -317,10 +318,10 @@ const styles = StyleSheet.create({
   conversationContainer: {
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: "#ddd",
+    // borderColor: "#ddd",
     padding: 16,
     borderRadius: 8,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
     elevation: 3,
     shadowColor: "#aaa",
     shadowOffset: { width: 0, height: 2 },
