@@ -16,6 +16,7 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebase";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../AuthProvider/AuthProvider";
+import { LinearGradient } from "expo-linear-gradient";
 
 const CreateGroup = () => {
   const { user, setNotification, setNotificationR, darkMode } = useAuth();
@@ -95,7 +96,11 @@ const CreateGroup = () => {
             <View
               style={[
                 styles.modalContainer,
-                { backgroundColor: !darkMode ? "#fff" : "black" },
+                {
+                  backgroundColor: darkMode ? "#282828" : "white",
+                  borderColor: darkMode ? "#515151" : "white",
+                  borderWidth: 2,
+                },
               ]}
             >
               <View style={styles.barContainer}>
@@ -115,31 +120,35 @@ const CreateGroup = () => {
                 }}
               />
               {/* Button to create the group */}
-              <TouchableOpacity
-                style={[
-                  styles.createButton,
-                  { backgroundColor: darkMode ? "#274f92" : "#4285F4" },
-                ]}
-                onPress={handleCreateGroup}
-              >
-                <Text style={styles.buttonText}>Create Group</Text>
+              <TouchableOpacity onPress={handleCreateGroup}>
+                <LinearGradient
+                  colors={[
+                    darkMode ? "#274f92" : "#4285F4",
+                    darkMode ? "#1f3f74" : "#346ac3",
+                  ]}
+                  style={[styles.cancelButton]}
+                >
+                  <Text style={styles.buttonText}>Create Group</Text>
+                </LinearGradient>
               </TouchableOpacity>
               {/* Button to close the modal */}
-              <TouchableOpacity
-                style={[
-                  styles.cancelButton,
-                  { backgroundColor: darkMode ? "#666666" : "#f6f6f6" },
-                ]}
-                onPress={toggleModal}
-              >
-                <Text
-                  style={[
-                    styles.buttonText,
-                    { color: !darkMode ? "#666666" : "#f6f6f6" },
+              <TouchableOpacity onPress={toggleModal}>
+                <LinearGradient
+                  colors={[
+                    darkMode ? "#666666" : "#f6f6f6",
+                    darkMode ? "#515151" : "#c4c4c4",
                   ]}
+                  style={[styles.cancelButton]}
                 >
-                  Cancel
-                </Text>
+                  <Text
+                    style={[
+                      styles.buttonText,
+                      { color: !darkMode ? "#666666" : "#f6f6f6" },
+                    ]}
+                  >
+                    Cancel
+                  </Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>

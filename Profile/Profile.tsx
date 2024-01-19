@@ -21,6 +21,8 @@ import RenderUserInformation from "./RenderUserInformation";
 import ImagePickerC from "../conversation/component/ImagePickerC";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Entypo } from "@expo/vector-icons";
+import LightDarkSwitch from "./LightDarkSwitch";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Profile: React.FC = () => {
   const { user, setUser, converations, expoPushToken, darkMode, setDarkMode } =
@@ -88,13 +90,26 @@ const Profile: React.FC = () => {
           <View
             style={[
               styles.modalContainer,
-              { backgroundColor: darkMode ? "black" : "white" },
+              {
+                backgroundColor: darkMode ? "#282828" : "white",
+                borderColor: darkMode ? "#515151" : "white",
+                borderWidth: 2,
+              },
             ]}
           >
+            <View style={styles.bar}></View>
+
             <View style={styles.header}>
               {user && RenderUserAvatar(user, 70)}
               <View style={styles.userInfoContainer}>
-                <Text style={styles.username}>Hello, {user?.username}</Text>
+                <Text
+                  style={[
+                    styles.username,
+                    { color: darkMode ? "#e0e0e0" : "#333" },
+                  ]}
+                >
+                  Hello, {user?.username}
+                </Text>
                 <Text style={styles.email}>{user?.email}</Text>
                 <Text style={styles.joinDate}>
                   Member since: {formatJoinDate(user?.timestamp)}
@@ -103,10 +118,17 @@ const Profile: React.FC = () => {
             </View>
 
             <TouchableOpacity
-              style={styles.editButton}
+              // style={styles.editButton}
               onPress={() => setIsEditing(!isEditing)}
             >
-              <Text>{isEditing ? "Cancel" : "Edit Profile"}</Text>
+              <LinearGradient
+                colors={["#9999cd", "#6666b4"]}
+                style={styles.editButton}
+              >
+                <Text style={{ color: "white" }}>
+                  {isEditing ? "Cancel" : "Edit Profile"}
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
 
             {isEditing ? (
@@ -134,92 +156,9 @@ const Profile: React.FC = () => {
               </View>
             ) : (
               <View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-around",
-                    marginVertical: 10,
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() => {
-                      setDarkMode(false);
-                    }}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 20,
-                      borderColor: "gray",
-                      borderWidth: 1,
-                      borderRadius: 10,
-                      padding: 10,
-                      backgroundColor: "white",
-                    }}
-                  >
-                    <Text>Light Mode</Text>
-                    <Entypo name="light-up" size={24} color="black" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setDarkMode(true);
-                    }}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 20,
-                      borderColor: "gray",
-                      borderWidth: 1,
-                      borderRadius: 10,
-                      padding: 10,
-                      backgroundColor: "#000000",
-                    }}
-                  >
-                    <Text style={{ color: "white" }}>Dark Mode</Text>
-                    <Feather name="moon" size={24} color="white" />
-                  </TouchableOpacity>
-                </View>
-                <Text
-                  style={[
-                    styles.discussionCount,
-                    { color: !darkMode ? "black" : "white" },
-                  ]}
-                >
-                  Participated in {converations.length} discussions.
-                </Text>
-                <Text
-                  style={[
-                    styles.discussionTitle,
-                    { color: !darkMode ? "black" : "white" },
-                  ]}
-                >
-                  Discussions:
-                </Text>
-                <FlatList
-                  data={converations}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <View style={styles.participantsContainer}>
-                      <Text style={styles.discussionItem}>{item.name}</Text>
-                      <View style={styles.participantsContainer}>
-                        <Text
-                          style={[
-                            styles.textContainer,
-                            { color: !darkMode ? "black" : "white" },
-                          ]}
-                        >
-                          with :
-                        </Text>
-                        <FlatList
-                          data={item.users}
-                          keyExtractor={(index) => index}
-                          renderItem={({ item }) => (
-                            <RenderUserInformation sender={item} />
-                          )}
-                          horizontal // Arrange items horizontally
-                        />
-                      </View>
-                    </View>
-                  )}
+                <LightDarkSwitch
+                  setDarkMode={setDarkMode}
+                  isDarkMode={darkMode}
                 />
               </View>
             )}
@@ -253,12 +192,21 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     width: "100%",
-    height: "60%",
+    // height: "45%",
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
+    // alignItems: "center",
+  },
+  bar: {
+    width: 80,
+    height: 8,
+    backgroundColor: "#708090",
+    borderRadius: 10,
+    marginBottom: 20,
+    alignSelf: "center",
   },
   header: {
     flexDirection: "row",
@@ -278,7 +226,6 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#333",
   },
   email: {
     fontSize: 18,

@@ -29,6 +29,7 @@ import { db } from "../../firebase";
 import { EvilIcons, AntDesign } from "@expo/vector-icons";
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import { useImage } from "../../AuthProvider/ImageProvider";
+import { LinearGradient } from "expo-linear-gradient";
 
 const SearchUser = ({ navigation, icon, conversationId, title }) => {
   const route = useRoute();
@@ -228,7 +229,11 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
             <View
               style={[
                 styles.modalContainer,
-                { backgroundColor: !darkMode ? "#fff" : "black" },
+                {
+                  backgroundColor: darkMode ? "#282828" : "white",
+                  borderColor: darkMode ? "#515151" : "white",
+                  borderWidth: 2,
+                },
               ]}
             >
               <View style={styles.barContainer}>
@@ -249,16 +254,20 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
               />
               {/* Button to create the group */}
               <TouchableOpacity
-                style={[
-                  styles.createButton,
-                  { backgroundColor: darkMode ? "#274f92" : "#4285F4" },
-                ]}
                 onPress={handleLookForUser}
                 disabled={loading} // Disable the button during loading
               >
-                <Text style={styles.buttonText}>
-                  {loading ? "Searching..." : "Look for a friend"}
-                </Text>
+                <LinearGradient
+                  colors={[
+                    darkMode ? "#274f92" : "#4285F4",
+                    darkMode ? "#1f3f74" : "#346ac3",
+                  ]}
+                  style={[styles.createButton]}
+                >
+                  <Text style={styles.buttonText}>
+                    {loading ? "Searching..." : "Look for a friend"}
+                  </Text>
+                </LinearGradient>
               </TouchableOpacity>
 
               {error ? (
@@ -288,21 +297,23 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
               )}
 
               {/* Button to close the modal */}
-              <TouchableOpacity
-                style={[
-                  styles.cancelButton,
-                  { backgroundColor: darkMode ? "#666666" : "#f6f6f6" },
-                ]}
-                onPress={toggleModal}
-              >
-                <Text
-                  style={[
-                    styles.buttonText,
-                    { color: !darkMode ? "#666666" : "#f6f6f6" },
+              <TouchableOpacity onPress={toggleModal}>
+                <LinearGradient
+                  colors={[
+                    darkMode ? "#666666" : "#f6f6f6",
+                    darkMode ? "#515151" : "#c4c4c4",
                   ]}
+                  style={[styles.cancelButton]}
                 >
-                  Cancel
-                </Text>
+                  <Text
+                    style={[
+                      styles.buttonText,
+                      { color: !darkMode ? "#626262" : "white" },
+                    ]}
+                  >
+                    Cancel
+                  </Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>
@@ -368,15 +379,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   createButton: {
-    paddingVertical: 12,
-    borderRadius: 5,
+    paddingVertical: 4,
+    borderRadius: 15,
     marginTop: 16,
-    alignItems: "center",
+    marginHorizontal: 0,
   },
   cancelButton: {
     backgroundColor: "#ddd",
-    paddingVertical: 12,
-    borderRadius: 5,
+    paddingVertical: 4,
+    borderRadius: 15,
     marginTop: 8,
     alignItems: "center",
   },
@@ -384,6 +395,8 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    textAlign: "center",
+    padding: 12,
   },
   errorText: {
     color: "red",
