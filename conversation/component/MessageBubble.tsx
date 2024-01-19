@@ -22,8 +22,12 @@ import {
 import { useAuth } from "../../AuthProvider/AuthProvider";
 import { ref, remove, update } from "firebase/database";
 import Reactions from "./Reactions";
+import { useRoute } from "@react-navigation/native";
 
 const MessageBubble = ({ message, isSender, conversationId }: any) => {
+  const route = useRoute();
+  console.log("🚀 ~ MessageBubble ~ route:", route && route.name);
+
   const { user, darkMode } = useAuth();
   const { reaction, setReaction } = useImage();
   const [userData, setUserData] = useState(null);
@@ -162,16 +166,6 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                 marginTop: 5,
               }}
             >
-              {message.text && (
-                <Text
-                  style={[
-                    styles.messageText,
-                    { color: "black", marginLeft: !isSender ? 36 : 0 },
-                  ]}
-                >
-                  {message.text}
-                </Text>
-              )}
               <View
                 style={{
                   flexDirection: "row",
@@ -182,9 +176,14 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                 {userData && !isSender && (
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <View style={styles.userAvatarContainer}>
-                      {renderUserAvatar(userData, 30, darkMode)}
+                      {renderUserAvatar(userData, 30, darkMode, route)}
                     </View>
-                    <Text style={styles.messageText}>
+                    <Text
+                      style={[
+                        styles.messageText,
+                        { color: darkMode ? "#4c4c4c" : "#4c4c4c" },
+                      ]}
+                    >
                       ~ {userData.username}
                     </Text>
                   </View>
@@ -193,12 +192,28 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                 <Text
                   style={[
                     styles.timestamp,
-                    { color: isSender ? "#444" : "gray" },
+                    {
+                      color: !isSender
+                        ? "#666666"
+                        : darkMode
+                        ? "#b7b7b7"
+                        : "#cccccc",
+                    },
                   ]}
                 >
                   {formatTimestamp(message.createdAt)}
                 </Text>
               </View>
+              {message.text && (
+                <Text
+                  style={[
+                    styles.messageText,
+                    { color: "#191919", marginLeft: !isSender ? 36 : 0 },
+                  ]}
+                >
+                  {message.text}
+                </Text>
+              )}
             </View>
           </TouchableOpacity>
         ) : (
@@ -237,13 +252,6 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
           renderItem={({ item }) => (
             <Text
               style={{
-                // position: "relative",
-                // bottom: 16,
-                // left:
-                //   message.user.id !== user.id
-                //     ? 100
-                //     : Dimensions.get("screen").width * 0.8,
-
                 fontSize: 16,
                 backgroundColor: "white",
                 borderRadius: 50,
@@ -312,14 +320,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 4,
   },
-  emptyAvatarText: {
-    fontSize: 14,
-  },
 });
 
 export default MessageBubble;
 
-export const renderUserAvatar = (userData, dimensions, darkMode) => {
+export const renderUserAvatar = (userData, dimensions, darkMode, route) => {
   if (userData && userData.image !== "") {
     return (
       <View style={styles.userAvatarContainer}>
@@ -351,10 +356,11 @@ export const renderUserAvatar = (userData, dimensions, darkMode) => {
         ]}
       >
         <Text
-          style={[
-            styles.emptyAvatarText,
-            { color: darkMode ? "#adadad" : "#d9d9d9" },
-          ]}
+          style={{
+            color: darkMode ? "#adadad" : "#d9d9d9",
+            fontSize: route && route.name === "Conversation" ? 18 : 14,
+            marginTop: route && route.name === "Conversation" ? 2 : 0,
+          }}
         >
           {initials}
         </Text>

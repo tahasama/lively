@@ -437,6 +437,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
             value={text}
             onChangeText={setText}
             placeholder="Type your message..."
+            placeholderTextColor={darkMode ? "#efefef" : "#333"}
             multiline={true}
           />
         ) : uploadProgress <= 1 || uploadProgress >= 99 ? (

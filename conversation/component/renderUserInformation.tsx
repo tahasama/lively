@@ -7,6 +7,7 @@ import { useAuth } from "../../AuthProvider/AuthProvider";
 import { renderUserAvatar } from "./MessageBubble";
 
 const RenderUserInformation = ({ sender }: any) => {
+  const route = null;
   // Fetch user information using the sender ID
   const { user, darkMode } = useAuth();
   const [userData, setUserData] = useState(null);
@@ -34,7 +35,7 @@ const RenderUserInformation = ({ sender }: any) => {
   }
   return (
     <View style={styles.userInfo}>
-      {renderUserAvatar(userData, 22, darkMode)}
+      {renderUserAvatar(userData, 22, darkMode, route)}
       {user && sender !== user.id && (
         <Text
           style={[
