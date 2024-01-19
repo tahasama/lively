@@ -12,7 +12,7 @@ import {
   FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   addDoc,
   arrayUnion,
@@ -31,6 +31,7 @@ import { useAuth } from "../../AuthProvider/AuthProvider";
 import { useImage } from "../../AuthProvider/ImageProvider";
 
 const SearchUser = ({ navigation, icon, conversationId, title }) => {
+  const route = useRoute();
   const [isModalVisible, setModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState([]);
@@ -183,18 +184,31 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
         onPress={toggleModal}
         style={[
           icon !== "adduser" ? styles.addButton : styles.addUsers,
-          { backgroundColor: !darkMode ? "#7272e5" : "#5b5bb7" },
+          {
+            backgroundColor:
+              route.name !== "Conversation"
+                ? !darkMode
+                  ? "#7272e5"
+                  : "#5b5bb7"
+                : darkMode
+                ? "#262626"
+                : "#f2f2f2",
+          },
         ]}
       >
         {icon !== "adduser" ? (
           <EvilIcons
             name="search"
-            size={44}
+            size={46}
             color="white"
             style={{ marginBottom: 7 }}
           />
         ) : (
-          <AntDesign name="adduser" size={24} color="black" />
+          <AntDesign
+            name="adduser"
+            size={26}
+            color={darkMode ? "#7272e5" : "black"}
+          />
         )}
       </TouchableOpacity>
 
