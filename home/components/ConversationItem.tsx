@@ -350,7 +350,7 @@ const ConversationItem: React.FC<{
 
 const styles = StyleSheet.create({
   conversationContainer: {
-    marginBottom: 16,
+    marginBottom: 6,
     borderWidth: 1,
     // borderColor: "#ddd",
     padding: 16,

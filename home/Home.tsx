@@ -277,7 +277,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 6,
   },
   search: {
     position: "absolute",
