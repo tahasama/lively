@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [notification, setNotification] = useState<any>(false);
   const [notificationR, setNotificationR] = useState<any>(false);
   const [converations, setConverations] = useState<any[]>([]);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
