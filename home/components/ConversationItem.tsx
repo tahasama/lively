@@ -312,7 +312,7 @@ const ConversationItem: React.FC<{
                     <Text
                       style={[
                         styles.buttonText,
-                        { color: !darkMode ? "#e5e5e5" : "#cccccc" },
+                        { color: !darkMode ? "#f7f7f7" : "#cccccc" },
                       ]}
                     >
                       Delete
