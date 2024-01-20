@@ -35,6 +35,7 @@ import {
   Entypo,
   Foundation,
 } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface Message {
   text: string;
@@ -273,11 +274,10 @@ const ConversationItem: React.FC<{
       <Text style={[styles.date, { color: !darkMode ? "#262626" : "#c1c1c1" }]}>
         Last Message : {formattedTime}
       </Text>
-
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
         <TouchableOpacity
           activeOpacity={1}
-          style={styles.modalBackground}
+          style={[styles.modalBackground]}
           onPress={() => {
             toggleModal();
           }}
@@ -285,29 +285,61 @@ const ConversationItem: React.FC<{
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
 
           <TouchableWithoutFeedback>
-            <View style={styles.modalContainer}>
+            <View
+              style={[
+                styles.modalContainer,
+                {
+                  backgroundColor: darkMode ? "#282828" : "white",
+                  borderColor: darkMode ? "#515151" : "white",
+                  borderWidth: 2,
+                },
+              ]}
+            >
               <View style={styles.barContainer}>
                 <View style={styles.bar}></View>
               </View>
-              {/* Input for group name */}
+              {/* Content of the modal */}
+              <View>
+                {/* Button to delete the item */}
+                <TouchableOpacity onPress={removeDiscussion}>
+                  <LinearGradient
+                    colors={[
+                      darkMode ? "#A30000" : "#FF4545",
+                      darkMode ? "#770000" : "#cc3737",
+                    ]}
+                    style={[styles.cancelButton]}
+                  >
+                    <Text
+                      style={[
+                        styles.buttonText,
+                        { color: !darkMode ? "#e5e5e5" : "#cccccc" },
+                      ]}
+                    >
+                      Delete
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
 
-              {/* Button to create the group */}
-              <TouchableOpacity
-                style={styles.createButton}
-                onPress={removeDiscussion}
-              >
-                <Text style={styles.buttonText}>Delete?</Text>
-              </TouchableOpacity>
-
-              {/* Button to close the modal */}
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={toggleModal}
-              >
-                <Text style={[styles.buttonText, { color: "#4e5a65" }]}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
+                {/* Button to close the modal */}
+                <TouchableOpacity onPress={toggleModal}>
+                  <LinearGradient
+                    colors={[
+                      darkMode ? "#666666" : "#f6f6f6",
+                      darkMode ? "#515151" : "#c4c4c4",
+                    ]}
+                    style={[styles.cancelButton]}
+                  >
+                    <Text
+                      style={[
+                        styles.buttonText,
+                        { color: !darkMode ? "#4c4c4c" : "#e5e5e5" },
+                      ]}
+                    >
+                      Cancel
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
             </View>
           </TouchableWithoutFeedback>
         </TouchableOpacity>
@@ -373,7 +405,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContainer: {
-    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 8,
     width: "100%",
@@ -409,8 +440,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
     alignItems: "center",
   },
+  deleteButton: {
+    marginBottom: 16,
+  },
+  gradientButton: {
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: "center",
+  },
 });
-
-// ...
 
 export default ConversationItem;
