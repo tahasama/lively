@@ -350,17 +350,17 @@ const ConversationItem: React.FC<{
 
 const styles = StyleSheet.create({
   conversationContainer: {
-    marginBottom: 6,
+    marginBottom: 8,
     borderWidth: 1,
     // borderColor: "#ddd",
     padding: 16,
     borderRadius: 8,
     // backgroundColor: "#fff",
-    elevation: 3,
-    shadowColor: "#aaa",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    // elevation: 3,
+    // shadowColor: "#aaa",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
   },
   title: {
     fontSize: 20,

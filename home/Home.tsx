@@ -250,6 +250,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation, route }) => {
       </View>
       {converations.length !== 0 ? (
         <FlatList
+          style={{ marginTop: 4 }}
           data={converations}
           keyExtractor={(converation) => converation.id}
           renderItem={({ item }) => (
