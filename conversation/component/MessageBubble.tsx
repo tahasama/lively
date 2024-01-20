@@ -23,6 +23,7 @@ import { useAuth } from "../../AuthProvider/AuthProvider";
 import { ref, remove, update } from "firebase/database";
 import Reactions from "./Reactions";
 import { useRoute } from "@react-navigation/native";
+import RenderUserAvatar from "../../Profile/RenderUserAvatar";
 
 const MessageBubble = ({ message, isSender, conversationId }: any) => {
   const route = useRoute();
@@ -116,7 +117,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
             backgroundColor: isSender
               ? darkMode
                 ? "#1b6c87"
-                : "#5b96bc"
+                : "#2DB4E2"
               : !darkMode
               ? "#e3e3e3"
               : "#9e9e9e",
@@ -176,7 +177,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                 {userData && !isSender && (
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <View style={styles.userAvatarContainer}>
-                      {renderUserAvatar(userData, 30, darkMode, route)}
+                      {RenderUserAvatar(userData, 30, darkMode, route)}
                     </View>
                     <Text
                       style={[
@@ -323,48 +324,3 @@ const styles = StyleSheet.create({
 });
 
 export default MessageBubble;
-
-export const renderUserAvatar = (userData, dimensions, darkMode, route) => {
-  if (userData && userData.image !== "") {
-    return (
-      <View style={styles.userAvatarContainer}>
-        <Image
-          source={{ uri: userData.image }}
-          style={{
-            width: dimensions,
-            height: dimensions,
-            borderRadius: 15,
-            borderColor: "gray",
-            borderWidth: 0.3,
-          }}
-        />
-      </View>
-    );
-  } else if (userData && userData.username !== undefined) {
-    // If image is an empty string, render a circle with the first letter of the username
-    const initials =
-      userData && userData?.username ? userData.username[0].toUpperCase() : "";
-    return (
-      <View
-        style={[
-          styles.emptyAvatarContainer,
-          {
-            width: dimensions,
-            height: dimensions,
-            backgroundColor: !darkMode ? "#2db4e2" : "#165a71",
-          },
-        ]}
-      >
-        <Text
-          style={{
-            color: darkMode ? "#adadad" : "#d9d9d9",
-            fontSize: route && route.name === "Conversation" ? 18 : 14,
-            marginTop: route && route.name === "Conversation" ? 2 : 0,
-          }}
-        >
-          {initials}
-        </Text>
-      </View>
-    );
-  }
-};

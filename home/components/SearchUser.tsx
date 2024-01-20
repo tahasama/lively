@@ -262,7 +262,7 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
                     darkMode ? "#274f92" : "#4285F4",
                     darkMode ? "#1f3f74" : "#346ac3",
                   ]}
-                  style={[styles.createButton]}
+                  style={[styles.cancelButton]}
                 >
                   <Text style={styles.buttonText}>
                     {loading ? "Searching..." : "Look for a friend"}
@@ -378,16 +378,11 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     borderRadius: 5,
   },
-  createButton: {
-    paddingVertical: 4,
-    borderRadius: 15,
-    marginTop: 16,
-    marginHorizontal: 0,
-  },
+
   cancelButton: {
     backgroundColor: "#ddd",
-    paddingVertical: 4,
-    borderRadius: 15,
+    paddingVertical: 10,
+    borderRadius: 5,
     marginTop: 8,
     alignItems: "center",
   },
@@ -396,7 +391,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
-    padding: 12,
   },
   errorText: {
     color: "red",

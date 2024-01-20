@@ -4,7 +4,7 @@ import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import { db, dbr } from "../../firebase";
 import { ref, set } from "firebase/database";
 import { useAuth } from "../../AuthProvider/AuthProvider";
-import { renderUserAvatar } from "./MessageBubble";
+import RenderUserAvatar from "../../Profile/RenderUserAvatar";
 
 const RenderUserInformation = ({ sender }: any) => {
   const route = null;
@@ -35,7 +35,7 @@ const RenderUserInformation = ({ sender }: any) => {
   }
   return (
     <View style={styles.userInfo}>
-      {renderUserAvatar(userData, 22, darkMode, route)}
+      {RenderUserAvatar(userData, 22, darkMode, route)}
       {user && sender !== user.id && (
         <Text
           style={[

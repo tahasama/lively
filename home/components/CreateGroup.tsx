@@ -209,16 +209,9 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     borderRadius: 5,
   },
-  createButton: {
-    backgroundColor: "#4285F4",
-    paddingVertical: 12,
-    borderRadius: 5,
-    marginTop: 16,
-    alignItems: "center",
-  },
   cancelButton: {
     backgroundColor: "#ddd",
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderRadius: 5,
     marginTop: 8,
     alignItems: "center",

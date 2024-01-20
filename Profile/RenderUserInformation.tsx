@@ -34,7 +34,7 @@ const RenderUserInformation = ({ sender }: any) => {
   }
   return (
     <View style={styles.userInfo}>
-      {RenderUserAvatar(userData, 22)}
+      {RenderUserAvatar(userData, 22, "", "")}
       {user && sender !== user.id && (
         <Text
           style={[

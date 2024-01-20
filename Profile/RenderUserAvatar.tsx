@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
-const RenderUserAvatar = (userData, dimensions) => {
+const RenderUserAvatar = (userData, dimensions, darkMode, route) => {
   if (userData && userData.image !== "") {
     return (
       <View style={styles.userAvatarContainer}>
@@ -25,10 +25,22 @@ const RenderUserAvatar = (userData, dimensions) => {
       <View
         style={[
           styles.emptyAvatarContainer,
-          { width: dimensions, height: dimensions },
+          {
+            width: dimensions,
+            height: dimensions,
+            backgroundColor: !darkMode ? "#2db4e2" : "#165a71",
+          },
         ]}
       >
-        <Text style={styles.emptyAvatarText}>{initials}</Text>
+        <Text
+          style={{
+            color: darkMode ? "#adadad" : "#d9d9d9",
+            fontSize: route && route.name === "Conversation" ? 18 : 14,
+            marginTop: route && route.name === "Conversation" ? 2 : 0,
+          }}
+        >
+          {initials}
+        </Text>
       </View>
     );
   }
@@ -40,7 +52,7 @@ const styles = StyleSheet.create({
   },
   emptyAvatarContainer: {
     borderRadius: 15,
-    backgroundColor: "#2db4e2",
+    backgroundColor: "red",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 4,

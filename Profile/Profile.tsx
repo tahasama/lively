@@ -16,13 +16,13 @@ import { useImage } from "../AuthProvider/ImageProvider";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import RenderUserAvatar from "./RenderUserAvatar";
 import RenderUserInformation from "./RenderUserInformation";
 import ImagePickerC from "../conversation/component/ImagePickerC";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Entypo } from "@expo/vector-icons";
 import LightDarkSwitch from "./LightDarkSwitch";
 import { LinearGradient } from "expo-linear-gradient";
+import RenderUserAvatar from "./RenderUserAvatar";
 
 const Profile: React.FC = () => {
   const { user, setUser, converations, expoPushToken, darkMode, setDarkMode } =
@@ -100,7 +100,7 @@ const Profile: React.FC = () => {
             <View style={styles.bar}></View>
 
             <View style={styles.header}>
-              {user && RenderUserAvatar(user, 70)}
+              {user && RenderUserAvatar(user, 70, "", "")}
               <View style={styles.userInfoContainer}>
                 <Text
                   style={[
