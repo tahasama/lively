@@ -218,7 +218,9 @@ const ConversationItem: React.FC<{
             lastMessage.user &&
             lastMessage.user?.id !== user?.id &&
             lastMessage.status !== "read"
-              ? "#D1E0F0"
+              ? darkMode
+                ? "#0d3643"
+                : "#D1E0F0"
               : darkMode
               ? "#333333"
               : "#f4f4f4",

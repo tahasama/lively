@@ -185,16 +185,16 @@ function CameraUsage({ color }: any) {
               style={styles.iconButton}
               onPress={toggleCameraType}
             >
-              <FontAwesome5 name="sync" size={24} color="white" />
+              <FontAwesome5 name="sync" size={24} color={color} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton} onPress={takePicture}>
-              <FontAwesome5 name="camera" size={24} color="white" />
+              <FontAwesome5 name="camera" size={24} color={color} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.iconButton}
               onPress={closeCameraModal}
             >
-              <FontAwesome5 name="times" size={24} color="white" />
+              <FontAwesome5 name="times" size={24} color={color} />
             </TouchableOpacity>
           </View>
         </View>

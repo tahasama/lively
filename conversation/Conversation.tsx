@@ -549,6 +549,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ececec", // Background color
     padding: 10,
     alignItems: "center",
+    marginTop: -1.2,
   },
   tipText: {
     color: "#333", // Text color

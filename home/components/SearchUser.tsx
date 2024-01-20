@@ -243,9 +243,14 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
               <TextInput
                 style={[
                   styles.input,
-                  { backgroundColor: darkMode ? "#666666" : "#f6f6f6" },
+                  {
+                    backgroundColor: darkMode ? "#666666" : "#f6f6f6",
+                    color: darkMode ? "#efefef" : "#333",
+                    borderColor: darkMode ? "#333333" : "#ccc",
+                  },
                 ]}
                 placeholder=" Search by username..."
+                placeholderTextColor={darkMode ? "#efefef" : "#333"}
                 value={searchTerm}
                 onChangeText={(text) => {
                   setSearchTerm(text);

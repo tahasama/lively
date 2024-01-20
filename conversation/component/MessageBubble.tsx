@@ -120,7 +120,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                 : "#2DB4E2"
               : !darkMode
               ? "#e3e3e3"
-              : "#9e9e9e",
+              : "#2f2f2f",
           },
         ]}
       >
@@ -182,7 +182,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                     <Text
                       style={[
                         styles.messageText,
-                        { color: darkMode ? "#4c4c4c" : "#4c4c4c" },
+                        { color: darkMode ? "#6f6f6f" : "#4d3955" },
                       ]}
                     >
                       ~ {userData.username}
@@ -194,11 +194,7 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                   style={[
                     styles.timestamp,
                     {
-                      color: !isSender
-                        ? "#666666"
-                        : darkMode
-                        ? "#b7b7b7"
-                        : "#cccccc",
+                      color: darkMode ? "#b7b7b7" : "#494949",
                     },
                   ]}
                 >
@@ -209,7 +205,10 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
                 <Text
                   style={[
                     styles.messageText,
-                    { color: "#191919", marginLeft: !isSender ? 36 : 0 },
+                    {
+                      color: darkMode ? "#d7d7d7" : "#191919",
+                      marginLeft: !isSender ? 36 : 0,
+                    },
                   ]}
                 >
                   {message.text}
@@ -307,13 +306,13 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
-    color: "#666",
   },
   timestamp: {
     fontSize: 12,
     color: "gray",
     marginLeft: 8,
     alignItems: "center",
+    marginTop: 3,
   },
   emptyAvatarContainer: {
     borderRadius: 15,

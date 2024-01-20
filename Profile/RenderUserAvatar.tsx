@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
 const RenderUserAvatar = (userData, dimensions, darkMode, route) => {
+  console.log("🚀 ~ RenderUserAvatar ~ route:", route && route);
   if (userData && userData.image !== "") {
     return (
       <View style={styles.userAvatarContainer}>
@@ -28,14 +29,19 @@ const RenderUserAvatar = (userData, dimensions, darkMode, route) => {
           {
             width: dimensions,
             height: dimensions,
-            backgroundColor: !darkMode ? "#2db4e2" : "#165a71",
+            backgroundColor: !darkMode ? "#28a2cb" : "#165a71",
           },
         ]}
       >
         <Text
           style={{
             color: darkMode ? "#adadad" : "#d9d9d9",
-            fontSize: route && route.name === "Conversation" ? 18 : 14,
+            fontSize:
+              route && route.name === "Conversation"
+                ? 18
+                : route && route === "Profile"
+                ? 24
+                : 14,
             marginTop: route && route.name === "Conversation" ? 2 : 0,
           }}
         >

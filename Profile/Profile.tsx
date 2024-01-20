@@ -100,7 +100,7 @@ const Profile: React.FC = () => {
             <View style={styles.bar}></View>
 
             <View style={styles.header}>
-              {user && RenderUserAvatar(user, 70, "", "")}
+              {user && RenderUserAvatar(user, 70, "", "Profile")}
               <View style={styles.userInfoContainer}>
                 <Text
                   style={[
@@ -134,12 +134,26 @@ const Profile: React.FC = () => {
             {isEditing ? (
               <View>
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    {
+                      backgroundColor: darkMode ? "#666666" : "#f6f6f6",
+                      color: darkMode ? "#efefef" : "#333",
+                      borderColor: darkMode ? "#333333" : "#ccc",
+                    },
+                  ]}
                   placeholder="New Username"
+                  placeholderTextColor={darkMode ? "#efefef" : "#333"}
                   value={newUsername}
                   onChangeText={(text) => setNewUsername(text)}
                 />
-                <Text style={{ fontSize: 16, color: "#333", marginTop: 10 }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: darkMode ? "#adadad" : "#d9d9d9",
+                    marginTop: 10,
+                  }}
+                >
                   Click on the icon to update your profile image:
                 </Text>
                 <View
