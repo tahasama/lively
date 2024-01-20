@@ -150,7 +150,7 @@ const Profile: React.FC = () => {
                 <Text
                   style={{
                     fontSize: 16,
-                    color: darkMode ? "#adadad" : "#d9d9d9",
+                    color: darkMode ? "#adadad" : "#4b4b4b",
                     marginTop: 10,
                   }}
                 >
@@ -166,7 +166,24 @@ const Profile: React.FC = () => {
                 >
                   <ImagePickerC type={"image"} size={36} color={"#4682B4"} />
                 </View>
-                <Button title="Update" onPress={handleUpdate} />
+
+                <TouchableOpacity
+                  onPress={handleUpdate}
+                  // disabled={loading} // Disable the button during loading
+                >
+                  <LinearGradient
+                    colors={[
+                      darkMode ? "#274f92" : "#4285F4",
+                      darkMode ? "#1f3f74" : "#346ac3",
+                    ]}
+                    style={[styles.editButton]}
+                  >
+                    <Text style={{ color: darkMode ? "#cfcfcf" : "#e7e7e7" }}>
+                      {/* {loading ? "Searching..." : "Look for a friend"} */}
+                      Update
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
               </View>
             ) : (
               <View>
@@ -253,6 +270,7 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     borderColor: "gray",
+    borderRadius: 5,
     borderWidth: 1,
     marginBottom: 10,
     padding: 8,
