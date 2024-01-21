@@ -286,7 +286,16 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
                   renderItem={({ item }) => (
                     <TouchableOpacity onPress={() => handleCreateGroup(item)}>
                       <View style={styles.userItem}>
-                        <Text style={styles.usernameText}>{item.username}</Text>
+                        <Text
+                          style={[
+                            styles.usernameText,
+                            {
+                              color: darkMode ? "#764c95" : "#3C0068",
+                            },
+                          ]}
+                        >
+                          {item.username}
+                        </Text>
                         <Text style={styles.startConversationText}>
                           Tap to start a conversation
                         </Text>
@@ -414,7 +423,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 4,
-    color: "#3c0068",
   },
   startConversationText: {
     color: "#555",

@@ -225,7 +225,9 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
               bottom: -3,
               position: "absolute",
               backgroundColor: "white",
-              right: message.user.id === user.id ? 50 : -50,
+              // right: message.user.id === user.id ? 50 : -55,
+              alignSelf:
+                message.user.id === user.id ? "flex-end" : "flex-start",
               // left: message.user.id !== user.id ? 50 : 0,
               padding: 7,
               borderRadius: 10,
@@ -253,14 +255,15 @@ const MessageBubble = ({ message, isSender, conversationId }: any) => {
             <Text
               style={{
                 fontSize: 16,
-                backgroundColor: "white",
-                borderRadius: 50,
-                elevation: 3,
-                paddingTop: 1,
+                // backgroundColor: "white",
+                // borderRadius: 50,
+                // elevation: 3,
+                paddingTop: -4,
                 paddingHorizontal: 3,
               }}
             >
-              {item.reaction.emoji} {countReactions(item.reaction.id)}
+              {item.reaction.emoji}
+              {countReactions(item.reaction.id)}
             </Text>
           )}
         />

@@ -60,7 +60,10 @@ const Reactions = ({ message, conversationId }) => {
     const rtdb = `groups/${conversationId}/messages/${message._id}`;
     const conversationRef = ref(dbr, rtdb);
 
-    await update(conversationRef, { alert: "This message was removed" });
+    await update(conversationRef, {
+      alert: "This message was removed",
+      reactions: [],
+    });
     setReaction(false);
   };
 
