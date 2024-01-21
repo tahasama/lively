@@ -99,7 +99,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
     <View
       style={{
         flex: 1,
-        backgroundColor: darkMode ? "#1E1E1E" : "#F9F9F9",
+        backgroundColor: darkMode ? "#212121" : "#ececec",
         alignItems: "center",
         justifyContent: "center",
         paddingHorizontal: 20,
