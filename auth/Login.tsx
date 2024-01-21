@@ -27,7 +27,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user, setUser } = useAuth();
+  const { user, setUser, darkMode } = useAuth();
 
   const handleLogin = async () => {
     try {
@@ -54,21 +54,43 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       await sendPasswordResetEmail(auth, email);
 
       // Inform the user that a password reset email has been sent
-      setError("Password reset email has been sent. Check your inbox.");
+      setError("Password reset email has been sent. Please check your inbox.");
     } catch (error) {
       setError(error.message);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Lively Chat ...</Text>
-      <Text style={{ textAlign: "center", color: "#999999" }}>
-        By continuing, you agree on, and aknowledge that you've read Lively's{" "}
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: darkMode ? "#1E1E1E" : "#F9F9F9",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 20,
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 28,
+          marginBottom: 24,
+          fontWeight: "bold",
+          color: darkMode ? "#FFFFFF" : "#333333",
+        }}
+      >
+        Lively Chat ...
       </Text>
       <Text
         style={{
-          color: "#0aaccc",
+          textAlign: "center",
+          color: darkMode ? "#AAAAAA" : "#999999",
+        }}
+      >
+        By continuing, you agree on, and acknowledge that you've read Lively's{" "}
+      </Text>
+      <Text
+        style={{
+          color: darkMode ? "#4285F4" : "#0A8CC2",
           textDecorationLine: "underline",
           marginBottom: 20,
           fontSize: 16,
@@ -82,8 +104,16 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         Privacy policy
       </Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: darkMode ? "#666666" : "#f6f6f6",
+            color: darkMode ? "#efefef" : "#333",
+            borderColor: darkMode ? "#333333" : "#ccc",
+          },
+        ]}
         placeholder="Email"
+        placeholderTextColor={darkMode ? "#efefef" : "#333"}
         value={email}
         onChangeText={(text) => {
           setEmail(text);
@@ -92,10 +122,25 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <View style={styles.passwordContainer}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
         <TextInput
-          style={styles.passwordInput}
+          style={[
+            styles.passwordInput,
+            {
+              backgroundColor: darkMode ? "#666666" : "#f6f6f6",
+              color: darkMode ? "#efefef" : "#333",
+              borderColor: darkMode ? "#333333" : "#ccc",
+            },
+          ]}
           placeholder="Password"
+          placeholderTextColor={darkMode ? "#efefef" : "#333"}
           value={password}
           onChangeText={(text) => setPassword(text)}
           secureTextEntry={!showPassword}
@@ -103,32 +148,104 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
-          style={styles.show}
+          style={{
+            height: 48,
+            borderColor: darkMode ? "#555555" : "#dddddd",
+            marginBottom: 14,
+            paddingLeft: 12,
+            borderRadius: 8,
+            justifyContent: "center",
+          }}
         >
           <Feather
             name={showPassword ? "eye-off" : "eye"}
             size={24}
-            color="#4285F4"
+            color={darkMode ? "#999999" : "#4285F4"}
           />
         </TouchableOpacity>
       </View>
-      <Text style={styles.passwordAdvise}>
-        <AntDesign name="questioncircleo" size={13} color="#708090" /> Be
-        careful with Uppercase and Lowercase letters!
+      <Text
+        style={{
+          color: darkMode ? "#AAAAAA" : "#708090",
+          marginBottom: 20,
+        }}
+      >
+        <AntDesign
+          name="questioncircleo"
+          size={13}
+          color={darkMode ? "#999999" : "#708090"}
+        />{" "}
+        Be careful with Uppercase and Lowercase letters!
       </Text>
-      {error && <Text style={styles.errorText}>{error}</Text>}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+      {error && (
+        <Text
+          style={{
+            color: darkMode ? "#b20000" : "red",
+            marginBottom: 16,
+            fontSize: 16,
+          }}
+        >
+          {error}
+        </Text>
+      )}
+      <TouchableOpacity
+        style={[
+          styles.loginButton,
+          {
+            backgroundColor: darkMode ? "#274f92" : "#4285F4",
+          },
+        ]}
+        onPress={handleLogin}
+      >
+        <Text
+          style={{
+            color: "#FFFFFF",
+            fontSize: 18,
+            fontWeight: "bold",
+          }}
+        >
+          Login
+        </Text>
       </TouchableOpacity>
 
-      <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>Don't have an account? </Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 16,
+            color: darkMode ? "#AAAAAA" : "#555555",
+          }}
+        >
+          Don't have an account?{" "}
+        </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-          <Text style={styles.registerLink}>Register here</Text>
+          <Text
+            style={{
+              fontSize: 16,
+              color: darkMode ? "#346ac3" : "#4285F4",
+              fontWeight: "bold",
+            }}
+          >
+            Register here
+          </Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity onPress={handleForgotPassword}>
-        <Text style={styles.forgotPasswordLink}>Forgot Password?</Text>
+        <Text
+          style={{
+            marginTop: 20,
+            color: darkMode ? "#346ac3" : "#4285F4",
+            fontSize: 16,
+            fontWeight: "bold",
+            textDecorationLine: "underline",
+          }}
+        >
+          Forgot Password?
+        </Text>
       </TouchableOpacity>
     </View>
   );

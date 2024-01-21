@@ -355,7 +355,14 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({ route }) => {
 
   if (loading) {
     return (
-      <View style={styles.loading}>
+      <View
+        style={[
+          styles.loading,
+          {
+            backgroundColor: darkMode ? "#212121" : "#ececec",
+          },
+        ]}
+      >
         <ActivityIndicator size={60} />
       </View>
     );

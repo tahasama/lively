@@ -30,8 +30,26 @@ const Index = () => {
       <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
         {!user || user === null ? (
           <>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={({ route }) => ({
+                headerStyle: {
+                  backgroundColor: darkMode ? "#262626" : "#f2f2f2",
+                },
+                headerTintColor: !darkMode ? "#262626" : "#f2f2f2",
+              })}
+            />
+            <Stack.Screen
+              name="Register"
+              component={RegisterScreen}
+              options={({ route }) => ({
+                headerStyle: {
+                  backgroundColor: darkMode ? "#262626" : "#f2f2f2",
+                },
+                headerTintColor: !darkMode ? "#262626" : "#f2f2f2",
+              })}
+            />
           </>
         ) : (
           <>

@@ -36,7 +36,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const { user, setUser, expoPushToken, notification } = useAuth();
+  const { user, setUser, expoPushToken, notification, darkMode } = useAuth();
 
   const handleRegister = async () => {
     try {
@@ -96,11 +96,36 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Create an Account</Text>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: darkMode ? "#1E1E1E" : "#F9F9F9",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 20,
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 28,
+          marginBottom: 24,
+          fontWeight: "bold",
+          color: darkMode ? "#FFFFFF" : "#333333",
+        }}
+      >
+        Create an Account
+      </Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: darkMode ? "#666666" : "#f6f6f6",
+            color: darkMode ? "#efefef" : "#333",
+            borderColor: darkMode ? "#333333" : "#ccc",
+          },
+        ]}
         placeholder="Email"
+        placeholderTextColor={darkMode ? "#efefef" : "#333"}
         value={email}
         onChangeText={(text) => {
           setEmail(text);
@@ -110,18 +135,42 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         autoCapitalize="none"
       />
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: darkMode ? "#666666" : "#f6f6f6",
+            color: darkMode ? "#efefef" : "#333",
+            borderColor: darkMode ? "#333333" : "#ccc",
+          },
+        ]}
         placeholder="Username"
+        placeholderTextColor={darkMode ? "#efefef" : "#333"}
         value={username}
         onChangeText={(text) => {
-          setUsername(text), setError("");
+          setUsername(text);
+          setError("");
         }}
         autoCapitalize="none"
       />
-      <View style={styles.passwordContainer}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          width: "100%",
+          gap: 12,
+        }}
+      >
         <TextInput
-          style={styles.passwordInput}
+          style={[
+            styles.passwordInput,
+            {
+              backgroundColor: darkMode ? "#666666" : "#f6f6f6",
+              color: darkMode ? "#efefef" : "#333",
+              borderColor: darkMode ? "#333333" : "#ccc",
+            },
+          ]}
           placeholder="Password"
+          placeholderTextColor={darkMode ? "#efefef" : "#333"}
           value={password}
           onChangeText={(text) => {
             setPassword(text);
@@ -131,23 +180,75 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         />
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
-          style={styles.show}
+          style={{
+            height: 48,
+            borderColor: darkMode ? "#555555" : "#dddddd",
+            justifyContent: "center",
+            alignItems: "center",
+            marginHorizontal: 4,
+            marginBottom: 12,
+          }}
         >
           <Feather
             name={showPassword ? "eye-off" : "eye"}
             size={24}
-            color="#4285F4"
+            color={darkMode ? "#FFFFFF" : "#4285F4"}
           />
         </TouchableOpacity>
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
+      {error && (
+        <Text
+          style={{
+            color: "red",
+            marginBottom: 16,
+          }}
+        >
+          {error}
+        </Text>
+      )}
+      <TouchableOpacity
+        style={[
+          styles.registerButton,
+          {
+            backgroundColor: darkMode ? "#274f92" : "#4285F4",
+          },
+        ]}
+        onPress={handleRegister}
+      >
+        <Text
+          style={{
+            color: "#FFFFFF",
+            fontSize: 18,
+            fontWeight: "bold",
+          }}
+        >
+          Register
+        </Text>
       </TouchableOpacity>
-      <View style={styles.loginContainer}>
-        <Text style={styles.loginText}>Already have an account? </Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 16,
+            color: darkMode ? "#AAAAAA" : "#555555",
+          }}
+        >
+          Already have an account?{" "}
+        </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.loginLink}>Login here</Text>
+          <Text
+            style={{
+              fontSize: 16,
+              color: darkMode ? "#346ac3" : "#4285F4",
+              fontWeight: "bold",
+            }}
+          >
+            Login here
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
