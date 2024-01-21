@@ -84,7 +84,11 @@ const Profile: React.FC = () => {
   return (
     <View>
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-        <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
+        <StatusBar
+          backgroundColor={
+            darkMode ? "rgba(0, 0, 0, 0.9)" : "rgba(0, 0, 0, 0.5)"
+          }
+        />
 
         <TouchableOpacity style={styles.modalBackground} onPress={toggleModal}>
           <View

@@ -223,8 +223,11 @@ const SearchUser = ({ navigation, icon, conversationId, title }) => {
             toggleModal();
           }}
         >
-          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" />
-
+          <StatusBar
+            backgroundColor={
+              darkMode ? "rgba(0, 0, 0, 0.9)" : "rgba(0, 0, 0, 0.5)"
+            }
+          />
           <TouchableWithoutFeedback>
             <View
               style={[
