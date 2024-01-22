@@ -6,8 +6,9 @@ Built with React Native, Expo, and Firebase (utilizing Storage, Authentication, 
 
 - **Login Page:** Register, recover passwords, and receive notifications.
 
-  <img src="https://github.com/tahasama/lively/assets/69104880/da6c2337-fa86-4239-b4fe-71c663d432b6" width="400"/>
-  <img src="https://github.com/tahasama/lively/assets/69104880/d999cd3a-dcf6-488a-87f1-8643f24f6524" width="400"/>
+![1](https://github.com/tahasama/lively/assets/69104880/49839f39-5a85-4592-96e8-9771745496e8)
+![6](https://github.com/tahasama/lively/assets/69104880/a661ccec-d059-47df-aa97-2860df73f1c0)
+
 
 - **Home Page:** Browse and participate in discussions, available in both light and dark modes.
 
