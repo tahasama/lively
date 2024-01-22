@@ -6,19 +6,23 @@ Built with React Native, Expo, and Firebase (utilizing Storage, Authentication, 
 
 - **Login Page:** Register, recover passwords, and receive notifications.
 
-  <img src="https://github.com/tahasama/lively/assets/69104880/da6c2337-fa86-4239-b4fe-71c663d432b6" width="400"/> <img src="https://github.com/tahasama/lively/assets/69104880/d999cd3a-dcf6-488a-87f1-8643f24f6524" width="400"/>
+  <img src="https://github.com/tahasama/lively/assets/69104880/da6c2337-fa86-4239-b4fe-71c663d432b6" width="400"/>
+  <img src="https://github.com/tahasama/lively/assets/69104880/d999cd3a-dcf6-488a-87f1-8643f24f6524" width="400"/>
 
 - **Home Page:** Browse and participate in discussions, available in both light and dark modes.
 
-  <img src="https://github.com/tahasama/lively/assets/69104880/90518eb2-ffb4-4720-b6fa-0c6893f1b318" width="400"/> <img src="https://github.com/tahasama/lively/assets/69104880/fdc44467-c9ae-4f33-9d2e-ebb2429c8c24" width="400"/>
+  <img src="https://github.com/tahasama/lively/assets/69104880/90518eb2-ffb4-4720-b6fa-0c6893f1b318" width="400"/>
+  <img src="https://github.com/tahasama/lively/assets/69104880/fdc44467-c9ae-4f33-9d2e-ebb2429c8c24" width="400"/>
 
 - **Manage Discussions:** Delete discussions and create new groups.
 
-  <img src="https://github.com/tahasama/lively/assets/69104880/f98ad090-2d3a-4407-af0f-865a16041bb7" width="400"/> <img src="https://github.com/tahasama/lively/assets/69104880/432f17ca-56f6-4cf2-9fda-4a1d749f6966" width="400"/>
+  <img src="https://github.com/tahasama/lively/assets/69104880/f98ad090-2d3a-4407-af0f-865a16041bb7" width="400"/>
+  <img src="https://github.com/tahasama/lively/assets/69104880/432f17ca-56f6-4cf2-9fda-4a1d749f6966" width="400"/>
 
 - **Profile: Updates and Dark/Light Mode:**
 
-  <img src="https://github.com/tahasama/lively/assets/69104880/68aa695f-7d43-47b4-a3a2-ed6999b49497" width="400"/> <img src="https://github.com/tahasama/lively/assets/69104880/22d9e69e-28b8-4eff-bb26-b25a06c1ffb1" width="400"/>
+  <img src="https://github.com/tahasama/lively/assets/69104880/68aa695f-7d43-47b4-a3a2-ed6999b49497" width="400"/>
+  <img src="https://github.com/tahasama/lively/assets/69104880/22d9e69e-28b8-4eff-bb26-b25a06c1ffb1" width="400"/>
 
 - **Main Discussion Features:**
   - Send messages, files, upload or record videos, audios, and images.
