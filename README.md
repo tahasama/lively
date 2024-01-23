@@ -1,6 +1,6 @@
 # Lively Chat
 
-### A Mobile App for Engaging Conversations
+### A Mobile App for Engaging Conversations.
 
 Built with React Native, Expo, and Firebase (utilizing Storage, Authentication, Firestore, and Real-Time Database).
 
